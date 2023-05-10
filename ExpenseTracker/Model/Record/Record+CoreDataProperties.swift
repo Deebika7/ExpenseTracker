@@ -22,7 +22,8 @@ extension Record {
     @NSManaged public var date: Date?
     @NSManaged public var amount: Double
     @NSManaged public var type: Int16
-
+    @NSManaged public var icon: String?
+    @N
 }
 
 extension Record : Identifiable {
