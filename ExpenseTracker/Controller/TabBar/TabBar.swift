@@ -16,13 +16,15 @@ class TabBar: UITabBarController {
     func setUpTabBar() -> UITabBarController {
         let tabBar = UITabBarController()
         tabBar.tabBar.unselectedItemTintColor = .label
-        let moneyTrackerVc = UINavigationController(rootViewController: MoneyTrackerVC())
+        let homeVc = UINavigationController(rootViewController: HomeVC())
         let chartVC = UINavigationController(rootViewController: PieChartVC())
         let settingsVC = UINavigationController(rootViewController: SettingsVC())
-        moneyTrackerVc.tabBarItem = homeTabBarItem
+        homeVc.tabBarItem = homeTabBarItem
+        homeVc.navigationBar.prefersLargeTitles = false
         chartVC.tabBarItem = chartTabBarItem
         settingsVC.tabBarItem = settingsTabBarItem
-        tabBar.viewControllers = [moneyTrackerVc, chartVC, settingsVC]
+        tabBar.viewControllers = [homeVc, chartVC, settingsVC]
+        
         return tabBar
     }
     
