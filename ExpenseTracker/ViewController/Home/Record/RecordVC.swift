@@ -51,7 +51,7 @@ class RecordVC: UITableViewController {
         case .amount:
             cell.configureCustomCell {  customCell in
                 customCell.addSubview(textField)
-                textField.backgroundColor = .black
+                textField.backgroundColor = .systemPink
                 NSLayoutConstraint.activate([
                     textField.leadingAnchor.constraint(equalTo: customCell.leadingAnchor),
                     textField.trailingAnchor.constraint(equalTo: customCell.trailingAnchor),
@@ -60,6 +60,7 @@ class RecordVC: UITableViewController {
                 ])
             }
         case .date:
+            cell.configureLabel("test")
             cell.accessoryType = .disclosureIndicator
         case .category:
             cell.accessoryType = .disclosureIndicator
