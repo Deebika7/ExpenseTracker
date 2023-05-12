@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RecordField {
+enum RecordField: CaseIterable {
     case title
     case amount
     case date

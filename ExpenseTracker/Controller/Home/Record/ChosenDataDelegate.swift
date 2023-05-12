@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol RecordDelegate {
-    
+protocol ChosenDataDelegate {
+    func selectedData(data: String)
 }
