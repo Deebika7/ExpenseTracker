@@ -17,6 +17,12 @@ class AddRecordCell: UITableViewCell {
         return customView
     }()
     
+    private lazy var label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func awakeFromNib() {
         super.awakeFromNib()
          
@@ -54,10 +60,8 @@ class AddRecordCell: UITableViewCell {
         customCell(customView)
     }
     
+    func configureLabel(_ text: String){
+        label.text = text
+    }
 
-    
-   
-    
-
-    
 }
