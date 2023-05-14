@@ -20,11 +20,15 @@
 		161402C42A0B5DA50040E15E /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402C32A0B5DA50040E15E /* DatabaseManager.swift */; };
 		161402C72A0B79F70040E15E /* Record+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402C52A0B79F70040E15E /* Record+CoreDataClass.swift */; };
 		161402C82A0B79F70040E15E /* Record+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402C62A0B79F70040E15E /* Record+CoreDataProperties.swift */; };
-		161402D02A0CA9A30040E15E /* AddRecordCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402CF2A0CA9A30040E15E /* AddRecordCell.swift */; };
 		161402D62A0CADDF0040E15E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402D52A0CADDF0040E15E /* Colors.swift */; };
-		161402D82A0CBB060040E15E /* ChosenDataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402D72A0CBB060040E15E /* ChosenDataDelegate.swift */; };
 		161402DC2A0CF33F0040E15E /* RecordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402DB2A0CF33F0040E15E /* RecordField.swift */; };
 		161402DE2A0D6F520040E15E /* CustomHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */; };
+		161402E12A0E09050040E15E /* GenericTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E02A0E09050040E15E /* GenericTableViewController.swift */; };
+		161402E32A0E5B2A0040E15E /* CustomTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E22A0E5B2A0040E15E /* CustomTextFieldCell.swift */; };
+		161402E52A0E5D680040E15E /* CustomDisClosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E42A0E5D680040E15E /* CustomDisClosureCell.swift */; };
+		161402E72A0E5F370040E15E /* SelectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E62A0E5F370040E15E /* SelectionDelegate.swift */; };
+		161402EB2A0EABDC0040E15E /* TypeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EA2A0EABDC0040E15E /* TypeVC.swift */; };
+		161402ED2A10BC190040E15E /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EC2A10BC190040E15E /* CategoryCell.swift */; };
 		163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063222A0A18D9009E6428 /* AppDelegate.swift */; };
 		163063252A0A18D9009E6428 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063242A0A18D9009E6428 /* SceneDelegate.swift */; };
 		163063272A0A18D9009E6428 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063262A0A18D9009E6428 /* HomeVC.swift */; };
@@ -47,11 +51,15 @@
 		161402C32A0B5DA50040E15E /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		161402C52A0B79F70040E15E /* Record+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Record+CoreDataClass.swift"; sourceTree = "<group>"; };
 		161402C62A0B79F70040E15E /* Record+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Record+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		161402CF2A0CA9A30040E15E /* AddRecordCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecordCell.swift; sourceTree = "<group>"; };
 		161402D52A0CADDF0040E15E /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
-		161402D72A0CBB060040E15E /* ChosenDataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChosenDataDelegate.swift; sourceTree = "<group>"; };
 		161402DB2A0CF33F0040E15E /* RecordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordField.swift; sourceTree = "<group>"; };
 		161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderFooterView.swift; sourceTree = "<group>"; };
+		161402E02A0E09050040E15E /* GenericTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTableViewController.swift; sourceTree = "<group>"; };
+		161402E22A0E5B2A0040E15E /* CustomTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldCell.swift; sourceTree = "<group>"; };
+		161402E42A0E5D680040E15E /* CustomDisClosureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisClosureCell.swift; sourceTree = "<group>"; };
+		161402E62A0E5F370040E15E /* SelectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionDelegate.swift; sourceTree = "<group>"; };
+		161402EA2A0EABDC0040E15E /* TypeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeVC.swift; sourceTree = "<group>"; };
+		161402EC2A10BC190040E15E /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		1630631F2A0A18D9009E6428 /* ExpenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		163063222A0A18D9009E6428 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		163063242A0A18D9009E6428 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -73,7 +81,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		161402A62A0A204E0040E15E /* Controller */ = {
+		161402A62A0A204E0040E15E /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
 				161402BC2A0A4F890040E15E /* TabBar */,
@@ -81,15 +89,16 @@
 				161402B22A0A2D5E0040E15E /* Settings */,
 				161402AF2A0A2BF70040E15E /* Chart */,
 			);
-			path = Controller;
+			path = ViewController;
 			sourceTree = "<group>";
 		};
-		161402A72A0A244C0040E15E /* View */ = {
+		161402A72A0A244C0040E15E /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				161402DF2A0E08CB0040E15E /* Generics */,
 				161402B62A0A2F050040E15E /* Home */,
 			);
-			path = View;
+			path = CustomView;
 			sourceTree = "<group>";
 		};
 		161402A82A0A245D0040E15E /* Model */ = {
@@ -117,8 +126,9 @@
 				161402A02A0A1C280040E15E /* RecordDescriptionVC.swift */,
 				1614029E2A0A1C0D0040E15E /* RecordVC.swift */,
 				161402A42A0A1C860040E15E /* CategoriesListVC.swift */,
-				161402D72A0CBB060040E15E /* ChosenDataDelegate.swift */,
 				161402DB2A0CF33F0040E15E /* RecordField.swift */,
+				161402E62A0E5F370040E15E /* SelectionDelegate.swift */,
+				161402EA2A0EABDC0040E15E /* TypeVC.swift */,
 			);
 			path = Record;
 			sourceTree = "<group>";
@@ -154,7 +164,9 @@
 				161402B72A0A42BA0040E15E /* MoneyTrackerView.swift */,
 				161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */,
 				161402C12A0A761F0040E15E /* SearchController.swift */,
-				161402CF2A0CA9A30040E15E /* AddRecordCell.swift */,
+				161402E22A0E5B2A0040E15E /* CustomTextFieldCell.swift */,
+				161402E42A0E5D680040E15E /* CustomDisClosureCell.swift */,
+				161402EC2A10BC190040E15E /* CategoryCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -173,6 +185,14 @@
 				161402BD2A0A4FB80040E15E /* TabBar.swift */,
 			);
 			path = TabBar;
+			sourceTree = "<group>";
+		};
+		161402DF2A0E08CB0040E15E /* Generics */ = {
+			isa = PBXGroup;
+			children = (
+				161402E02A0E09050040E15E /* GenericTableViewController.swift */,
+			);
+			path = Generics;
 			sourceTree = "<group>";
 		};
 		163063162A0A18D9009E6428 = {
@@ -196,8 +216,8 @@
 			children = (
 				161402BA2A0A46C70040E15E /* Helper */,
 				161402A82A0A245D0040E15E /* Model */,
-				161402A72A0A244C0040E15E /* View */,
-				161402A62A0A204E0040E15E /* Controller */,
+				161402A72A0A244C0040E15E /* CustomView */,
+				161402A62A0A204E0040E15E /* ViewController */,
 				163063392A0A18F6009E6428 /* CoreData */,
 				163063222A0A18D9009E6428 /* AppDelegate.swift */,
 				163063242A0A18D9009E6428 /* SceneDelegate.swift */,
@@ -294,21 +314,25 @@
 				161402DE2A0D6F520040E15E /* CustomHeaderFooterView.swift in Sources */,
 				161402C42A0B5DA50040E15E /* DatabaseManager.swift in Sources */,
 				1614029F2A0A1C0D0040E15E /* RecordVC.swift in Sources */,
-				161402D02A0CA9A30040E15E /* AddRecordCell.swift in Sources */,
 				1614029D2A0A1BEB0040E15E /* GraphVC.swift in Sources */,
 				163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */,
 				163063252A0A18D9009E6428 /* SceneDelegate.swift in Sources */,
+				161402E12A0E09050040E15E /* GenericTableViewController.swift in Sources */,
+				161402E72A0E5F370040E15E /* SelectionDelegate.swift in Sources */,
 				161402C82A0B79F70040E15E /* Record+CoreDataProperties.swift in Sources */,
+				161402ED2A10BC190040E15E /* CategoryCell.swift in Sources */,
 				161402C72A0B79F70040E15E /* Record+CoreDataClass.swift in Sources */,
 				1614029B2A0A1BCA0040E15E /* PieChartVC.swift in Sources */,
 				161402BE2A0A4FB80040E15E /* TabBar.swift in Sources */,
+				161402E52A0E5D680040E15E /* CustomDisClosureCell.swift in Sources */,
 				161402C22A0A761F0040E15E /* SearchController.swift in Sources */,
 				1630632D2A0A18D9009E6428 /* ExpenseTracker.xcdatamodeld in Sources */,
-				161402D82A0CBB060040E15E /* ChosenDataDelegate.swift in Sources */,
 				161402A52A0A1C860040E15E /* CategoriesListVC.swift in Sources */,
 				161402DC2A0CF33F0040E15E /* RecordField.swift in Sources */,
+				161402E32A0E5B2A0040E15E /* CustomTextFieldCell.swift in Sources */,
 				161402A32A0A1C570040E15E /* SettingsVC.swift in Sources */,
 				161402AA2A0A297E0040E15E /* RecordType.swift in Sources */,
+				161402EB2A0EABDC0040E15E /* TypeVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

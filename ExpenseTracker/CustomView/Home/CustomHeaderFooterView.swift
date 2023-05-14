@@ -21,6 +21,10 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
         super.init(coder: aDecoder)
     }
     
+    override func prepareForReuse() {
+            super.prepareForReuse()
+    }
+
     func configureView(with title: String) {
         textLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         textLabel?.text = title

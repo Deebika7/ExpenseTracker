@@ -7,9 +7,9 @@
 
 import Foundation
 
-enum RecordField: CaseIterable {
-    case title
-    case amount
-    case date
-    case category
+enum RecordField: String, CaseIterable {
+    case type = "Type"
+    case amount = "Amount"
+    case date = "Date"
+    case category = "Category"
 }

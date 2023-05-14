@@ -9,9 +9,6 @@ import UIKit
 
 class RecordVC: UITableViewController {
     
-    
-    var fields = ["Type","Amount","Date","Category"]
-    
     lazy var textField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
@@ -26,62 +23,66 @@ class RecordVC: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: nil)
         tableView.backgroundColor = .secondarySystemBackground
-        tableView.register(AddRecordCell.self, forCellReuseIdentifier: AddRecordCell.reuseIdentifier)
+                tableView.register(CustomTextFieldCell.self, forCellReuseIdentifier: CustomTextFieldCell.reuseIdentifier)
+        tableView.register(CustomDisClosureCell.self, forCellReuseIdentifier: CustomDisClosureCell.reuseIdentifier)
         tableView.register(CustomHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CustomHeaderFooterView.reuseIdentifier)
-        
+        tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
+
+    }
+
+   
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let indexPathValue = RecordField.allCases[indexPath.section]
+        switch indexPathValue {
+        case .type:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        case .amount:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
+            cell.configureNumberKeyBoard()
+            return cell
+        case .date:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        case .category:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        }
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: AddRecordCell.reuseIdentifier, for: indexPath) as! AddRecordCell
-        cell.backgroundColor = .systemBackground
-        let indexPathValue = RecordField.allCases[indexPath.row]
-        print(indexPathValue)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
-        case .title:
-            cell.configureCustomCell {  customCell in
-                customCell.addSubview(textField)
-                textField.backgroundColor = .black
-                NSLayoutConstraint.activate([
-                    textField.leadingAnchor.constraint(equalTo: customCell.leadingAnchor),
-                    textField.trailingAnchor.constraint(equalTo: customCell.trailingAnchor),
-                    textField.topAnchor.constraint(equalTo: customCell.topAnchor),
-                    textField.bottomAnchor.constraint(equalTo: customCell.bottomAnchor)
-                ])
-            }
-        case .amount:
-            cell.configureCustomCell {  customCell in
-                customCell.addSubview(textField)
-                textField.backgroundColor = .systemPink
-                NSLayoutConstraint.activate([
-                    textField.leadingAnchor.constraint(equalTo: customCell.leadingAnchor),
-                    textField.trailingAnchor.constraint(equalTo: customCell.trailingAnchor),
-                    textField.topAnchor.constraint(equalTo: customCell.topAnchor),
-                    textField.bottomAnchor.constraint(equalTo: customCell.bottomAnchor)
-                ])
-            }
+        case .type:
+            let typeVC = TypeVC()
+            navigationController?.pushViewController(typeVC, animated: true)
         case .date:
-            cell.configureLabel("test")
-            cell.accessoryType = .disclosureIndicator
+            fatalError()
         case .category:
-            cell.accessoryType = .disclosureIndicator
+            let categoryListVC = CategoriesListVC()
+            navigationController?.pushViewController(categoryListVC, animated: true)
+        default:
+            fatalError()
         }
-        
-        return cell
     }
+    
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 20
     }
     
-    
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier:CustomHeaderFooterView.reuseIdentifier) as! CustomHeaderFooterView
-        headerView.configureView(with: fields[section])
+        headerView.configureView(with: RecordField.allCases[section].rawValue)
         return headerView
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return fields.count
+        return RecordField.allCases.count
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -92,14 +93,10 @@ class RecordVC: UITableViewController {
         return 44
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
     init() {
         super.init(style: .insetGrouped)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

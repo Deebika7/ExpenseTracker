@@ -8,12 +8,13 @@
 import UIKit
 
 class HomeVC: UITableViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         navigationItem.searchController = SearchController()
+        tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
     }
     
     

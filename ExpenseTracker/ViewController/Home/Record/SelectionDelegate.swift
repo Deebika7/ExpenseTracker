@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+protocol SelectionDelegate {
+    func selected(_ text: String)
+}

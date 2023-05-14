@@ -7,15 +7,17 @@
 
 import UIKit
 
-class TitleVC: UITableViewController {
+class TypeVC: UITableViewController {
     
     var selectedRowIndex: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.backgroundColor = .secondarySystemBackground
         navigationItem.searchController = SearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done , target: self, action: nil)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "title")
     }
     
@@ -27,6 +29,7 @@ class TitleVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
+        cell.backgroundColor = .systemBackground
         let indexPathValue = RecordType.allCases[indexPath.row]
         switch indexPathValue {
         case .expense:
@@ -55,6 +58,14 @@ class TitleVC: UITableViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
         selectedCell?.accessoryType = .checkmark
         selectedRowIndex = indexPath.row
+    }
+    
+    init() {
+        super.init(style: .grouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
 }

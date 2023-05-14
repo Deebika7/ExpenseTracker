@@ -11,18 +11,12 @@ class AddRecordCell: UITableViewCell {
     
     static let reuseIdentifier = "Add Record"
     
-    lazy var customView: UIView = {
+    private lazy var customView: UIView = {
         let customView = UIView()
         customView.translatesAutoresizingMaskIntoConstraints = false
         return customView
     }()
-    
-    private lazy var label: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
+        
     override func awakeFromNib() {
         super.awakeFromNib()
          
@@ -40,7 +34,6 @@ class AddRecordCell: UITableViewCell {
         }
     }
 
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(customView)
@@ -60,8 +53,6 @@ class AddRecordCell: UITableViewCell {
         customCell(customView)
     }
     
-    func configureLabel(_ text: String){
-        label.text = text
-    }
+    
 
 }
