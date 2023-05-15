@@ -10,7 +10,8 @@ import UIKit
 class RecordVC: UITableViewController, SelectionDelegate {
     
     var changedCategory: Category?
-    var type: String?
+    var changedType: String?
+    var changedDate: Date?
     
     lazy var textField: UITextField = {
         let textField = UITextField()
@@ -30,20 +31,19 @@ class RecordVC: UITableViewController, SelectionDelegate {
         tableView.register(CustomDisClosureCell.self, forCellReuseIdentifier: CustomDisClosureCell.reuseIdentifier)
         tableView.register(CustomHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CustomHeaderFooterView.reuseIdentifier)
         tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
+        tableView.register(CustomDateCell.self, forCellReuseIdentifier: CustomDateCell.reuseIdentifier )
         tableView.keyboardDismissMode = .onDrag
         tableView.rowHeight = UITableView.automaticDimension
         tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
     
-
-        
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
-            if type != nil {
-                cell.configureCustomdisclosureCell(type!)
+            if changedType != nil {
+                cell.configureCustomdisclosureCell(changedType!)
             }
             else {
                 cell.configureCustomdisclosureCell("Income")
@@ -57,9 +57,15 @@ class RecordVC: UITableViewController, SelectionDelegate {
             cell.backgroundColor = .systemBackground
             return cell
         case .date:
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
-            cell.configureNumberKeyBoard()
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDateCell.reuseIdentifier, for: indexPath) as! CustomDateCell
+            cell.accessoryType = .disclosureIndicator
             cell.backgroundColor = .systemBackground
+            if changedDate != nil {
+                //cell.configureCustomdisclosureCell(changedDate!.formatted(Forma)
+            }
+            else {
+                cell.configureCustomdisclosureCell(Date())
+            }
             return cell
         case .category:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
@@ -83,12 +89,14 @@ class RecordVC: UITableViewController, SelectionDelegate {
             let typeVC = TypeVC()
             typeVC.selectionDelegate = self
             navigationController?.pushViewController(typeVC, animated: true)
-        case .date:
-            print("")
         case .category:
             let categoryListVC = CategoriesListVC()
             categoryListVC.selectionDelegate = self
             navigationController?.pushViewController(categoryListVC, animated: true)
+        case .date:
+            let calendarVC = CalendarTableTableViewController()
+           // calendarVC.selectionDelegate = self
+            navigationController?.pushViewController(calendarVC, animated: true)
         default:
             print("")
         }
@@ -109,12 +117,18 @@ class RecordVC: UITableViewController, SelectionDelegate {
     }
     
     func selectedType(_ text: String) {
-        type = text
+        changedType = text
         tableView.reloadData()
     }
     
     func selectedCategory(_ category: Category) {
         changedCategory = category
+        tableView.reloadData()
+    }
+    
+    func selectedDate(_ date: Date) {
+        changedDate = date
+        print(changedDate!)
         tableView.reloadData()
     }
     

@@ -10,4 +10,6 @@ import Foundation
 protocol SelectionDelegate: AnyObject {
     func selectedType(_ text: String)
     func selectedCategory(_ category: Category)
+    func selectedDate(_ date: Date)
 }
+

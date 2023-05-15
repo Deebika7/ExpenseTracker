@@ -8,13 +8,13 @@
 import UIKit
 
 class CategoriesListVC: UITableViewController {
-     
+    
     weak var selectionDelegate: SelectionDelegate?
     
     var sfSymbol = [String]()
     
     var label = [String]()
-
+    
     var selectedRowIndex: Int?
     
     override func viewDidLoad() {
@@ -22,10 +22,13 @@ class CategoriesListVC: UITableViewController {
         tableView.backgroundColor = .secondarySystemBackground
         staticData()
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.resuseIdentifier)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(popCategoriesListVC))
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 44
         tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
+    
     
     @objc func popCategoriesListVC() {
         self.navigationController?.popViewController(animated: true)
@@ -54,7 +57,7 @@ class CategoriesListVC: UITableViewController {
         cell.backgroundColor = .systemBackground
         return cell
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if let selectedRowIndex = selectedRowIndex {

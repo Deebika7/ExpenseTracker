@@ -20,7 +20,7 @@ class TypeVC: UITableViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done , target: self, action: #selector(popTypeVC))
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "title")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "type")
     }
     
     @objc func popTypeVC() {
@@ -34,7 +34,7 @@ class TypeVC: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "title", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "type", for: indexPath)
         cell.backgroundColor = .systemBackground
         let indexPathValue = RecordType.allCases[indexPath.row]
         switch indexPathValue {

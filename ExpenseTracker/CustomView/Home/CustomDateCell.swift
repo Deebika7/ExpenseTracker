@@ -1,15 +1,15 @@
 //
-//  CustomDisClosureCell.swift
+//  CustomDateCell.swift
 //  ExpenseTracker
 //
-//  Created by deebika-pt6680 on 12/05/23.
+//  Created by deebika-pt6680 on 15/05/23.
 //
 
 import UIKit
 
-class CustomDisClosureCell: UITableViewCell {
+class CustomDateCell: UITableViewCell {
 
-    static let reuseIdentifier = "CustomDisclosure Cell"
+    static let reuseIdentifier = "CustomDate Cell"
     
     private lazy var label: UILabel = {
         let label = UILabel()
@@ -24,8 +24,7 @@ class CustomDisClosureCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
-            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
+            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
         ])
     }
     
@@ -46,20 +45,11 @@ class CustomDisClosureCell: UITableViewCell {
     }
     
     override var intrinsicContentSize: CGSize {
-        return label.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
-//    override var intrinsicContentSize: CGSize {
-//        let labelSize = label.intrinsicContentSize
-//        let cellPadding: CGFloat = 20
-//        return CGSize(width: UIView.noIntrinsicMetric, height: labelSize.height + cellPadding)
-//    }
-//
-    
-    func configureCustomdisclosureCell(_ text: String){
-        label.text = text
+    func configureCustomdisclosureCell(_ text: Date){
+        //label.text = String(text)
         label.textColor = .label
-        layoutIfNeeded()
     }
-    
 }
