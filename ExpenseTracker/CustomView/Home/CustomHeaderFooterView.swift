@@ -22,13 +22,19 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
     }
     
     override func prepareForReuse() {
-            super.prepareForReuse()
+        super.prepareForReuse()
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
 
+    
     func configureView(with title: String) {
-        textLabel?.font = UIFont.boldSystemFont(ofSize: 13)
         textLabel?.text = title
         textLabel?.textColor = .label
+        textLabel?.adjustsFontForContentSizeCategory = true
+        textLabel?.font = UIFont.boldSystemFont(ofSize: textLabel!.font.pointSize)
     }
 }
 

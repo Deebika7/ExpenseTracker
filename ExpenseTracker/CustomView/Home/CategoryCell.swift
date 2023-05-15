@@ -30,7 +30,6 @@ class CategoryCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -38,15 +37,12 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(categoryIcon)
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
-            categoryIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
-            categoryIcon.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
             categoryIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
-            categoryIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -340),
-            
-            label.topAnchor.constraint(equalTo: contentView.topAnchor),
-            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            categoryIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -370),
+            categoryIcon.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            label.leadingAnchor.constraint(equalTo: categoryIcon.trailingAnchor, constant: 10)
+            label.leadingAnchor.constraint(equalTo: categoryIcon.trailingAnchor, constant: 10),
+            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
         ])
     }
     
@@ -59,11 +55,16 @@ class CategoryCell: UITableViewCell {
         contentView.frame = bounds
     }
     
+    override var intrinsicContentSize: CGSize {
+        return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+    }
+    
     func configure(with name: String, and text: String) {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label
         label.text = text
         label.textColor = .label
+        label.adjustsFontForContentSizeCategory = true
     }
     
 }

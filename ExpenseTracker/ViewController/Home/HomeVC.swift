@@ -14,6 +14,7 @@ class HomeVC: UITableViewController {
         tableView.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         navigationItem.searchController = SearchController()
+        navigationItem.hidesSearchBarWhenScrolling = false
         tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
     }
     
@@ -28,15 +29,6 @@ class HomeVC: UITableViewController {
         navigationController?.pushViewController(recordVC, animated: true)
         
     }
-    
-//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = UITableViewCell()
-//        return cell
-//    }
-
-//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return 20
-//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

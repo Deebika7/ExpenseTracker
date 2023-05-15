@@ -8,9 +8,9 @@
 
 import Foundation
 
-enum RecordType: Int16, CaseIterable {
-    case expense = 0
-    case income  = 1
+enum RecordType: String, CaseIterable {
+    case expense = "Expense"
+    case income  = "Income"
     
 }
 

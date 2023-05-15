@@ -14,6 +14,8 @@ class CustomTextFieldCell: UITableViewCell {
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.adjustsFontForContentSizeCategory = true
+        textField.textColor = .label
         return textField
     }()
 
@@ -22,11 +24,11 @@ class CustomTextFieldCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textField)
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            textField.topAnchor.constraint(equalTo: contentView.topAnchor),
-            textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            textField.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            textField.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
+            textField.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
         ])
+        textField.adjustsFontForContentSizeCategory = true
     }
     
     required init?(coder: NSCoder) {
@@ -41,6 +43,9 @@ class CustomTextFieldCell: UITableViewCell {
             super.prepareForReuse()
     }
 
+    override var intrinsicContentSize: CGSize {
+        return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+    }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

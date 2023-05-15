@@ -7,9 +7,9 @@
 
 import UIKit
 
-class CustomDisClosureCell: UITableViewCell {
+class CustomDisClosureCellWithImage: UITableViewCell {
 
-    static let reuseIdentifier = "CustomDisclosure Cell"
+    static let reuseIdentifier = "CustomDisclosure Cell with Image"
     
     private lazy var label: UILabel = {
         let label = UILabel()
@@ -18,13 +18,24 @@ class CustomDisClosureCell: UITableViewCell {
         return label
     }()
     
+    private lazy var categoryIcon: UIImageView = {
+        let categoryIcon = UIImageView()
+        categoryIcon.translatesAutoresizingMaskIntoConstraints = false
+        categoryIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
+        return categoryIcon
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(label)
+        contentView.addSubview(categoryIcon)
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
-            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
+            label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -50),
+            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
+            categoryIcon.leadingAnchor.constraint(greaterThanOrEqualTo: label.trailingAnchor, constant: -120),
+            categoryIcon.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            categoryIcon.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
         ])
     }
     
@@ -47,10 +58,13 @@ class CustomDisClosureCell: UITableViewCell {
     override var intrinsicContentSize: CGSize {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
-    
-    func configureCustomdisclosureCell(_ text: String){
+
+    func configure(with name: String, and text: String) {
+        categoryIcon.image = UIImage(systemName: name)
+        categoryIcon.tintColor = .label
         label.text = text
-        label.tintColor = .label
+        label.textColor = .label
+        label.adjustsFontForContentSizeCategory = true
     }
     
 }

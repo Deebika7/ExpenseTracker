@@ -8,6 +8,8 @@
 import UIKit
 
 class CategoriesListVC: UITableViewController {
+     
+    weak var selectionDelegate: SelectionDelegate?
     
     var sfSymbol = [String]()
     
@@ -17,10 +19,16 @@ class CategoriesListVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        tableView.backgroundColor = .secondarySystemBackground
         staticData()
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.resuseIdentifier)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(popCategoriesListVC))
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
+    }
+    
+    @objc func popCategoriesListVC() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     func staticData() {
@@ -43,13 +51,10 @@ class CategoriesListVC: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.resuseIdentifier, for: indexPath) as! CategoryCell
         cell.configure(with: sfSymbol[indexPath.row], and: label[indexPath.row])
+        cell.backgroundColor = .systemBackground
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if let selectedRowIndex = selectedRowIndex {
@@ -60,6 +65,7 @@ class CategoriesListVC: UITableViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
         selectedCell?.accessoryType = .checkmark
         selectedRowIndex = indexPath.row
+        selectionDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
     }
     
 }

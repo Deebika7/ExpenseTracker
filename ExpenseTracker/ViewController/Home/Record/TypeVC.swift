@@ -11,14 +11,20 @@ class TypeVC: UITableViewController {
     
     var selectedRowIndex: Int?
     
+    weak var selectionDelegate: SelectionDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
         navigationItem.searchController = SearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done , target: self, action: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done , target: self, action: #selector(popTypeVC))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "title")
+    }
+    
+    @objc func popTypeVC() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     // MARK: - Table view data source
@@ -33,11 +39,13 @@ class TypeVC: UITableViewController {
         let indexPathValue = RecordType.allCases[indexPath.row]
         switch indexPathValue {
         case .expense:
-            cell.textLabel?.text = "Expense"
+            cell.textLabel?.text = indexPathValue.rawValue
             cell.textLabel?.textColor = .label
+            cell.textLabel?.adjustsFontForContentSizeCategory = true
         case .income:
-            cell.textLabel?.text = "Income"
+            cell.textLabel?.text = indexPathValue.rawValue
             cell.textLabel?.textColor = .label
+            cell.textLabel?.adjustsFontForContentSizeCategory = true
         }
         return cell
     }
@@ -58,6 +66,7 @@ class TypeVC: UITableViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
         selectedCell?.accessoryType = .checkmark
         selectedRowIndex = indexPath.row
+        selectionDelegate?.selectedType( RecordType.allCases[indexPath.row].rawValue)
     }
     
     init() {

@@ -7,7 +7,10 @@
 
 import UIKit
 
-class RecordVC: UITableViewController {
+class RecordVC: UITableViewController, SelectionDelegate {
+    
+    var changedCategory: Category?
+    var type: String?
     
     lazy var textField: UITextField = {
         let textField = UITextField()
@@ -19,60 +22,76 @@ class RecordVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = .secondarySystemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: nil)
         tableView.backgroundColor = .secondarySystemBackground
-                tableView.register(CustomTextFieldCell.self, forCellReuseIdentifier: CustomTextFieldCell.reuseIdentifier)
+        tableView.register(CustomTextFieldCell.self, forCellReuseIdentifier: CustomTextFieldCell.reuseIdentifier)
         tableView.register(CustomDisClosureCell.self, forCellReuseIdentifier: CustomDisClosureCell.reuseIdentifier)
         tableView.register(CustomHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CustomHeaderFooterView.reuseIdentifier)
-        tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
-
+        tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
+        tableView.keyboardDismissMode = .onDrag
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
+    
 
-   
+        
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
+            if type != nil {
+                cell.configureCustomdisclosureCell(type!)
+            }
+            else {
+                cell.configureCustomdisclosureCell("Income")
+            }
             cell.accessoryType = .disclosureIndicator
+            cell.backgroundColor = .systemBackground
             return cell
         case .amount:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
             cell.configureNumberKeyBoard()
+            cell.backgroundColor = .systemBackground
             return cell
         case .date:
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
-            cell.accessoryType = .disclosureIndicator
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
+            cell.configureNumberKeyBoard()
+            cell.backgroundColor = .systemBackground
             return cell
         case .category:
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
+            if changedCategory != nil {
+                cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
+            }
+            else {
+                cell.configure(with: "fork.knife", and: "foofkufyuljfdjrfdytfjtdkuyigliggio;oigckfutgydtkud")
+            }
             cell.accessoryType = .disclosureIndicator
+            cell.backgroundColor = .systemBackground
             return cell
         }
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
             let typeVC = TypeVC()
+            typeVC.selectionDelegate = self
             navigationController?.pushViewController(typeVC, animated: true)
         case .date:
-            fatalError()
+            print("")
         case .category:
             let categoryListVC = CategoriesListVC()
+            categoryListVC.selectionDelegate = self
             navigationController?.pushViewController(categoryListVC, animated: true)
         default:
-            fatalError()
+            print("")
         }
-    }
-    
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 20
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -89,14 +108,20 @@ class RecordVC: UITableViewController {
         return  1
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
+    func selectedType(_ text: String) {
+        type = text
+        tableView.reloadData()
+    }
+    
+    func selectedCategory(_ category: Category) {
+        changedCategory = category
+        tableView.reloadData()
     }
     
     init() {
         super.init(style: .insetGrouped)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -7,6 +7,7 @@
 
 import Foundation
 
-protocol SelectionDelegate {
-    func selected(_ text: String)
+protocol SelectionDelegate: AnyObject {
+    func selectedType(_ text: String)
+    func selectedCategory(_ category: Category)
 }
