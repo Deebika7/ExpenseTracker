@@ -13,14 +13,16 @@ class TypeVC: UITableViewController {
     
     weak var selectionDelegate: SelectionDelegate?
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
         navigationItem.searchController = SearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
-        navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done , target: self, action: #selector(popTypeVC))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "type")
+        tableView.estimatedSectionHeaderHeight = 10
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
     
     @objc func popTypeVC() {
@@ -70,11 +72,15 @@ class TypeVC: UITableViewController {
     }
     
     init() {
-        super.init(style: .grouped)
+        super.init(style: .insetGrouped)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
 }

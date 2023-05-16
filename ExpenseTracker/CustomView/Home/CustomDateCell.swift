@@ -48,8 +48,8 @@ class CustomDateCell: UITableViewCell {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
-    func configureCustomdisclosureCell(_ text: Date){
-        //label.text = String(text)
+    func configureCustomDateCell(_ text: String){
+        label.text = String(text)
         label.textColor = .label
     }
 }

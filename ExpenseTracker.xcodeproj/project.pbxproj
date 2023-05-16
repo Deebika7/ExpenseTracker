@@ -32,7 +32,6 @@
 		161402EF2A11557A0040E15E /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EE2A11557A0040E15E /* Category.swift */; };
 		161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */; };
 		161402F32A1240D10040E15E /* CustomDateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F22A1240D10040E15E /* CustomDateCell.swift */; };
-		161402F72A12B4290040E15E /* CalendarTableTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F62A12B4290040E15E /* CalendarTableTableViewController.swift */; };
 		163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063222A0A18D9009E6428 /* AppDelegate.swift */; };
 		163063252A0A18D9009E6428 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063242A0A18D9009E6428 /* SceneDelegate.swift */; };
 		163063272A0A18D9009E6428 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063262A0A18D9009E6428 /* HomeVC.swift */; };
@@ -67,7 +66,6 @@
 		161402EE2A11557A0040E15E /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisclosureCellWithImage.swift; sourceTree = "<group>"; };
 		161402F22A1240D10040E15E /* CustomDateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDateCell.swift; sourceTree = "<group>"; };
-		161402F62A12B4290040E15E /* CalendarTableTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTableTableViewController.swift; sourceTree = "<group>"; };
 		1630631F2A0A18D9009E6428 /* ExpenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		163063222A0A18D9009E6428 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		163063242A0A18D9009E6428 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -137,7 +135,6 @@
 				161402DB2A0CF33F0040E15E /* RecordField.swift */,
 				161402E62A0E5F370040E15E /* SelectionDelegate.swift */,
 				161402EA2A0EABDC0040E15E /* TypeVC.swift */,
-				161402F62A12B4290040E15E /* CalendarTableTableViewController.swift */,
 			);
 			path = Record;
 			sourceTree = "<group>";
@@ -339,7 +336,6 @@
 				1614029B2A0A1BCA0040E15E /* PieChartVC.swift in Sources */,
 				161402BE2A0A4FB80040E15E /* TabBar.swift in Sources */,
 				161402E52A0E5D680040E15E /* CustomDisClosureCell.swift in Sources */,
-				161402F72A12B4290040E15E /* CalendarTableTableViewController.swift in Sources */,
 				161402C22A0A761F0040E15E /* SearchController.swift in Sources */,
 				1630632D2A0A18D9009E6428 /* ExpenseTracker.xcdatamodeld in Sources */,
 				161402A52A0A1C860040E15E /* CategoriesListVC.swift in Sources */,

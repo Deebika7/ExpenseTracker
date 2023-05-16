@@ -7,12 +7,15 @@
 
 import UIKit
 
-class CalendarTableTableViewController: UITableViewController, UICalendarSelectionSingleDateDelegate {
+class CalendarViewVC: UITableViewController, UICalendarSelectionSingleDateDelegate {
 
+    weak var selectionDelegate: SelectionDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Calendar View" )
         tableView.separatorStyle = .none
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(popCalendarViewVC))
     }
 
     private lazy var calendarView: UICalendarView = {
@@ -27,6 +30,10 @@ class CalendarTableTableViewController: UITableViewController, UICalendarSelecti
         return calendarView
     }()
 
+    @objc func popCalendarViewVC() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -53,7 +60,10 @@ class CalendarTableTableViewController: UITableViewController, UICalendarSelecti
    
     
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        print(dateComponents?.date)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-yyyy"
+        selectionDelegate?.selectedDate(dateFormatter.string(from: dateComponents!.date!))
+        
     }
     
 }

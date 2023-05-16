@@ -9,13 +9,16 @@ import UIKit
 
 class HomeVC: UITableViewController {
     
+    private lazy var searchController = SearchController()
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
-        navigationItem.searchController = SearchController()
+        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
     }
     
     
@@ -35,8 +38,8 @@ class HomeVC: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
-    
-    
+
+
     
     
     

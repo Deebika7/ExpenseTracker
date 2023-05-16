@@ -45,9 +45,9 @@ class CustomDisClosureCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    override var intrinsicContentSize: CGSize {
-        return label.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-    }
+//    override var intrinsicContentSize: CGSize {
+//        return label.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+//    }
     
 //    override var intrinsicContentSize: CGSize {
 //        let labelSize = label.intrinsicContentSize

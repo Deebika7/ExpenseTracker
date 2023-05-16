@@ -29,6 +29,8 @@ class CategoryCell: UITableViewCell {
         
     }
     
+   
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
@@ -39,7 +41,6 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             categoryIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            //            categoryIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -370),
             categoryIcon.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -320),
             categoryIcon.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -68,12 +69,12 @@ class CategoryCell: UITableViewCell {
     //            return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     //        }
     
-    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
-        return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-    }
-    
+//    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+//        self.setNeedsLayout()
+//        self.layoutIfNeeded()
+//        return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+//    }
+//
     func configure(with name: String, and text: String) {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label

@@ -17,6 +17,8 @@ class CategoriesListVC: UITableViewController {
     
     var selectedRowIndex: Int?
     
+    private lazy var searchController = SearchController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
@@ -24,8 +26,12 @@ class CategoriesListVC: UITableViewController {
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.resuseIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(popCategoriesListVC))
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.navigationBar.prefersLargeTitles = true
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 44
+        tableView.estimatedRowHeight = 30
+        tableView.estimatedSectionHeaderHeight = 10
         tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
     
@@ -69,6 +75,18 @@ class CategoriesListVC: UITableViewController {
         selectedCell?.accessoryType = .checkmark
         selectedRowIndex = indexPath.row
         selectionDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
+    }
+    
+    init() {
+        super.init(style: .insetGrouped)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
 }
