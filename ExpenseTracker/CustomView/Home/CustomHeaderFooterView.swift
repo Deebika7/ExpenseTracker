@@ -34,7 +34,8 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
         textLabel?.text = title
         textLabel?.textColor = .label
         textLabel?.adjustsFontForContentSizeCategory = true
-        textLabel?.font = UIFont.boldSystemFont(ofSize: textLabel!.font.pointSize)
+        textLabel?.font = .boldSystemFont(ofSize: textLabel!.font.pointSize)
+       // textLabel?.font = .preferredFont(forTextStyle: .body)
     }
 }
 

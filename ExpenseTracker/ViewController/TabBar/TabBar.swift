@@ -9,25 +9,6 @@ import UIKit
 
 class TabBar: UITabBarController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    func setUpTabBar() -> UITabBarController {
-        let tabBar = UITabBarController()
-        tabBar.tabBar.unselectedItemTintColor = .label
-        let homeVc = UINavigationController(rootViewController: HomeVC())
-        let chartVC = UINavigationController(rootViewController: PieChartVC())
-        let settingsVC = UINavigationController(rootViewController: SettingsVC())
-        homeVc.tabBarItem = homeTabBarItem
-        homeVc.navigationBar.prefersLargeTitles = false
-        chartVC.tabBarItem = chartTabBarItem
-        settingsVC.tabBarItem = settingsTabBarItem
-        tabBar.viewControllers = [homeVc, chartVC, settingsVC]
-        
-        return tabBar
-    }
-    
     private lazy var homeTabBarItem: UITabBarItem = {
         let homeTabBarItem = UITabBarItem()
         homeTabBarItem.image = UIImage(systemName: "house")
@@ -45,7 +26,35 @@ class TabBar: UITabBarController {
         settingsTabBarItem.image = UIImage(systemName: "gearshape.fill")
         return settingsTabBarItem
     }()
+
+    private lazy var homeVC: UINavigationController = {
+        let homeVc = UINavigationController(rootViewController: HomeVC())
+        homeVc.tabBarItem = homeTabBarItem
+        homeVc.navigationBar.prefersLargeTitles = false
+        return homeVc
+    }()
     
+    private lazy var chartVC: UINavigationController = {
+        let chartVC = UINavigationController(rootViewController: PieChartVC())
+        chartVC.tabBarItem = chartTabBarItem
+        return chartVC
+    }()
     
+    private lazy var  settingsVC: UINavigationController = {
+        let settingsVC = UINavigationController(rootViewController: SettingsVC())
+        settingsVC.tabBarItem = settingsTabBarItem
+        return settingsVC
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    func setUpTabBar() -> UITabBarController {
+        let tabBar = UITabBarController()
+        tabBar.tabBar.unselectedItemTintColor = .label
+        tabBar.viewControllers = [homeVC, chartVC, settingsVC]
+        return tabBar
+    }
     
 }

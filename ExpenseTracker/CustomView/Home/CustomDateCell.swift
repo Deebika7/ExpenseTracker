@@ -24,7 +24,8 @@ class CustomDateCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
+            label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -40)
         ])
     }
     
@@ -51,5 +52,6 @@ class CustomDateCell: UITableViewCell {
     func configureCustomDateCell(_ text: String){
         label.text = String(text)
         label.textColor = .label
+        label.font = .preferredFont(forTextStyle: .body)
     }
 }

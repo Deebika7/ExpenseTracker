@@ -11,12 +11,11 @@ class CustomDisClosureCellWithImage: UITableViewCell {
 
     static let reuseIdentifier = "CustomDisclosure Cell with Image"
     
-    private lazy var label: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.adjustsFontForContentSizeCategory = true
-        return label
-    }()
+    private lazy var textField = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.adjustsFontForContentSizeCategory = true
+        return $0
+    }(UITextField())
     
     private lazy var categoryIcon: UIImageView = {
         let categoryIcon = UIImageView()
@@ -27,14 +26,14 @@ class CustomDisClosureCellWithImage: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(label)
+        contentView.addSubview(textField)
         contentView.addSubview(categoryIcon)
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
-            label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -50),
-            label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
+            textField.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            textField.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -50),
+            textField.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             
-            categoryIcon.leadingAnchor.constraint(greaterThanOrEqualTo: label.trailingAnchor, constant: -120),
+            categoryIcon.leadingAnchor.constraint(greaterThanOrEqualTo: textField.trailingAnchor, constant: -120),
             categoryIcon.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             categoryIcon.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
         ])
@@ -60,12 +59,16 @@ class CustomDisClosureCellWithImage: UITableViewCell {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
 
-    func configure(with name: String, and text: String) {
+    func configure(with name: String, and text: String) -> String {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label
-        label.text = text
-        label.textColor = .label
-        label.adjustsFontForContentSizeCategory = true
+        textField.text = text
+        textField.font = .preferredFont(forTextStyle: .body)
+        textField.isUserInteractionEnabled = true
+        textField.textColor = .label
+        textField.adjustsFontForContentSizeCategory = true
+        textField.keyboardType = .default
+        return textField.text!
     }
     
 }

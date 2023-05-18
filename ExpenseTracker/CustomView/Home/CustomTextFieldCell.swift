@@ -18,7 +18,6 @@ class CustomTextFieldCell: UITableViewCell {
         textField.textColor = .label
         return textField
     }()
-
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -40,7 +39,7 @@ class CustomTextFieldCell: UITableViewCell {
     }
 
     override func prepareForReuse() {
-            super.prepareForReuse()
+        super.prepareForReuse()
     }
 
     override var intrinsicContentSize: CGSize {
@@ -51,9 +50,10 @@ class CustomTextFieldCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func configureNumberKeyBoard() {
+    func configureNumberKeyBoard() -> Double? {
         textField.keyboardType = .decimalPad
+        textField.font = .preferredFont(forTextStyle: .body)
+        return Double(textField.text ?? "0")
     }
-    
     
 }

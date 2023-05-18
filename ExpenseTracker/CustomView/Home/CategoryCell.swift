@@ -29,8 +29,6 @@ class CategoryCell: UITableViewCell {
         
     }
     
-   
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
@@ -41,10 +39,10 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             categoryIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            categoryIcon.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -320),
+            categoryIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -330),
             categoryIcon.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            label.leadingAnchor.constraint(equalTo: categoryIcon.trailingAnchor, constant: 10),
+            label.leadingAnchor.constraint(equalTo: categoryIcon.trailingAnchor, constant: 20),
             label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
         ])
     }
@@ -58,28 +56,12 @@ class CategoryCell: UITableViewCell {
         contentView.frame = bounds
     }
     
-    //    override var intrinsicContentSize: CGSize {
-    //        let iconSize = categoryIcon.intrinsicContentSize
-    //        let labelSize = label.intrinsicContentSize
-    //        return CGSize(width: iconSize.width + labelSize.width, height: labelSize.height + labelSize.height)
-    //    }
-    
-    //    override var intrinsicContentSize: CGSize {
-    //            let contentSize = contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-    //            return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
-    //        }
-    
-//    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
-//        self.setNeedsLayout()
-//        self.layoutIfNeeded()
-//        return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-//    }
-//
     func configure(with name: String, and text: String) {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label
         label.text = text
         label.textColor = .label
+        label.font = .preferredFont(forTextStyle: .body)
         label.adjustsFontForContentSizeCategory = true
     }
     

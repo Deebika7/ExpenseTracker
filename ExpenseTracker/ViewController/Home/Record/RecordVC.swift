@@ -13,6 +13,9 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     var changedType: String?
     var changedDate: String?
     var isRowExpanded: Bool = false
+    var amount: Double = 0
+    var date = ""
+    var categoryName = ""
     
     private lazy var calendarView: UICalendarView = {
         let calendarView = UICalendarView()
@@ -32,19 +35,20 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         tableView.keyboardDismissMode = .onDrag
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 44
+        tableView.estimatedSectionHeaderHeight = 44
         tableView.sectionHeaderHeight = UITableView.automaticDimension
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addRecord))
         navigationController?.navigationBar.prefersLargeTitles = true
         registerCustomCells()
     }
     
-    
+    // MARK: Validation
     @objc func addRecord() {
-        //        let sheet = UIAlertController(title: "", message: nil, preferredStyle: .actionSheet)
-        //        sheet.addAction(UIAlertAction(title: "", style: .default, handler: { [weak self] _ in
-        //            guard let amount
-        //            present(sheet, animated: true)
-        //        }))
+    
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+         print("amount \(amount)")
     }
     
     // MARK: TableView Cells
@@ -62,10 +66,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
             
         case .type:
+            
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
             if changedType != nil {
                 cell.configureCustomdisclosureCell(changedType!)
@@ -80,14 +86,16 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             return cell
             
         case .amount:
+            
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
             
-            cell.configureNumberKeyBoard()
+            amount = cell.configureNumberKeyBoard() ?? 0
             cell.backgroundColor = .systemBackground
             
             return cell
             
         case .date:
+            
             if indexPath.row == 0 {
                 
                 let cell = tableView.dequeueReusableCell(withIdentifier: CustomDateCell.reuseIdentifier, for: indexPath) as! CustomDateCell
@@ -95,7 +103,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "dd-MM-yyyy"
-                let date = dateFormatter.string(from: Date())
+                date = dateFormatter.string(from: Date())
                 
                 if changedDate != nil && changedDate != date {
                     cell.configureCustomDateCell(changedDate!)
@@ -130,7 +138,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 ])
                 
                 cell.backgroundColor = .systemBackground
-
+                
                 return cell
             }
             
@@ -139,10 +147,10 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
             
             if changedCategory != nil {
-                cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
+               categoryName = cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
             }
             else {
-                cell.configure(with: "fork.knife", and: "foofkufyuljfdjrfdytfjtdkuyigliggio;oigckfutgydtkud")
+               categoryName = cell.configure(with: "fork.knife", and: "food")
             }
             
             cell.accessoryType = .disclosureIndicator
@@ -222,8 +230,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         tableView.reloadData()
     }
     
-
-    
+    // MARK: TableView Style
     init() {
         super.init(style: .insetGrouped)
     }

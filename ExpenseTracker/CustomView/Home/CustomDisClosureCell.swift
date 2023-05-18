@@ -45,19 +45,10 @@ class CustomDisClosureCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-//    override var intrinsicContentSize: CGSize {
-//        return label.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//    }
-    
-//    override var intrinsicContentSize: CGSize {
-//        let labelSize = label.intrinsicContentSize
-//        let cellPadding: CGFloat = 20
-//        return CGSize(width: UIView.noIntrinsicMetric, height: labelSize.height + cellPadding)
-//    }
-//
     
     func configureCustomdisclosureCell(_ text: String){
         label.text = text
+        label.font = .preferredFont(forTextStyle: .body)
         label.textColor = .label
         layoutIfNeeded()
     }

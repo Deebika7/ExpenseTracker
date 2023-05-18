@@ -9,24 +9,16 @@ import UIKit
 
 class TypeVC: UITableViewController {
     
-    var selectedRowIndex: Int?
-    
     weak var selectionDelegate: SelectionDelegate?
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
         navigationItem.searchController = SearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done , target: self, action: #selector(popTypeVC))
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "type")
         tableView.estimatedSectionHeaderHeight = 10
         tableView.sectionHeaderHeight = UITableView.automaticDimension
-    }
-    
-    @objc func popTypeVC() {
-        self.navigationController?.popViewController(animated: true)
     }
     
     // MARK: - Table view data source
@@ -52,23 +44,16 @@ class TypeVC: UITableViewController {
         return cell
     }
     
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 2
     }
     
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let selectedRowIndex = selectedRowIndex {
-            let previousSelectedIndexPath = IndexPath(row: selectedRowIndex, section: indexPath.section)
-            let previousSelectedCell = tableView.cellForRow(at: previousSelectedIndexPath)
-            previousSelectedCell?.accessoryType = .none
-        }
         let selectedCell = tableView.cellForRow(at: indexPath)
         selectedCell?.accessoryType = .checkmark
-        selectedRowIndex = indexPath.row
         selectionDelegate?.selectedType( RecordType.allCases[indexPath.row].rawValue)
+        self.navigationController?.popViewController(animated: true)
     }
     
     init() {
