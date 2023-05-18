@@ -11,13 +11,28 @@ class CategoriesListVC: UITableViewController {
     
     weak var selectionDelegate: SelectionDelegate?
     
-    var sfSymbol = [String]()
+    private var sfSymbol = [String]()
     
-    var label = [String]()
+    private var label = [String]()
     
-    var selectedRowIndex: Int?
+    private var selectedRowIndex: Int?
     
     private lazy var searchController = SearchController()
+    
+    lazy var selectedCategory: Category! = nil
+    
+    convenience init(selectedCategory: Category) {
+        self.init(style: .insetGrouped)
+        self.selectedCategory = selectedCategory
+    }
+    
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,10 +43,19 @@ class CategoriesListVC: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCategory))
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 30
         tableView.estimatedSectionHeaderHeight = 10
         tableView.sectionHeaderHeight = UITableView.automaticDimension
+    }
+    
+    @objc func addNewCategory(){
+        let addCategoryVC = AddCategorySheet()
+        let navigationController = UINavigationController(rootViewController: addCategoryVC)
+        navigationController.modalPresentationStyle = .formSheet
+        navigationController.preferredContentSize = .init(width: view.frame.width, height: view.frame.height)
+        present(navigationController, animated: true)
     }
     
     func staticData() {
@@ -71,14 +95,6 @@ class CategoriesListVC: UITableViewController {
         selectionDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
         tableView.reloadData()
         self.navigationController?.popViewController(animated: true)
-    }
-    
-    init() {
-        super.init(style: .insetGrouped)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillAppear(_ animated: Bool) {

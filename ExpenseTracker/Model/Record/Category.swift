@@ -8,6 +8,7 @@
 import Foundation
 
 struct Category {
+    
     var sfSymbolName: String
     var categoryName: String
     

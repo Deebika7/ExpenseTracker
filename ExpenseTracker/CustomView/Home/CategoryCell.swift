@@ -56,7 +56,6 @@ class CategoryCell: UITableViewCell {
         contentView.frame = bounds
     }
     
-    
     func configure(with name: String, and text: String) {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label

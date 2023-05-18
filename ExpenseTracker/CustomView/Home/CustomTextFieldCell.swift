@@ -8,7 +8,7 @@
 import UIKit
 
 class CustomTextFieldCell: UITableViewCell {
-
+    
     static let reuseIdentifier = "Custom Text Field Cell"
     
     private lazy var textField: UITextField = {
@@ -37,13 +37,9 @@ class CustomTextFieldCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func prepareForReuse() {
         super.prepareForReuse()
-    }
-
-    override var intrinsicContentSize: CGSize {
-        return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -55,5 +51,7 @@ class CustomTextFieldCell: UITableViewCell {
         textField.font = .preferredFont(forTextStyle: .body)
         return Double(textField.text ?? "0")
     }
+    
+    
     
 }

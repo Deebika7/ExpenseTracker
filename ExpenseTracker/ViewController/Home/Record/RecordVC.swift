@@ -9,14 +9,13 @@ import UIKit
 
 class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate {
     
-    var changedCategory: Category?
-    var changedType: String?
-    var changedDate: String?
-    var isRowExpanded: Bool = false
-    var amount: Double = 0
-    var date = ""
-    var categoryName = ""
-    weak var textField: UITextField?
+    private var changedCategory: Category?
+    private var changedType: String?
+    private var changedDate: String?
+    private var isRowExpanded: Bool = false
+    private var amount: Double = 0
+    private var date = ""
+    private var categoryName = ""
     
     private lazy var calendarView: UICalendarView = {
         let calendarView = UICalendarView()
@@ -40,11 +39,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addRecord))
         navigationController?.navigationBar.prefersLargeTitles = true
         registerCustomCells()
+        tableView.allowsSelection = true
+
     }
     
     // MARK: Validation
     @objc func addRecord() {
-    
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -60,14 +60,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         tableView.register(CustomDateCell.self, forCellReuseIdentifier: CustomDateCell.reuseIdentifier )
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarView")
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
-            
         case .type:
-            
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
             if changedType != nil {
                 cell.configureCustomdisclosureCell(changedType!)
@@ -82,7 +80,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             return cell
             
         case .amount:
-            
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
             
             amount = cell.configureNumberKeyBoard() ?? 0
@@ -91,9 +88,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             return cell
             
         case .date:
-            
             if indexPath.row == 0 {
-                
                 let cell = tableView.dequeueReusableCell(withIdentifier: CustomDateCell.reuseIdentifier, for: indexPath) as! CustomDateCell
                 cell.backgroundColor = .systemBackground
                 
@@ -122,7 +117,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 return cell
             }
             else if indexPath.row == 1 {
-                
                 let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarView", for: indexPath)
                 cell.contentView.addSubview(calendarView)
                 
@@ -137,7 +131,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 
                 return cell
             }
-            
         case .category:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
             
@@ -156,29 +149,31 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         return UITableViewCell()
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        44
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
-            
             let typeVC = TypeVC()
             typeVC.title = "Type"
             typeVC.selectionDelegate = self
             navigationController?.pushViewController(typeVC, animated: true)
-            
         case .category:
-            
-            let categoryListVC = CategoriesListVC()
+            let categoryListVC = CategoriesListVC(selectedCategory: changedCategory ?? Category(sfSymbolName: "fork.knife", categoryName: "food"))
             categoryListVC.title = "Category"
             categoryListVC.selectionDelegate = self
             navigationController?.pushViewController(categoryListVC, animated: true)
-            
         case .date:
-            
             isRowExpanded = !isRowExpanded
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
-            
         default:
             print("")
             
@@ -196,40 +191,10 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isRowExpanded  && section == 2{
+        if isRowExpanded  && section == 2 {
             return 2
         }
         return  1
-    }
-    
-    // MARK: keyboard notifications
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    @objc func keyboardWillShow(_ notification: NSNotification) {
-        navigationController?.setNavigationBarHidden(true, animated: true)
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            if self.view.frame.origin.y == 0 {
-                self.view.frame.origin.y -= keyboardSize.height/2
-            }
-        }
-    }
-    
-    @objc func keyboardWillHide(_ notification: NSNotification) {
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        if self.view.frame.origin.y != 0 {
-            self.view.frame.origin.y = 0
-        }
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK: Selection Delegate
@@ -254,6 +219,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     }
     
     // MARK: TableView Style
+    
     init() {
         super.init(style: .insetGrouped)
     }

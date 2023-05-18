@@ -11,9 +11,9 @@ class TypeVC: UITableViewController {
     
     weak var selectionDelegate: SelectionDelegate?
     
-    var selectedRowIndex: Int?
+    private var selectedRowIndex: Int?
     
-    var selectedIndexPath: IndexPath?
+    private var selectedIndexPath: IndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()

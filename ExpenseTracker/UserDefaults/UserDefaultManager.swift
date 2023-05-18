@@ -25,9 +25,9 @@ class UserDefaultManager {
         defaults.set(encodedData, forKey: key)
     }
     
-    func getUserDefaultObject<T: Decodable>(for key: String, _ value: T) -> T? {
+    func getUserDefaultObject<T: Decodable>(for key: String, _ value: T.Type) -> T? {
        if let data = defaults.object(forKey: key) as? Data {
-           let decodedData = try? decoder.decode(value.self as! T.Type, from: data)
+           let decodedData = try? decoder.decode(value, from: data)
            return decodedData
         }
         return nil
