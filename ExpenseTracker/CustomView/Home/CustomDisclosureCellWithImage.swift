@@ -8,7 +8,7 @@
 import UIKit
 
 class CustomDisClosureCellWithImage: UITableViewCell {
-
+    
     static let reuseIdentifier = "CustomDisclosure Cell with Image"
     
     private lazy var textField = {
@@ -40,7 +40,7 @@ class CustomDisClosureCellWithImage: UITableViewCell {
     }
     
     override func prepareForReuse() {
-            super.prepareForReuse()
+        super.prepareForReuse()
     }
     
     required init?(coder: NSCoder) {
@@ -50,7 +50,7 @@ class CustomDisClosureCellWithImage: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
@@ -58,7 +58,7 @@ class CustomDisClosureCellWithImage: UITableViewCell {
     override var intrinsicContentSize: CGSize {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
-
+    
     func configure(with name: String, and text: String) -> String {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label

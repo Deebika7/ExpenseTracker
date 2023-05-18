@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate {
+class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate, UITextFieldDelegate {
     
     var changedCategory: Category?
     var changedType: String?
@@ -16,6 +16,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     var amount: Double = 0
     var date = ""
     var categoryName = ""
+    weak var textField: UITextField?
     
     private lazy var calendarView: UICalendarView = {
         let calendarView = UICalendarView()
@@ -31,12 +32,13 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //navigationController?.hidesBarsWhenKeyboardAppears = true
+        textField?.delegate = self
         tableView.backgroundColor = .secondarySystemBackground
         tableView.keyboardDismissMode = .onDrag
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 44
-        tableView.estimatedSectionHeaderHeight = 44
-        tableView.sectionHeaderHeight = UITableView.automaticDimension
+        tableView.sectionHeaderHeight = 44
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addRecord))
         navigationController?.navigationBar.prefersLargeTitles = true
         registerCustomCells()
@@ -59,10 +61,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
         tableView.register(CustomDateCell.self, forCellReuseIdentifier: CustomDateCell.reuseIdentifier )
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarView")
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -142,7 +140,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 return cell
             }
             
-            
         case .category:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
             
@@ -207,7 +204,32 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         return  1
     }
     
-    // MARK: Delegate Methods
+    // MARK: keyboard notifications
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow(_ notification: NSNotification) {
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y == 0 {
+                self.view.frame.origin.y -= keyboardSize.height/2
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
+    }
+    
+    // MARK: Selection Delegate
     
     func selectedType(_ text: String) {
         changedType = text
@@ -218,8 +240,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         changedCategory = category
         tableView.reloadData()
     }
-    
-    
     
     // MARK: Calendar View Delegate
     

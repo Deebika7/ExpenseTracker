@@ -34,7 +34,6 @@ class CategoriesListVC: UITableViewController {
         tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
     
-    
     func staticData() {
         label.append("Food")
         label.append("Gym")
@@ -61,9 +60,16 @@ class CategoriesListVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if let selectedRowIndex = selectedRowIndex {
+            let previousSelectedIndexPath = IndexPath(row: selectedRowIndex, section: indexPath.section)
+            let previousSelectedCell = tableView.cellForRow(at: previousSelectedIndexPath)
+            previousSelectedCell?.accessoryType = .none
+        }
         let selectedCell = tableView.cellForRow(at: indexPath)
         selectedCell?.accessoryType = .checkmark
+        selectedRowIndex = indexPath.row
         selectionDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
+        tableView.reloadData()
         self.navigationController?.popViewController(animated: true)
     }
     

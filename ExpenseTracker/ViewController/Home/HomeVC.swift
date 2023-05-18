@@ -102,8 +102,6 @@ class HomeVC: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        //navigationController?.title = "Home"
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     

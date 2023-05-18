@@ -11,6 +11,10 @@ class TypeVC: UITableViewController {
     
     weak var selectionDelegate: SelectionDelegate?
     
+    var selectedRowIndex: Int?
+    
+    var selectedIndexPath: IndexPath?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
@@ -50,21 +54,30 @@ class TypeVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if let selectedRowIndex = selectedRowIndex {
+            let previousSelectedIndexPath = IndexPath(row: selectedRowIndex, section: indexPath.section)
+            let previousSelectedCell = tableView.cellForRow(at: previousSelectedIndexPath)
+            previousSelectedCell?.accessoryType = .none
+        }
         let selectedCell = tableView.cellForRow(at: indexPath)
         selectedCell?.accessoryType = .checkmark
+        selectedRowIndex = indexPath.row
+        selectedIndexPath = indexPath
         selectionDelegate?.selectedType( RecordType.allCases[indexPath.row].rawValue)
         self.navigationController?.popViewController(animated: true)
     }
     
+   
     init() {
         super.init(style: .insetGrouped)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     

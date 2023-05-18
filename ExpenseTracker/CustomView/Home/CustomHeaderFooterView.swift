@@ -12,9 +12,15 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
     
     static let reuseIdentifier = "customHeaderFooterView"
     
+    private lazy var headerLabel: UILabel = {
+        let headerLabel = UILabel()
+        headerLabel.translatesAutoresizingMaskIntoConstraints = false
+        return headerLabel
+    }()
+    
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(textLabel!)
+        contentView.addSubview(headerLabel)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -28,14 +34,19 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
     override var intrinsicContentSize: CGSize {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
-
     
     func configureView(with title: String) {
-        textLabel?.text = title
-        textLabel?.textColor = .label
-        textLabel?.adjustsFontForContentSizeCategory = true
-        textLabel?.font = .boldSystemFont(ofSize: textLabel!.font.pointSize)
-       // textLabel?.font = .preferredFont(forTextStyle: .body)
+        headerLabel.text = title
+        headerLabel.textColor = .label
+        headerLabel.adjustsFontForContentSizeCategory = true
+        headerLabel.font = .boldSystemFont(ofSize: 18)
+        headerLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            headerLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 3),
+            headerLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            headerLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            headerLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
     }
 }
 
