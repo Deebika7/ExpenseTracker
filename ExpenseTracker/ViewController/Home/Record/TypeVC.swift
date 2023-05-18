@@ -66,7 +66,6 @@ class TypeVC: UITableViewController {
         selectionDelegate?.selectedType( RecordType.allCases[indexPath.row].rawValue)
         self.navigationController?.popViewController(animated: true)
     }
-    
    
     init() {
         super.init(style: .insetGrouped)

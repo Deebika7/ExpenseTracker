@@ -20,7 +20,7 @@
 		161402C42A0B5DA50040E15E /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402C32A0B5DA50040E15E /* DatabaseManager.swift */; };
 		161402C72A0B79F70040E15E /* Record+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402C52A0B79F70040E15E /* Record+CoreDataClass.swift */; };
 		161402C82A0B79F70040E15E /* Record+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402C62A0B79F70040E15E /* Record+CoreDataProperties.swift */; };
-		161402D62A0CADDF0040E15E /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402D52A0CADDF0040E15E /* Colors.swift */; };
+		161402D62A0CADDF0040E15E /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402D52A0CADDF0040E15E /* UserDefaultManager.swift */; };
 		161402DC2A0CF33F0040E15E /* RecordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402DB2A0CF33F0040E15E /* RecordField.swift */; };
 		161402DE2A0D6F520040E15E /* CustomHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */; };
 		161402E12A0E09050040E15E /* GenericTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E02A0E09050040E15E /* GenericTableViewController.swift */; };
@@ -33,6 +33,7 @@
 		161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */; };
 		161402F32A1240D10040E15E /* CustomDateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F22A1240D10040E15E /* CustomDateCell.swift */; };
 		161402F92A138E5A0040E15E /* PopOverCalendarSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F82A138E5A0040E15E /* PopOverCalendarSheet.swift */; };
+		161403232A161F810040E15E /* SelectedIndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403222A161F810040E15E /* SelectedIndexPath.swift */; };
 		163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063222A0A18D9009E6428 /* AppDelegate.swift */; };
 		163063252A0A18D9009E6428 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063242A0A18D9009E6428 /* SceneDelegate.swift */; };
 		163063272A0A18D9009E6428 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063262A0A18D9009E6428 /* HomeVC.swift */; };
@@ -55,7 +56,7 @@
 		161402C32A0B5DA50040E15E /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		161402C52A0B79F70040E15E /* Record+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Record+CoreDataClass.swift"; sourceTree = "<group>"; };
 		161402C62A0B79F70040E15E /* Record+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Record+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		161402D52A0CADDF0040E15E /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		161402D52A0CADDF0040E15E /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		161402DB2A0CF33F0040E15E /* RecordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordField.swift; sourceTree = "<group>"; };
 		161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderFooterView.swift; sourceTree = "<group>"; };
 		161402E02A0E09050040E15E /* GenericTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTableViewController.swift; sourceTree = "<group>"; };
@@ -68,6 +69,7 @@
 		161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisclosureCellWithImage.swift; sourceTree = "<group>"; };
 		161402F22A1240D10040E15E /* CustomDateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDateCell.swift; sourceTree = "<group>"; };
 		161402F82A138E5A0040E15E /* PopOverCalendarSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopOverCalendarSheet.swift; sourceTree = "<group>"; };
+		161403222A161F810040E15E /* SelectedIndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedIndexPath.swift; sourceTree = "<group>"; };
 		1630631F2A0A18D9009E6428 /* ExpenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		163063222A0A18D9009E6428 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		163063242A0A18D9009E6428 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -183,12 +185,13 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
-		161402BA2A0A46C70040E15E /* Helper */ = {
+		161402BA2A0A46C70040E15E /* UserDefaults */ = {
 			isa = PBXGroup;
 			children = (
-				161402D52A0CADDF0040E15E /* Colors.swift */,
+				161403212A161F150040E15E /* CustomUserDefaults */,
+				161402D52A0CADDF0040E15E /* UserDefaultManager.swift */,
 			);
-			path = Helper;
+			path = UserDefaults;
 			sourceTree = "<group>";
 		};
 		161402BC2A0A4F890040E15E /* TabBar */ = {
@@ -205,6 +208,14 @@
 				161402E02A0E09050040E15E /* GenericTableViewController.swift */,
 			);
 			path = Generics;
+			sourceTree = "<group>";
+		};
+		161403212A161F150040E15E /* CustomUserDefaults */ = {
+			isa = PBXGroup;
+			children = (
+				161403222A161F810040E15E /* SelectedIndexPath.swift */,
+			);
+			path = CustomUserDefaults;
 			sourceTree = "<group>";
 		};
 		163063162A0A18D9009E6428 = {
@@ -226,7 +237,7 @@
 		163063212A0A18D9009E6428 /* ExpenseTracker */ = {
 			isa = PBXGroup;
 			children = (
-				161402BA2A0A46C70040E15E /* Helper */,
+				161402BA2A0A46C70040E15E /* UserDefaults */,
 				161402A82A0A245D0040E15E /* Model */,
 				161402A72A0A244C0040E15E /* CustomView */,
 				161402A62A0A204E0040E15E /* ViewController */,
@@ -321,7 +332,7 @@
 			files = (
 				161402F32A1240D10040E15E /* CustomDateCell.swift in Sources */,
 				161402A12A0A1C280040E15E /* RecordDescriptionVC.swift in Sources */,
-				161402D62A0CADDF0040E15E /* Colors.swift in Sources */,
+				161402D62A0CADDF0040E15E /* UserDefaultManager.swift in Sources */,
 				161402B82A0A42BA0040E15E /* MoneyTrackerView.swift in Sources */,
 				163063272A0A18D9009E6428 /* HomeVC.swift in Sources */,
 				161402DE2A0D6F520040E15E /* CustomHeaderFooterView.swift in Sources */,
@@ -334,6 +345,7 @@
 				161402E72A0E5F370040E15E /* SelectionDelegate.swift in Sources */,
 				161402C82A0B79F70040E15E /* Record+CoreDataProperties.swift in Sources */,
 				161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */,
+				161403232A161F810040E15E /* SelectedIndexPath.swift in Sources */,
 				161402ED2A10BC190040E15E /* CategoryCell.swift in Sources */,
 				161402C72A0B79F70040E15E /* Record+CoreDataClass.swift in Sources */,
 				1614029B2A0A1BCA0040E15E /* PieChartVC.swift in Sources */,

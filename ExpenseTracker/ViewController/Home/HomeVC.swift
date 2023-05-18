@@ -89,8 +89,6 @@ class HomeVC: UITableViewController {
             
             incomeLabel.centerYAnchor.constraint(equalTo: blueView.centerYAnchor),
 //            expenseLabel.centerYAnchor.constraint(equalTo: redView.centerYAnchor)
-            
-           
         ])
         self.tableView.tableHeaderView = tableHeaderView
     }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate, UITextFieldDelegate {
+class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate {
     
     var changedCategory: Category?
     var changedType: String?
@@ -32,8 +32,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //navigationController?.hidesBarsWhenKeyboardAppears = true
-        textField?.delegate = self
         tableView.backgroundColor = .secondarySystemBackground
         tableView.keyboardDismissMode = .onDrag
         tableView.rowHeight = UITableView.automaticDimension
@@ -227,6 +225,11 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         if self.view.frame.origin.y != 0 {
             self.view.frame.origin.y = 0
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK: Selection Delegate
