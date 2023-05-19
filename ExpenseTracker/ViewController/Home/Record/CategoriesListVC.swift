@@ -15,8 +15,6 @@ class CategoriesListVC: UITableViewController {
     
     private var label = [String]()
     
-    private var selectedRowIndex: Int?
-    
     private lazy var searchController = SearchController()
     
     lazy var selectedCategory: Category! = nil
@@ -78,20 +76,15 @@ class CategoriesListVC: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.resuseIdentifier, for: indexPath) as! CategoryCell
         cell.configure(with: sfSymbol[indexPath.row], and: label[indexPath.row])
+        if label[indexPath.row]  == selectedCategory.categoryName {
+            cell.accessoryType = .checkmark
+        }
         cell.backgroundColor = .systemBackground
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let selectedRowIndex = selectedRowIndex {
-            let previousSelectedIndexPath = IndexPath(row: selectedRowIndex, section: indexPath.section)
-            let previousSelectedCell = tableView.cellForRow(at: previousSelectedIndexPath)
-            previousSelectedCell?.accessoryType = .none
-        }
-        let selectedCell = tableView.cellForRow(at: indexPath)
-        selectedCell?.accessoryType = .checkmark
-        selectedRowIndex = indexPath.row
         selectionDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
         tableView.reloadData()
         self.navigationController?.popViewController(animated: true)

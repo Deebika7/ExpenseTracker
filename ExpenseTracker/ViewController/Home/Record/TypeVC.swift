@@ -11,9 +11,20 @@ class TypeVC: UITableViewController {
     
     weak var selectionDelegate: SelectionDelegate?
     
-    private var selectedRowIndex: Int?
+    private lazy var selectedType: String! = nil
     
-    private var selectedIndexPath: IndexPath?
+    convenience init(selectedType: String) {
+        self.init(style: .insetGrouped)
+        self.selectedType = selectedType
+    }
+    
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +56,9 @@ class TypeVC: UITableViewController {
             cell.textLabel?.textColor = .label
             cell.textLabel?.adjustsFontForContentSizeCategory = true
         }
+        if cell.textLabel!.text == selectedType {
+            cell.accessoryType = .checkmark
+        }
         return cell
     }
     
@@ -54,27 +68,10 @@ class TypeVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let selectedRowIndex = selectedRowIndex {
-            let previousSelectedIndexPath = IndexPath(row: selectedRowIndex, section: indexPath.section)
-            let previousSelectedCell = tableView.cellForRow(at: previousSelectedIndexPath)
-            previousSelectedCell?.accessoryType = .none
-        }
-        let selectedCell = tableView.cellForRow(at: indexPath)
-        selectedCell?.accessoryType = .checkmark
-        selectedRowIndex = indexPath.row
-        selectedIndexPath = indexPath
         selectionDelegate?.selectedType( RecordType.allCases[indexPath.row].rawValue)
         self.navigationController?.popViewController(animated: true)
     }
    
-    init() {
-        super.init(style: .insetGrouped)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true

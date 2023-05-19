@@ -27,7 +27,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         calendarView.layer.cornerRadius = 10.0
         calendarView.translatesAutoresizingMaskIntoConstraints = false
         return calendarView
-    }()
+    }() 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -162,12 +162,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
-            let typeVC = TypeVC()
+            let typeVC = TypeVC(selectedType: changedType ?? "Income")
             typeVC.title = "Type"
             typeVC.selectionDelegate = self
             navigationController?.pushViewController(typeVC, animated: true)
         case .category:
-            let categoryListVC = CategoriesListVC(selectedCategory: changedCategory ?? Category(sfSymbolName: "fork.knife", categoryName: "food"))
+            let categoryListVC = CategoriesListVC(selectedCategory: changedCategory ?? Category(sfSymbolName: "fork.knife", categoryName: "Food"))
             categoryListVC.title = "Category"
             categoryListVC.selectionDelegate = self
             navigationController?.pushViewController(categoryListVC, animated: true)

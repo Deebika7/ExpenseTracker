@@ -45,12 +45,10 @@ class CustomDisClosureCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    
     func configureCustomdisclosureCell(_ text: String){
         label.text = text
         label.font = .preferredFont(forTextStyle: .body)
         label.textColor = .label
         layoutIfNeeded()
     }
-    
 }
