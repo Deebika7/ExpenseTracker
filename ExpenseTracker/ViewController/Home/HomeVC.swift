@@ -55,7 +55,7 @@ class HomeVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = .secondarySystemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         
         navigationItem.searchController = searchController
@@ -72,7 +72,12 @@ class HomeVC: UITableViewController {
         redView.layer.cornerRadius = 15
         blueView.layer.cornerRadius = 15
         
+        setupContraints()
         
+        self.tableView.tableHeaderView = tableHeaderView
+    }
+    
+    func setupContraints() {
         NSLayoutConstraint.activate([
             moneyTrackerView.leadingAnchor.constraint(equalTo: redView.leadingAnchor),
             moneyTrackerView.trailingAnchor.constraint(equalTo: redView.trailingAnchor),
@@ -82,15 +87,14 @@ class HomeVC: UITableViewController {
             blueView.leadingAnchor.constraint(equalTo: moneyTrackerView.leadingAnchor, constant: -5),
             blueView.trailingAnchor.constraint(equalTo: moneyTrackerView.trailingAnchor),
             blueView.heightAnchor.constraint(equalToConstant: 120),
-
+            
             redView.leadingAnchor.constraint(equalTo: tableHeaderView.leadingAnchor, constant: 25),
             redView.trailingAnchor.constraint(equalTo: tableHeaderView.trailingAnchor, constant: -20),
             redView.heightAnchor.constraint(equalToConstant: 120),
             
             incomeLabel.centerYAnchor.constraint(equalTo: blueView.centerYAnchor),
-//            expenseLabel.centerYAnchor.constraint(equalTo: redView.centerYAnchor)
+            //            expenseLabel.centerYAnchor.constraint(equalTo: redView.centerYAnchor)
         ])
-        self.tableView.tableHeaderView = tableHeaderView
     }
     
     @objc func addRecord() {
@@ -106,10 +110,10 @@ class HomeVC: UITableViewController {
     init() {
         super.init(style: .insetGrouped)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
 }
 
