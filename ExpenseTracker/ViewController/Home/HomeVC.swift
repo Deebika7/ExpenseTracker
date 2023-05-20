@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeVC: UITableViewController {
+class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private lazy var searchController = SearchController()
     
@@ -15,6 +15,7 @@ class HomeVC: UITableViewController {
         let blueView = UIView()
         blueView.translatesAutoresizingMaskIntoConstraints = false
         blueView.backgroundColor = UIColor(named: "blue")
+        blueView.layer.cornerRadius = 13
         return blueView
     }()
     
@@ -22,6 +23,7 @@ class HomeVC: UITableViewController {
         let redView = UIView()
         redView.translatesAutoresizingMaskIntoConstraints = false
         redView.backgroundColor = UIColor(named: "red")
+        redView.layer.cornerRadius = 13
         return redView
     }()
     
@@ -30,11 +32,6 @@ class HomeVC: UITableViewController {
         moneyTrackerView.translatesAutoresizingMaskIntoConstraints = false
         moneyTrackerView.backgroundColor = .clear
         return moneyTrackerView
-    }()
-    
-    private lazy var tableHeaderView: UIView = {
-        let tableHeaderView = UIView()
-        return tableHeaderView
     }()
     
     private lazy var expenseLabel: UILabel = {
@@ -53,30 +50,36 @@ class HomeVC: UITableViewController {
         return incomeLabel
     }()
     
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: view.bounds, style: .insetGrouped)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .secondarySystemBackground
+        tableView.keyboardDismissMode = .onDrag
+        tableView.delegate = self
+        tableView.dataSource = self
+        return tableView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = .secondarySystemBackground
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.title = "Home"
         
-        tableView.keyboardDismissMode = .onDrag
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         
-        tableHeaderView.addSubview(redView)
         redView.addSubview(moneyTrackerView)
         moneyTrackerView.addSubview(blueView)
-        tableHeaderView.addSubview(moneyTrackerView)
         blueView.addSubview(incomeLabel)
-        redView.layer.cornerRadius = 13
-        blueView.layer.cornerRadius = 13
-        
+        redView.addSubview(moneyTrackerView)
+        view.addSubview(redView)
+        view.addSubview(tableView)
         setupContraints()
-        
-        self.tableView.tableHeaderView = tableHeaderView
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
     }
     
     func setupContraints() {
@@ -90,12 +93,17 @@ class HomeVC: UITableViewController {
             blueView.trailingAnchor.constraint(equalTo: moneyTrackerView.trailingAnchor),
             blueView.heightAnchor.constraint(equalToConstant: 120),
             
-            redView.leadingAnchor.constraint(equalTo: tableHeaderView.leadingAnchor, constant: 18),
-            redView.trailingAnchor.constraint(equalTo: tableHeaderView.trailingAnchor, constant: -18),
+            redView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
+            redView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
             redView.heightAnchor.constraint(equalToConstant: 120),
+            redView.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
             
             incomeLabel.centerYAnchor.constraint(equalTo: blueView.centerYAnchor),
-            //            expenseLabel.centerYAnchor.constraint(equalTo: redView.centerYAnchor)
+            
+            tableView.topAnchor.constraint(equalTo: redView.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
         ])
     }
     
@@ -109,12 +117,14 @@ class HomeVC: UITableViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    init() {
-        super.init(style: .insetGrouped)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath)
+        cell.textLabel?.text = "test"
+        return cell
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
     }
     
 }

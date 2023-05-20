@@ -36,10 +36,7 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return tableView
     }()
     
-    private lazy var searchController: SearchController = {
-        let searchController = SearchController()
-        return searchController
-    }()
+    private lazy var searchController = SearchController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +62,7 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             headerViewContainer.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
             headerViewContainer.heightAnchor.constraint(equalToConstant: 200),
             
-            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: 2),
+            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
