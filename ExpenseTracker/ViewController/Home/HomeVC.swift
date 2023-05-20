@@ -56,10 +56,12 @@ class HomeVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.title = "Home"
+        
         tableView.keyboardDismissMode = .onDrag
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
@@ -69,8 +71,8 @@ class HomeVC: UITableViewController {
         moneyTrackerView.addSubview(blueView)
         tableHeaderView.addSubview(moneyTrackerView)
         blueView.addSubview(incomeLabel)
-        redView.layer.cornerRadius = 15
-        blueView.layer.cornerRadius = 15
+        redView.layer.cornerRadius = 13
+        blueView.layer.cornerRadius = 13
         
         setupContraints()
         
@@ -84,12 +86,12 @@ class HomeVC: UITableViewController {
             moneyTrackerView.topAnchor.constraint(equalTo: redView.topAnchor),
             moneyTrackerView.bottomAnchor.constraint(equalTo: redView.bottomAnchor),
             
-            blueView.leadingAnchor.constraint(equalTo: moneyTrackerView.leadingAnchor, constant: -5),
+            blueView.leadingAnchor.constraint(equalTo: moneyTrackerView.leadingAnchor),
             blueView.trailingAnchor.constraint(equalTo: moneyTrackerView.trailingAnchor),
             blueView.heightAnchor.constraint(equalToConstant: 120),
             
-            redView.leadingAnchor.constraint(equalTo: tableHeaderView.leadingAnchor, constant: 25),
-            redView.trailingAnchor.constraint(equalTo: tableHeaderView.trailingAnchor, constant: -20),
+            redView.leadingAnchor.constraint(equalTo: tableHeaderView.leadingAnchor, constant: 18),
+            redView.trailingAnchor.constraint(equalTo: tableHeaderView.trailingAnchor, constant: -18),
             redView.heightAnchor.constraint(equalToConstant: 120),
             
             incomeLabel.centerYAnchor.constraint(equalTo: blueView.centerYAnchor),
@@ -104,7 +106,7 @@ class HomeVC: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     init() {
