@@ -39,7 +39,7 @@ class CategoryCell: UITableViewCell {
         contentView.addSubview(label)
         NSLayoutConstraint.activate([
             categoryIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            categoryIcon.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -330),
+            categoryIcon.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -300),
             categoryIcon.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             label.leadingAnchor.constraint(equalTo: categoryIcon.trailingAnchor, constant: 20),
@@ -56,6 +56,7 @@ class CategoryCell: UITableViewCell {
         contentView.frame = bounds
     }
     
+
     func configure(with name: String, and text: String) {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label

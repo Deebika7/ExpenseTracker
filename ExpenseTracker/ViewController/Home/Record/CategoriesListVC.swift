@@ -36,7 +36,7 @@ class CategoriesListVC: UITableViewController {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
         staticData()
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.resuseIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -56,7 +56,7 @@ class CategoriesListVC: UITableViewController {
         present(navigationController, animated: true)
     }
     
-    func staticData() {
+    private func staticData() {
         label.append("Food")
         label.append("Gym")
         label.append("Rent")
@@ -74,12 +74,17 @@ class CategoriesListVC: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.resuseIdentifier, for: indexPath) as! CategoryCell
-        cell.configure(with: sfSymbol[indexPath.row], and: label[indexPath.row])
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        var configuration = cell.defaultContentConfiguration()
+        configuration.text = label[indexPath.row]
+        configuration.textProperties.color = .label
+        configuration.image = UIImage(systemName: sfSymbol[indexPath.row])
+        configuration.imageProperties.tintColor = .label
         if label[indexPath.row]  == selectedCategory.categoryName {
             cell.accessoryType = .checkmark
         }
         cell.backgroundColor = .systemBackground
+        cell.contentConfiguration = configuration
         return cell
     }
     

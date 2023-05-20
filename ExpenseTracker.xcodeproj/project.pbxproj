@@ -24,13 +24,10 @@
 		161402DC2A0CF33F0040E15E /* RecordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402DB2A0CF33F0040E15E /* RecordField.swift */; };
 		161402DE2A0D6F520040E15E /* CustomHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */; };
 		161402E32A0E5B2A0040E15E /* CustomTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E22A0E5B2A0040E15E /* CustomTextFieldCell.swift */; };
-		161402E52A0E5D680040E15E /* CustomDisClosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E42A0E5D680040E15E /* CustomDisClosureCell.swift */; };
 		161402E72A0E5F370040E15E /* SelectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402E62A0E5F370040E15E /* SelectionDelegate.swift */; };
 		161402EB2A0EABDC0040E15E /* TypeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EA2A0EABDC0040E15E /* TypeVC.swift */; };
-		161402ED2A10BC190040E15E /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EC2A10BC190040E15E /* CategoryCell.swift */; };
 		161402EF2A11557A0040E15E /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EE2A11557A0040E15E /* Category.swift */; };
 		161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */; };
-		161402F32A1240D10040E15E /* CustomDateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F22A1240D10040E15E /* CustomDateCell.swift */; };
 		161402F92A138E5A0040E15E /* AddCategorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F82A138E5A0040E15E /* AddCategorySheet.swift */; };
 		161403232A161F810040E15E /* SelectedIndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403222A161F810040E15E /* SelectedIndexPath.swift */; };
 		1614034A2A1749BB0040E15E /* CategoryIconVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403492A1749BB0040E15E /* CategoryIconVC.swift */; };
@@ -61,13 +58,10 @@
 		161402DB2A0CF33F0040E15E /* RecordField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordField.swift; sourceTree = "<group>"; };
 		161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderFooterView.swift; sourceTree = "<group>"; };
 		161402E22A0E5B2A0040E15E /* CustomTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldCell.swift; sourceTree = "<group>"; };
-		161402E42A0E5D680040E15E /* CustomDisClosureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisClosureCell.swift; sourceTree = "<group>"; };
 		161402E62A0E5F370040E15E /* SelectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionDelegate.swift; sourceTree = "<group>"; };
 		161402EA2A0EABDC0040E15E /* TypeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeVC.swift; sourceTree = "<group>"; };
-		161402EC2A10BC190040E15E /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		161402EE2A11557A0040E15E /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisclosureCellWithImage.swift; sourceTree = "<group>"; };
-		161402F22A1240D10040E15E /* CustomDateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDateCell.swift; sourceTree = "<group>"; };
 		161402F82A138E5A0040E15E /* AddCategorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategorySheet.swift; sourceTree = "<group>"; };
 		161403222A161F810040E15E /* SelectedIndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedIndexPath.swift; sourceTree = "<group>"; };
 		161403492A1749BB0040E15E /* CategoryIconVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIconVC.swift; sourceTree = "<group>"; };
@@ -180,10 +174,7 @@
 				161402DD2A0D6F520040E15E /* CustomHeaderFooterView.swift */,
 				161402C12A0A761F0040E15E /* SearchController.swift */,
 				161402E22A0E5B2A0040E15E /* CustomTextFieldCell.swift */,
-				161402E42A0E5D680040E15E /* CustomDisClosureCell.swift */,
-				161402EC2A10BC190040E15E /* CategoryCell.swift */,
 				161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */,
-				161402F22A1240D10040E15E /* CustomDateCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -333,7 +324,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				161402F32A1240D10040E15E /* CustomDateCell.swift in Sources */,
 				161402A12A0A1C280040E15E /* RecordDescriptionVC.swift in Sources */,
 				161402D62A0CADDF0040E15E /* UserDefaultManager.swift in Sources */,
 				161402B82A0A42BA0040E15E /* MoneyTrackerView.swift in Sources */,
@@ -348,13 +338,11 @@
 				161402C82A0B79F70040E15E /* Record+CoreDataProperties.swift in Sources */,
 				161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */,
 				161403232A161F810040E15E /* SelectedIndexPath.swift in Sources */,
-				161402ED2A10BC190040E15E /* CategoryCell.swift in Sources */,
 				161402C72A0B79F70040E15E /* Record+CoreDataClass.swift in Sources */,
 				1614029B2A0A1BCA0040E15E /* PieChartVC.swift in Sources */,
 				161402BE2A0A4FB80040E15E /* TabBar.swift in Sources */,
 				161402F92A138E5A0040E15E /* AddCategorySheet.swift in Sources */,
 				161403512A180BC20040E15E /* HollowPieChart.swift in Sources */,
-				161402E52A0E5D680040E15E /* CustomDisClosureCell.swift in Sources */,
 				161402C22A0A761F0040E15E /* SearchController.swift in Sources */,
 				1630632D2A0A18D9009E6428 /* ExpenseTracker.xcdatamodeld in Sources */,
 				161402A52A0A1C860040E15E /* CategoriesListVC.swift in Sources */,

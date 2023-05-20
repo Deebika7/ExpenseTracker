@@ -8,7 +8,6 @@
 import UIKit
 
 class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate {
-    
     private var changedCategory: Category?
     private var changedType: String?
     private var changedDate: String?
@@ -54,11 +53,11 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     // MARK: TableView Cells
     private func registerCustomCells() {
         tableView.register(CustomTextFieldCell.self, forCellReuseIdentifier: CustomTextFieldCell.reuseIdentifier)
-        tableView.register(CustomDisClosureCell.self, forCellReuseIdentifier: CustomDisClosureCell.reuseIdentifier)
         tableView.register(CustomHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CustomHeaderFooterView.reuseIdentifier)
         tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
-        tableView.register(CustomDateCell.self, forCellReuseIdentifier: CustomDateCell.reuseIdentifier )
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarView")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TypeCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarLabel")
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -66,14 +65,15 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCell.reuseIdentifier, for: indexPath) as! CustomDisClosureCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TypeCell" , for: indexPath)
+            var configuration = cell.defaultContentConfiguration()
             if changedType != nil {
-                cell.configureCustomdisclosureCell(changedType!)
+                configuration.text = changedType!
             }
             else {
-                cell.configureCustomdisclosureCell("Income")
+                configuration.text = "Income"
             }
-            
+            cell.contentConfiguration = configuration
             cell.accessoryType = .disclosureIndicator
             cell.backgroundColor = .systemBackground
             
@@ -89,18 +89,18 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             
         case .date:
             if indexPath.row == 0 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: CustomDateCell.reuseIdentifier, for: indexPath) as! CustomDateCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarLabel", for: indexPath)
                 cell.backgroundColor = .systemBackground
-                
+                var configuration  = cell.defaultContentConfiguration()
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "dd-MM-yyyy"
                 date = dateFormatter.string(from: Date())
                 
                 if changedDate != nil && changedDate != date {
-                    cell.configureCustomDateCell(changedDate!)
+                    configuration.text = changedDate!
                 }
                 else {
-                    cell.configureCustomDateCell("\(date)"+" "+"(Today's Date)")
+                    configuration.text = "\(date)"+" "+"(Today's Date)"
                 }
                 
                 if !isRowExpanded {
@@ -113,7 +113,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                     cell.accessoryView = UIImageView(image: calendarImage)
                     cell.accessoryView?.tintColor = .label
                 }
-                
+                cell.contentConfiguration = configuration
                 return cell
             }
             else if indexPath.row == 1 {

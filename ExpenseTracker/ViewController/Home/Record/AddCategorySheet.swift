@@ -52,7 +52,8 @@ class AddCategorySheet: UITableViewController {
         if indexPath.section == 1 {
             let categoryIconVC = CategoryIconVC()
             let navigationController = UINavigationController(rootViewController: categoryIconVC)
-            
+            navigationController.preferredContentSize = .init(width: view.frame.width, height: view.frame.height)
+            present(navigationController, animated: true)
         }
     }
     

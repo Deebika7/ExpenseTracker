@@ -93,7 +93,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             blueView.trailingAnchor.constraint(equalTo: moneyTrackerView.trailingAnchor),
             blueView.heightAnchor.constraint(equalToConstant: 120),
             
-            redView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 18),
+            redView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             redView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
             redView.heightAnchor.constraint(equalToConstant: 120),
             redView.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
