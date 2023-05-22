@@ -120,6 +120,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath)
         cell.textLabel?.text = "test"
+        cell.backgroundColor = .systemBackground
         return cell
     }
     

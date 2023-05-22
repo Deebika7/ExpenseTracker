@@ -7,7 +7,9 @@
 
 import UIKit
 
-class AddCategorySheet: UITableViewController {
+class AddCategorySheet: UITableViewController, CategoryDelegate {
+    
+    private var selectedCategory: Category?
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
@@ -31,7 +33,7 @@ class AddCategorySheet: UITableViewController {
         super.viewDidLoad()
         tableView.backgroundColor = .secondarySystemBackground
         tableView.backgroundColor = .secondarySystemBackground
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(addCustomCategory))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissAddCategorySheet))
         tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TextFieldCell")
@@ -50,7 +52,8 @@ class AddCategorySheet: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.section == 1 {
-            let categoryIconVC = CategoryIconVC()
+            let categoryIconVC = CategoryIconVC(selectedCategory: selectedCategory)
+            categoryIconVC.categoryDelegate = self
             let navigationController = UINavigationController(rootViewController: categoryIconVC)
             navigationController.preferredContentSize = .init(width: view.frame.width, height: view.frame.height)
             present(navigationController, animated: true)
@@ -64,7 +67,7 @@ class AddCategorySheet: UITableViewController {
             cell.contentView.addSubview(textField)
             NSLayoutConstraint.activate([
                 textField.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
-                textField.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 3),
+                textField.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 20),
                 textField.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor)
             ])
             return cell
@@ -72,11 +75,35 @@ class AddCategorySheet: UITableViewController {
         else  if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
             cell.backgroundColor = .systemBackground
-            cell.configure(with: "", and: "Select Category Icon")
+            if selectedCategory != nil {
+                cell.configure(with: selectedCategory!.sfSymbolName, and: selectedCategory!.categoryName)
+            }
+            else {
+                cell.configure(with: "", and: "Select Category Icon")
+            }
             cell.accessoryType = .disclosureIndicator
             return cell
         }
         return UITableViewCell()
+    }
+    
+    @objc func addCustomCategory() {
+        
+        guard textField.text! != ""  else {
+            let alert = UIAlertController(title: "", message: "Please enter category name", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true)
+            return
+        }
+        
+        guard selectedCategory != nil else {
+            let alert = UIAlertController(title: "", message: "Please select a category", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true)
+            return
+        }
+        
+        Toast(text: "Category added", delay: 0)
     }
     
     @objc func dismissKeyboard() {
@@ -85,6 +112,23 @@ class AddCategorySheet: UITableViewController {
     
     @objc func dismissAddCategorySheet() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func selectedCategory(_ category: Category) {
+        selectedCategory = category
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .none)
+    }
+    
+    // MARK: Toast
+    
+    func Toast(text: String, delay: Int) {
+        let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
+        self.present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(delay), execute: {
+            alert.dismiss(animated: true) {
+                self.dismiss(animated: true, completion: nil)
+            }
+        })
     }
     
 }

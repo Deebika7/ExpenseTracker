@@ -13,6 +13,23 @@ class CategoryIconVC: UITableViewController {
     
     private var label = [String]()
     
+    weak var categoryDelegate: CategoryDelegate?
+    
+    lazy var selectedCategory: Category! = nil
+    
+    convenience init(selectedCategory: Category?) {
+        self.init(style: .insetGrouped)
+        self.selectedCategory = selectedCategory
+    }
+    
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissCategoryIconVC) )
@@ -47,9 +64,11 @@ class CategoryIconVC: UITableViewController {
         configuration.textProperties.color = .label
         configuration.image = UIImage(systemName: sfSymbol[indexPath.row])
         configuration.imageProperties.tintColor = .label
-//        if label[indexPath.row]  == selectedCategory.categoryName {
-//            cell.accessoryType = .checkmark
-//        }
+        if selectedCategory != nil {
+            if label[indexPath.row]  == selectedCategory.categoryName {
+                cell.accessoryType = .checkmark
+            }
+        }
         cell.backgroundColor = .systemBackground
         cell.contentConfiguration = configuration
         return cell
@@ -57,17 +76,13 @@ class CategoryIconVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        categoryDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
+        tableView.reloadData()
+        self.dismiss(animated: true, completion: nil)
     }
     
     @objc func dismissCategoryIconVC() {
         dismiss(animated: true, completion: nil)
     }
     
-    init() {
-        super.init(style: .insetGrouped)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }

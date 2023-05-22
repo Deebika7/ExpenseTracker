@@ -7,15 +7,16 @@
 
 import UIKit
 
-class CustomTextFieldCell: UITableViewCell {
+class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDelegate {
     
     static let reuseIdentifier = "Custom Text Field Cell"
     
-    private lazy var textField: UITextField = {
+    lazy var textField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.adjustsFontForContentSizeCategory = true
         textField.textColor = .label
+        textField.delegate = self
         return textField
     }()
     
@@ -23,7 +24,7 @@ class CustomTextFieldCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textField)
         NSLayoutConstraint.activate([
-            textField.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            textField.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             textField.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
             textField.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
         ])
@@ -46,12 +47,21 @@ class CustomTextFieldCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    func configureNumberKeyBoard() -> Double? {
+    func configureNumberKeyBoard() {
         textField.keyboardType = .decimalPad
         textField.font = .preferredFont(forTextStyle: .body)
-        return Double(textField.text ?? "0")
+        textField.placeholder = "Enter Amount"
     }
     
+    func getEnteredData() -> String {
+        textField.text!
+    }
     
+    // MARK: Textfield Delegate
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let invalidCharacters = CharacterSet(charactersIn: "0123456789.").inverted
+        return string.rangeOfCharacter(from: invalidCharacters) == nil
+    }
 }
+

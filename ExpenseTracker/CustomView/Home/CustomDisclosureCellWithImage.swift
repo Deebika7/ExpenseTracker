@@ -29,7 +29,7 @@ class CustomDisClosureCellWithImage: UITableViewCell {
         contentView.addSubview(label)
         contentView.addSubview(categoryIcon)
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 10),
+            label.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             label.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -50),
             label.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor),
             
@@ -59,7 +59,7 @@ class CustomDisClosureCellWithImage: UITableViewCell {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
-    func configure(with name: String, and text: String) -> String {
+    func configure(with name: String, and text: String)  {
         categoryIcon.image = UIImage(systemName: name)
         categoryIcon.tintColor = .label
         label.text = text
@@ -67,10 +67,6 @@ class CustomDisClosureCellWithImage: UITableViewCell {
         label.isUserInteractionEnabled = true
         label.textColor = .label
         label.adjustsFontForContentSizeCategory = true
-        if label.text! == "Select Category Icon" {
-            label.textColor = .placeholderText
-        }
-        return label.text!
     }
     
 }

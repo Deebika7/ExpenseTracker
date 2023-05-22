@@ -7,14 +7,14 @@
 
 import UIKit
 
-class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate {
+class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate, CategoryDelegate {
+    
     private var changedCategory: Category?
     private var changedType: String?
     private var changedDate: String?
     private var isRowExpanded: Bool = false
     private var amount: Double = 0
     private var date = ""
-    private var categoryName = ""
     
     private lazy var calendarView: UICalendarView = {
         let calendarView = UICalendarView()
@@ -26,7 +26,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         calendarView.layer.cornerRadius = 10.0
         calendarView.translatesAutoresizingMaskIntoConstraints = false
         return calendarView
-    }() 
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,15 +39,22 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         navigationController?.navigationBar.prefersLargeTitles = true
         registerCustomCells()
         tableView.allowsSelection = true
-
+        
     }
     
     // MARK: Validation
+    
     @objc func addRecord() {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+        let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! CustomTextFieldCell
+        amount = Double(cell.getEnteredData()) ?? 0
+        guard amount > 0 else {
+            let alert = UIAlertController(title: "", message: "Please enter amount", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert,animated: true)
+            return
         }
-         print("amount \(amount)")
+        // Add record
+        Toast(text: "Record added", delay: 0)
     }
     
     // MARK: TableView Cells
@@ -59,7 +66,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TypeCell")
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarLabel")
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let indexPathValue = RecordField.allCases[indexPath.section]
@@ -71,7 +78,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 configuration.text = changedType!
             }
             else {
-                configuration.text = "Income"
+                configuration.text = Constants.defaultType
             }
             cell.contentConfiguration = configuration
             cell.accessoryType = .disclosureIndicator
@@ -82,9 +89,8 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         case .amount:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
             
-            amount = cell.configureNumberKeyBoard() ?? 0
+            cell.configureNumberKeyBoard()
             cell.backgroundColor = .systemBackground
-            
             return cell
             
         case .date:
@@ -92,28 +98,20 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarLabel", for: indexPath)
                 cell.backgroundColor = .systemBackground
                 var configuration  = cell.defaultContentConfiguration()
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "dd-MM-yyyy"
-                date = dateFormatter.string(from: Date())
+                
                 
                 if changedDate != nil && changedDate != date {
                     configuration.text = changedDate!
                 }
                 else {
-                    configuration.text = "\(date)"+" "+"(Today's Date)"
+                    configuration.text = "\(Constants.format(date: Constants.defaultDate))"+" "+"(Today's Date)"
                 }
+                let systemName = isRowExpanded ? "calendar.badge.minus" : "calendar.badge.plus"
+                cell.accessoryView = UIImageView(image: UIImage(systemName: systemName))
+                cell.accessoryView?.tintColor = .label
                 
-                if !isRowExpanded {
-                    let calendarImage = UIImage(systemName: "calendar.badge.plus")
-                    cell.accessoryView = UIImageView(image: calendarImage)
-                    cell.accessoryView?.tintColor = .label
-                }
-                else {
-                    let calendarImage = UIImage(systemName: "calendar.badge.minus")
-                    cell.accessoryView = UIImageView(image: calendarImage)
-                    cell.accessoryView?.tintColor = .label
-                }
                 cell.contentConfiguration = configuration
+                
                 return cell
             }
             else if indexPath.row == 1 {
@@ -135,10 +133,10 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
             
             if changedCategory != nil {
-               categoryName = cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
+                cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
             }
             else {
-               categoryName = cell.configure(with: "fork.knife", and: "food")
+                cell.configure(with: Constants.defaultCategory.sfSymbolName, and: Constants.defaultCategory.categoryName)
             }
             
             cell.accessoryType = .disclosureIndicator
@@ -162,21 +160,20 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
-            let typeVC = TypeVC(selectedType: changedType ?? "Income")
+            let typeVC = TypeVC(selectedType: changedType ?? Constants.defaultType)
             typeVC.title = "Type"
             typeVC.selectionDelegate = self
             navigationController?.pushViewController(typeVC, animated: true)
+        case .amount:
+            print("")
         case .category:
-            let categoryListVC = CategoriesListVC(selectedCategory: changedCategory ?? Category(sfSymbolName: "fork.knife", categoryName: "Food"))
+            let categoryListVC = CategoriesListVC(selectedCategory: changedCategory ?? Constants.defaultCategory)
             categoryListVC.title = "Category"
-            categoryListVC.selectionDelegate = self
+            categoryListVC.categoryDelegate = self
             navigationController?.pushViewController(categoryListVC, animated: true)
         case .date:
-            isRowExpanded = !isRowExpanded
+            isRowExpanded.toggle()
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
-        default:
-            print("")
-            
         }
     }
     
@@ -197,25 +194,37 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         return  1
     }
     
+    // MARK: Toast
+    
+    func Toast(text: String, delay: Int) {
+        let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
+        self.present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(delay), execute: {
+            alert.dismiss(animated: true) {
+                self.navigationController?.popViewController(animated: true)
+            }
+        })
+    }
+    
     // MARK: Selection Delegate
     
     func selectedType(_ text: String) {
         changedType = text
-        tableView.reloadData()
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
     }
+    
+    // MARK: Category Delegate
     
     func selectedCategory(_ category: Category) {
         changedCategory = category
-        tableView.reloadData()
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 3)], with: .none)
     }
     
     // MARK: Calendar View Delegate
     
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-MM-yyyy"
-        changedDate = dateFormatter.string(from: dateComponents!.date!)
-        tableView.reloadData()
+        changedDate = Constants.format(date: dateComponents!.date!)
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 2)], with: .none)
     }
     
     // MARK: TableView Style

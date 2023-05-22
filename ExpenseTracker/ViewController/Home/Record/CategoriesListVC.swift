@@ -9,7 +9,7 @@ import UIKit
 
 class CategoriesListVC: UITableViewController {
     
-    weak var selectionDelegate: SelectionDelegate?
+    weak var categoryDelegate: CategoryDelegate?
     
     private var sfSymbol = [String]()
     
@@ -90,7 +90,7 @@ class CategoriesListVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        selectionDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
+        categoryDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
         tableView.reloadData()
         self.navigationController?.popViewController(animated: true)
     }

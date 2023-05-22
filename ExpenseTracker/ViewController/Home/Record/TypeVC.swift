@@ -46,19 +46,19 @@ class TypeVC: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "type", for: indexPath)
         cell.backgroundColor = .systemBackground
         let indexPathValue = RecordType.allCases[indexPath.row]
+        var configuration = cell.defaultContentConfiguration()
         switch indexPathValue {
         case .expense:
-            cell.textLabel?.text = indexPathValue.rawValue
-            cell.textLabel?.textColor = .label
-            cell.textLabel?.adjustsFontForContentSizeCategory = true
+            configuration.text = indexPathValue.rawValue
+            configuration.textProperties.color = .label
         case .income:
-            cell.textLabel?.text = indexPathValue.rawValue
-            cell.textLabel?.textColor = .label
-            cell.textLabel?.adjustsFontForContentSizeCategory = true
+            configuration.text = indexPathValue.rawValue
+            configuration.textProperties.color = .label
         }
-        if cell.textLabel!.text == selectedType {
+        if configuration.text == selectedType {
             cell.accessoryType = .checkmark
         }
+        cell.contentConfiguration = configuration
         return cell
     }
     
