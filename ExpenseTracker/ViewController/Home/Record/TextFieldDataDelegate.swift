@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol TextFieldDataDelegate {
+protocol TextFieldDataDelegate: AnyObject {
     func enteredData(_ data: String)
 }

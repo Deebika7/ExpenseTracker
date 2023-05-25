@@ -15,14 +15,14 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let hollowPieChartView = HollowPieChart()
         hollowPieChartView.data = dataSource
         hollowPieChartView.translatesAutoresizingMaskIntoConstraints = false
-        hollowPieChartView.backgroundColor = .systemBackground
+        hollowPieChartView.backgroundColor = .secondarySystemGroupedBackground
         return hollowPieChartView
     }()
     
     private lazy var headerViewContainer: UIView = {
         let headerViewContainer = UIView()
         headerViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        headerViewContainer.backgroundColor = .systemBackground
+        headerViewContainer.backgroundColor = .secondarySystemGroupedBackground
         headerViewContainer.layer.cornerRadius = 8
         return headerViewContainer
     }()
@@ -32,7 +32,7 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .secondarySystemBackground
+        tableView.backgroundColor = .systemGroupedBackground
         return tableView
     }()
     
@@ -40,7 +40,7 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = .systemGroupedBackground
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         headerViewContainer.addSubview(hollowPieChart)
@@ -86,7 +86,6 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
         cell.textLabel?.text = Array(dataSource.keys)[indexPath.row]
-        cell.backgroundColor = .systemBackground
         return cell
     }
     

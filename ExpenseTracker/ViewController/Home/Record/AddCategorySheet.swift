@@ -9,15 +9,18 @@ import UIKit
 
 class AddCategorySheet: UITableViewController, CategoryDelegate {
     
-    private var selectedCategory: Category?
+    var selectedCategory: Category?
+    
+    weak var presentationModalSheetDelegate: PresentationModalSheetDelegate?
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.backgroundColor = .systemBackground
         textField.layer.cornerRadius = 10
         textField.placeholder = "Category Name"
         textField.keyboardType = .default
+        textField.addTarget(self, action: #selector(handleOnEditing), for: .editingChanged)
+        textField.autocorrectionType = .no
         return textField
     }()
     
@@ -31,13 +34,13 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .secondarySystemBackground
-        tableView.backgroundColor = .secondarySystemBackground
+        tableView.backgroundColor = .systemGroupedBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(addCustomCategory))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissAddCategorySheet))
         tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TextFieldCell")
         tableView.keyboardDismissMode = .onDrag
+        
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -54,6 +57,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
         if indexPath.section == 1 {
             let categoryIconVC = CategoryIconVC(selectedCategory: selectedCategory)
             categoryIconVC.categoryDelegate = self
+            categoryIconVC.title = "Custom Category Icon"
             let navigationController = UINavigationController(rootViewController: categoryIconVC)
             navigationController.preferredContentSize = .init(width: view.frame.width, height: view.frame.height)
             present(navigationController, animated: true)
@@ -63,18 +67,17 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath)
-            cell.backgroundColor = .systemBackground
             cell.contentView.addSubview(textField)
+            
             NSLayoutConstraint.activate([
                 textField.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
                 textField.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 20),
-                textField.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor)
+                textField.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
             ])
             return cell
         }
         else  if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
-            cell.backgroundColor = .systemBackground
             if selectedCategory != nil {
                 cell.configure(with: selectedCategory!.sfSymbolName, and: selectedCategory!.categoryName)
             }
@@ -89,29 +92,44 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
     
     @objc func addCustomCategory() {
         
-        guard textField.text! != ""  else {
-            let alert = UIAlertController(title: "", message: "Please enter category name", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true)
+        guard textField.text! != "" && !textField.isEmptyAfterTrimmed else {
+            showAlert(text: "Please enter category name")
             return
         }
         
         guard selectedCategory != nil else {
-            let alert = UIAlertController(title: "", message: "Please select a category", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alert, animated: true)
+            showAlert(text: "Please select a category")
             return
         }
         
-        Toast(text: "Category added", delay: 0)
+        if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text!).trimMoreThanOneSpaces(), category: selectedCategory!) {
+            let alert = UIAlertController(title: "", message: "Category added", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
+                    self.dismiss(animated: true){ [weak self] in
+                        self?.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
+                    }
+                })
+            }))
+            self.present(alert, animated: true)
+            
+        }
+        
     }
     
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    @objc func dismissAddCategorySheet() {
-        dismiss(animated: true, completion: nil)
+    @objc func dismissAddCategorySheet()
+    {
+        dismiss(animated: true)
+    }
+    
+    @objc func handleOnEditing() {
+        let text = textField.text ?? ""
+        let limit = 30
+        textField.text = String(text.prefix(limit))
     }
     
     func selectedCategory(_ category: Category) {
@@ -119,16 +137,29 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
         tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .none)
     }
     
-    // MARK: Toast
+    // MARK: Alert
     
-    func Toast(text: String, delay: Int) {
+    func showAlert(text: String) {
         let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(delay), execute: {
-            alert.dismiss(animated: true) {
-                self.dismiss(animated: true, completion: nil)
-            }
-        })
     }
     
 }
+
+extension UITextField {
+    var isEmptyAfterTrimmed: Bool {
+        return ((text!.trimmingCharacters(in: .whitespaces).isEmpty))
+    }
+}
+
+extension String {
+    
+    func trimMoreThanOneSpaces() -> String {
+        let components = self.components(separatedBy: .whitespaces)
+        let filteredComponents = components.filter { !$0.isEmpty }
+        return filteredComponents.joined(separator: " ")
+    }
+    
+}
+

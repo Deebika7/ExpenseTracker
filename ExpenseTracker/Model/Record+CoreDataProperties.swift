@@ -2,7 +2,7 @@
 //  Record+CoreDataProperties.swift
 //  ExpenseTracker
 //
-//  Created by deebika-pt6680 on 10/05/23.
+//  Created by deebika-pt6680 on 23/05/23.
 //
 //
 
@@ -16,18 +16,15 @@ extension Record {
         return NSFetchRequest<Record>(entityName: "Record")
     }
 
+    @NSManaged public var amount: Double
     @NSManaged public var category: String?
     @NSManaged public var date: Date?
-    @NSManaged public var amount: Double
-    @NSManaged public var type: Int16
     @NSManaged public var icon: String?
-    @NSManaged public var id: Int64
+    @NSManaged public var id: UUID?
+    @NSManaged public var type: Int16
 
 }
 
 extension Record : Identifiable {
 
-    
-    
-    
 }

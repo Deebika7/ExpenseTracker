@@ -28,7 +28,7 @@ class TypeVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .secondarySystemBackground
+        tableView.backgroundColor = .systemGroupedBackground
         navigationItem.searchController = SearchController()
         navigationItem.hidesSearchBarWhenScrolling = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "type")
@@ -44,7 +44,6 @@ class TypeVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "type", for: indexPath)
-        cell.backgroundColor = .systemBackground
         let indexPathValue = RecordType.allCases[indexPath.row]
         var configuration = cell.defaultContentConfiguration()
         switch indexPathValue {

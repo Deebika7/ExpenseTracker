@@ -7,21 +7,38 @@
 
 import UIKit
 
-class CategoriesListVC: UITableViewController {
+class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     
     weak var categoryDelegate: CategoryDelegate?
     
-    private var sfSymbol = [String]()
+//    lazy var check = false
     
-    private var label = [String]()
+    private lazy var category: [Category] = {
+        let category = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
+        return category
+    }()
+    
+    private lazy var customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
+   
     
     private lazy var searchController = SearchController()
     
-    lazy var selectedCategory: Category! = nil
+    private var selectedCategory: Category?
     
-    convenience init(selectedCategory: Category) {
+    private lazy var type: String! = nil
+    
+    private lazy var edit: UIBarButtonItem = {
+        UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(enableEditing))
+    }()
+    
+    private lazy var add: UIBarButtonItem = {
+        UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCategory))
+    }()
+    
+    convenience init(selectedCategory: Category?, type: String) {
         self.init(style: .insetGrouped)
         self.selectedCategory = selectedCategory
+        self.type = type
     }
     
     override init(style: UITableView.Style) {
@@ -34,69 +51,114 @@ class CategoriesListVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundColor = .secondarySystemBackground
-        staticData()
+        tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCategory))
+        navigationItem.rightBarButtonItems = [add, edit]
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 30
         tableView.estimatedSectionHeaderHeight = 10
         tableView.sectionHeaderHeight = UITableView.automaticDimension
     }
     
+    @objc func enableEditing() {
+        tableView.isEditing  =  tableView.isEditing ? false : true
+    }
+    
     @objc func addNewCategory(){
         let addCategoryVC = AddCategorySheet()
+        addCategoryVC.title = "Custom Category"
+        addCategoryVC.presentationModalSheetDelegate = self
         let navigationController = UINavigationController(rootViewController: addCategoryVC)
         navigationController.modalPresentationStyle = .formSheet
         navigationController.preferredContentSize = .init(width: view.frame.width, height: view.frame.height)
         present(navigationController, animated: true)
     }
     
-    private func staticData() {
-        label.append("Food")
-        label.append("Gym")
-        label.append("Rent")
-        sfSymbol.append("fork.knife")
-        sfSymbol.append("dumbbell")
-        sfSymbol.append("house")
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        section == 0 ? "Default Category" : (customCategory.isEmpty) ? "" : "Custom Category"
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sfSymbol.count
+        section == 0 ? category.count : customCategory.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
-        configuration.text = label[indexPath.row]
-        configuration.textProperties.color = .label
-        configuration.image = UIImage(systemName: sfSymbol[indexPath.row])
-        configuration.imageProperties.tintColor = .label
-        if label[indexPath.row]  == selectedCategory.categoryName {
-            cell.accessoryType = .checkmark
+        if indexPath.section == 0 {
+            configuration.text = category[indexPath.row].categoryName
+            configuration.image = UIImage(systemName: category[indexPath.row].sfSymbolName)
+            if selectedCategory != nil {
+                cell.accessoryType = (category[indexPath.row].categoryName  == selectedCategory!.categoryName) ? .checkmark: .none
+            }
         }
-        cell.backgroundColor = .systemBackground
+        else if indexPath.section == 1 {
+            configuration.text = customCategory[indexPath.row].name
+            configuration.image = UIImage(systemName: customCategory[indexPath.row].icon!)
+            if selectedCategory != nil {
+                cell.accessoryType = (customCategory[indexPath.row].name  == selectedCategory!.categoryName) ? .checkmark: .none
+            }
+        }
+        configuration.imageProperties.tintColor = .label
+        configuration.textProperties.color = .label
         cell.contentConfiguration = configuration
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        categoryDelegate?.selectedCategory(Category(sfSymbolName: sfSymbol[indexPath.row], categoryName: label[indexPath.row]))
-        tableView.reloadData()
+        if indexPath.section == 0 {
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: category[indexPath.row].sfSymbolName, categoryName: category[indexPath.row].categoryName))
+        }
+        else {
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: customCategory[indexPath.row].icon!, categoryName: customCategory[indexPath.row].name!))
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    // MARK: Edit
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        indexPath.section == 1 ? true : false
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .delete
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            tableView.beginUpdates()
+            RecordDataManager.shared.deleteCustomCategory(id: customCategory[indexPath.row].id!)
+            customCategory.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
+            tableView.reloadData()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
+    func dismissedPresentationModalSheet(_ isDismissed: Bool) {
+        if isDismissed {
+            customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
+            tableView.reloadData()
+        }
+    }
+    
 }
+
+

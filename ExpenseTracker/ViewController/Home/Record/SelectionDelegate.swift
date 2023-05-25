@@ -10,5 +10,3 @@ import Foundation
 protocol SelectionDelegate: AnyObject {
     func selectedType(_ text: String)
 }
-
-

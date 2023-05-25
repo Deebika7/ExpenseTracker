@@ -65,7 +65,7 @@ class CustomDisClosureCellWithImage: UITableViewCell {
         label.text = text
         label.font = .preferredFont(forTextStyle: .body)
         label.isUserInteractionEnabled = true
-        label.textColor = .label
+        label.textColor = (text == "Select a Category" || text == "Select Category Icon" ) ? .placeholderText : .label
         label.adjustsFontForContentSizeCategory = true
     }
     

@@ -19,6 +19,8 @@ class DatabaseManager {
     
     let saveContext = (UIApplication.shared.delegate as! AppDelegate).saveContext
     
+    // MARK: Record
+    
     private lazy var fetchRecord: NSFetchRequest<Record>  = {
         return Record.fetchRequest()
     }()
@@ -37,10 +39,10 @@ class DatabaseManager {
         return nil
     }
     
-    func createRecord(id: Int64, type: Int16, category: String, amount: Double, icon: String, date: Date ) {
+    func createRecord(id: UUID, recordType: Int16, category: String, amount: Double, icon: String, date: Date ) {
         let record = Record(context: context)
         record.id = id
-        record.type = type
+        record.type = recordType
         record.category = category
         record.amount = amount
         record.icon = icon
@@ -48,7 +50,7 @@ class DatabaseManager {
         saveContext()
     }
     
-    func removeRecord(_ id: Int64) {
+    func removeRecord(_ id: UUID) {
         let records = getAllRecord()
         for record in records {
             if record.id == id {
@@ -58,6 +60,33 @@ class DatabaseManager {
         saveContext()
     }
     
+    // MARK: Category
+    
+    private lazy var fetchCustomCategory: NSFetchRequest<CustomCategory>  = {
+        return CustomCategory.fetchRequest()
+    }()
+    
+    func getAllCustomCategory() -> [CustomCategory] {
+        return (try? context.fetch(fetchCustomCategory)) ?? []
+    }
+
+    func addCustomCategory(id: UUID, name: String, iconName: String) {
+        let customCategory = CustomCategory(context: context)
+        customCategory.id = id
+        customCategory.name = name
+        customCategory.icon = iconName
+        saveContext()
+    }
+    
+    func removeCustomCategory(id : UUID) {
+        let customCategory = getAllCustomCategory()
+        for category in customCategory {
+            if category.id == id {
+                context.delete(category)
+            }
+        }
+        saveContext()
+    }
     
 }
 

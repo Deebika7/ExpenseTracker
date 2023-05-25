@@ -17,6 +17,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         textField.adjustsFontForContentSizeCategory = true
         textField.textColor = .label
         textField.delegate = self
+        textField.addTarget(self, action:  #selector(handleOnEditing), for: .editingChanged)
         return textField
     }()
     
@@ -25,7 +26,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         contentView.addSubview(textField)
         NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            textField.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
+            textField.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant:  -16),
             textField.centerYAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
         ])
         textField.adjustsFontForContentSizeCategory = true
@@ -54,7 +55,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
     }
     
     func getEnteredData() -> String {
-        textField.text!
+        textField.text ?? ""
     }
     
     // MARK: Textfield Delegate
@@ -62,6 +63,12 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let invalidCharacters = CharacterSet(charactersIn: "0123456789.").inverted
         return string.rangeOfCharacter(from: invalidCharacters) == nil
+    }
+    
+    @objc func handleOnEditing() {
+        let text = textField.text ?? ""
+        let limit = 21
+        textField.text = String(text.prefix(limit))
     }
 }
 
