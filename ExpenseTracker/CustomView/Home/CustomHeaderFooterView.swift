@@ -31,10 +31,6 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
         super.prepareForReuse()
     }
     
-    override var intrinsicContentSize: CGSize {
-        return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-    }
-    
     func configureView(with title: String) {
         headerLabel.text = title
         headerLabel.textColor = .label

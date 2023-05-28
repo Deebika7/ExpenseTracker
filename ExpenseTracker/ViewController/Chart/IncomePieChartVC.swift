@@ -7,23 +7,90 @@
 
 import UIKit
 
-class IncomePieChartVC: UIViewController {
+class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    var dataSource: [String : Double] = ["Category 1": 30, "Category 2": 40, "Category 3": 20]
+    
+    private lazy var hollowPieChart: UIView = {
+        let hollowPieChartView = HollowPieChart()
+        hollowPieChartView.data = dataSource
+        hollowPieChartView.translatesAutoresizingMaskIntoConstraints = false
+        hollowPieChartView.backgroundColor = .secondarySystemGroupedBackground
+        return hollowPieChartView
+    }()
+    
+    private lazy var headerViewContainer: UIView = {
+        let headerViewContainer = UIView()
+        headerViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        headerViewContainer.backgroundColor = .secondarySystemGroupedBackground
+        headerViewContainer.layer.cornerRadius = 8
+        return headerViewContainer
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: view.bounds, style: .insetGrouped)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .systemGroupedBackground
+        return tableView
+    }()
+    
+    private lazy var searchController = SearchController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .systemGroupedBackground
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(displaySearchBar))
+        headerViewContainer.addSubview(hollowPieChart)
+        view.addSubview(tableView)
+        view.addSubview(headerViewContainer)
+        setupContraints()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
+        tableView.keyboardDismissMode = .onDrag
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    func setupContraints() {
+        NSLayoutConstraint.activate([
+            hollowPieChart.heightAnchor.constraint(equalToConstant: 160),
+            hollowPieChart.widthAnchor.constraint(equalToConstant: 160),
+            hollowPieChart.centerYAnchor.constraint(equalTo: headerViewContainer.centerYAnchor),
+            hollowPieChart.centerXAnchor.constraint(equalTo: headerViewContainer.centerXAnchor),
+            
+            headerViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            headerViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -16),
+            headerViewContainer.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
+            headerViewContainer.heightAnchor.constraint(equalToConstant: 160),
+            
+            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: -20),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
+        ])
     }
-    */
-
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        navigationItem.title = "Chart"
+//        navigationController?.navigationBar.prefersLargeTitles = true
+//    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        dataSource.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
+        cell.textLabel?.text = Array(dataSource.keys)[indexPath.row]
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
+
