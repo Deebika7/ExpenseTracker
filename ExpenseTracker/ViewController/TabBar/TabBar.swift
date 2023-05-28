@@ -30,12 +30,11 @@ class TabBar: UITabBarController {
     private lazy var homeVC: UINavigationController = {
         let homeVc = UINavigationController(rootViewController: HomeVC())
         homeVc.tabBarItem = homeTabBarItem
-        homeVc.navigationBar.prefersLargeTitles = false
         return homeVc
     }()
     
     private lazy var chartVC: UINavigationController = {
-        let chartVC = UINavigationController(rootViewController: PieChartVC())
+        let chartVC = UINavigationController(rootViewController: ChartVC())
         chartVC.tabBarItem = chartTabBarItem
         return chartVC
     }()

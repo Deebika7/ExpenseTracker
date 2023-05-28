@@ -82,8 +82,6 @@ class CategoryIconVC: UITableViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    
-    
     @objc func dismissCategoryIconVC() {
         dismiss(animated: true, completion: nil)
     }

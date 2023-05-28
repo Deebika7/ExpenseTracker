@@ -11,7 +11,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     
     weak var categoryDelegate: CategoryDelegate?
     
-//    lazy var check = false
+    lazy var check = false
     
     private lazy var category: [Category] = {
         let category = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()

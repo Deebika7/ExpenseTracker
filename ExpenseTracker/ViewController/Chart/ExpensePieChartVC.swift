@@ -41,33 +41,45 @@ class PieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(displaySearchBar))
+//        navigationItem.searchController = searchController
+//        navigationItem.hidesSearchBarWhenScrolling = false
+//        searchController.obscuresBackgroundDuringPresentation = false
+//        searchController.hidesNavigationBarDuringPresentation = false
         headerViewContainer.addSubview(hollowPieChart)
         view.addSubview(headerViewContainer)
         view.addSubview(tableView)
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
+        tableView.keyboardDismissMode = .onDrag
+    }
+    
+    @objc func displaySearchBar() {
+//        let searchBar = UISearchBar()
+//        searchBar.showsCancelButton = true
+//        searchBar.cance
+//        navigationItem.titleView = searchBar
+//        navigationItem.hidesSearchBarWhenScrolling = false
+
     }
     
     func setupContraints() {
         NSLayoutConstraint.activate([
-            hollowPieChart.heightAnchor.constraint(equalToConstant: 200),
-            hollowPieChart.widthAnchor.constraint(equalToConstant: 200),
+            hollowPieChart.heightAnchor.constraint(equalToConstant: 160),
+            hollowPieChart.widthAnchor.constraint(equalToConstant: 160),
             hollowPieChart.centerYAnchor.constraint(equalTo: headerViewContainer.centerYAnchor),
             hollowPieChart.centerXAnchor.constraint(equalTo: headerViewContainer.centerXAnchor),
             
             headerViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             headerViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -16),
             headerViewContainer.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
-            headerViewContainer.heightAnchor.constraint(equalToConstant: 200),
+            headerViewContainer.heightAnchor.constraint(equalToConstant: 160),
             
             tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
         ])
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {

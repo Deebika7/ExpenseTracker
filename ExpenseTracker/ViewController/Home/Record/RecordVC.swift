@@ -47,11 +47,13 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     @objc func addRecord() {
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! CustomTextFieldCell
         amount = Double(cell.getEnteredData()) ?? 0
+        
         guard amount > 0 else {
 
             showAlert(text: "Please enter amount")
             return
         }
+        
         guard changedCategory != nil else {
             showAlert(text: "Please select a category")
             return
@@ -179,7 +181,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier:CustomHeaderFooterView.reuseIdentifier) as! CustomHeaderFooterView
+        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomHeaderFooterView.reuseIdentifier) as! CustomHeaderFooterView
         headerView.configureView(with: RecordField.allCases[section].rawValue)
         return headerView
     }

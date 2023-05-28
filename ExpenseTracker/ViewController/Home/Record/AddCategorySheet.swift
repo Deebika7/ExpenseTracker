@@ -154,12 +154,10 @@ extension UITextField {
 }
 
 extension String {
-    
     func trimMoreThanOneSpaces() -> String {
         let components = self.components(separatedBy: .whitespaces)
         let filteredComponents = components.filter { !$0.isEmpty }
         return filteredComponents.joined(separator: " ")
     }
-    
 }
 

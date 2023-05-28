@@ -109,6 +109,13 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return tableView
     }()
     
+//    private lazy var filterIcon: UIImageView = {
+//        let filterIcon = UIImageView()
+//        filterIcon.translatesAutoresizingMaskIntoConstraints = false
+//        filterIcon.image = UIImage(systemName: "arrow.up.arrow.down.circle")
+//        return filterIcon
+//    }()
+//
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
@@ -136,6 +143,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         view.addSubview(tableView)
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
+        tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
     }
     
     func setupContraints() {
@@ -181,9 +189,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             
             balanceAmount.centerYAnchor.constraint(equalTo: balanceView.centerYAnchor, constant: 10),
             balanceAmount.centerXAnchor.constraint(equalTo: balanceView.centerXAnchor),
-        
-            tableView.topAnchor.constraint(equalTo: redView.bottomAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            tableView.topAnchor.constraint(equalTo: redView.bottomAnchor, constant: 20),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
         ])
@@ -195,18 +203,44 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(recordVC, animated: true)
     }
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        3
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        25
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as! MoneyTrackerSectionHeaderView
+        cell.configure(date: "23-03-2023", incomeAmount: 978687, expenseAmount: 35343)
+        return cell
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath)
-        cell.textLabel?.text = "test"
+        var configuration = cell.defaultContentConfiguration()
+        configuration.text = "test"
+        configuration.image = UIImage(systemName: "pencil")
+        configuration.imageProperties.tintColor = .label
+        cell.contentConfiguration = configuration
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let decriptionVc = DescriptionVC()
+        decriptionVc.title = "Details"
+//        let navigationController = UINavigationController(rootViewController: decriptionVc)
+        navigationController?.pushViewController(decriptionVc, animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        4
     }
     
 }
