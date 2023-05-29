@@ -112,7 +112,6 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
                 })
             }))
             self.present(alert, animated: true)
-            
         }
         
     }

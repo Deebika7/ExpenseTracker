@@ -22,6 +22,8 @@ class CustomCategoryDataManager {
         DatabaseManager.shared.getAllCustomCategory()
     }
     
-    
+    func deleteCustomCategory(id: UUID) {
+        DatabaseManager.shared.removeCustomCategory(id: id)
+    }
     
 }

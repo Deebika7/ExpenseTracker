@@ -9,17 +9,50 @@ import UIKit
 
 class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    private var recordId: UUID?
+    
+    private lazy var record: Record! = nil
     
     private lazy var edit: UIBarButtonItem = {
-        UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: nil)
+        UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(editRecord))
     }()
     
+    @objc func editRecord() {
+        let recordVC = RecordVC(editRecord: record)
+        navigationController?.pushViewController(recordVC, animated: true)
+    }
+    
     private lazy var delete: UIBarButtonItem = {
-        UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: nil)
+        UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(deleteRecord))
     }()
+    
+    @objc func deleteRecord() {
+        let alert = UIAlertController(title: "Delete", message: "Are you sure want to delete this record", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "No", style: .default))
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in
+            RecordDataManager.shared.deleteRecord(id: self.record!.id!)
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
+                self.dismiss(animated: true){ [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            })
+        }))
+        self.present(alert, animated: true)
+        
+    }
+    
+    init(recordId: UUID?) {
+        self.recordId = recordId
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        record = RecordDataManager.shared.getRecord(id: recordId!)
         view.addSubview(tableView)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DescriptionCell")
         navigationItem.rightBarButtonItems = [delete, edit]
@@ -47,27 +80,35 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         ])
     }
     
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DescriptionCell", for: indexPath)
             var configuration = cell.defaultContentConfiguration()
-            configuration.image = UIImage(systemName: "dumbbell")
+            configuration.image = UIImage(systemName: record.icon!)
             configuration.imageToTextPadding = 70
             configuration.imageProperties.tintColor = .label
-            configuration.text = "Gym"
+            configuration.text = record.category
             configuration.textProperties.font = UIFont.boldSystemFont(ofSize: 20)
             cell.contentConfiguration = configuration
             cell.selectionStyle = .none
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.reuseIdentifier, for: indexPath) as! DescriptionCell
-            cell.configureCell(title: "test", text: "test")
+            if indexPath.row == 1 {
+                cell.configureCell(title: "Type", text: RecordType.allCases[Int(record.type)].rawValue)
+            }
+            else if indexPath.row == 2 {
+                cell.configureCell(title: "Category", text: record.category!)
+            }
+            else if indexPath.row == 3 {
+                cell.configureCell(title: "Amount", text: String(record.amount))
+            }
+            else if indexPath.row == 4 {
+                cell.configureCell(title: "Date", text: Helper.convertDateToString(date: record.date!))
+            }
             cell.selectionStyle = .none
             return cell
         }
-       
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -82,5 +123,9 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        record = RecordDataManager.shared.getRecord(id: recordId!)
+        tableView.reloadData()
+    }
     
 }

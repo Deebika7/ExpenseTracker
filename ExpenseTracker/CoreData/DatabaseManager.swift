@@ -29,17 +29,28 @@ class DatabaseManager {
         return (try? context.fetch(fetchRecord)) ?? []
     }
     
-    func getRecord(_ predicate: (Record) -> Bool) -> Record? {
+//    func getRecord(_ predicate: (Record) -> Bool) -> Record? {
+//        let records = getAllRecord()
+//        for record in records {
+//            if predicate(record) {
+//                return record
+//            }
+//        }
+//        return nil
+//    }
+    
+    func getRecord(id: UUID) -> Record? {
         let records = getAllRecord()
         for record in records {
-            if predicate(record) {
+            if record.id == id {
                 return record
             }
         }
         return nil
+
     }
     
-    func createRecord(id: UUID, recordType: Int16, category: String, amount: Double, icon: String, date: Date ) {
+    func createRecord(id: UUID, recordType: Int16, category: String, amount: Double, icon: String, date: Date) {
         let record = Record(context: context)
         record.id = id
         record.type = recordType
@@ -57,6 +68,16 @@ class DatabaseManager {
                 context.delete(record)
             }
         }
+        saveContext()
+    }
+    
+    func updateRecord(id: UUID, newType: Int16, newAmount: Double, newIcon: String, newCategory: String, newDate: Date) {
+        let record = getRecord(id: id)
+        record?.type = newType
+        record?.amount = newAmount
+        record?.icon = newIcon
+        record?.category = newCategory
+        record?.date = newDate
         saveContext()
     }
     

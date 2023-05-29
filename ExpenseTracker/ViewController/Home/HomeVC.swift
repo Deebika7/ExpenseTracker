@@ -11,6 +11,8 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private lazy var searchController = SearchController()
     
+    private lazy var records = RecordDataManager.shared.getAllRecord(month: 5, year: 2023)
+    
     private lazy var blueView: UIView = {
         let blueView = UIView()
         blueView.translatesAutoresizingMaskIntoConstraints = false
@@ -109,13 +111,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return tableView
     }()
     
-//    private lazy var filterIcon: UIImageView = {
-//        let filterIcon = UIImageView()
-//        filterIcon.translatesAutoresizingMaskIntoConstraints = false
-//        filterIcon.image = UIImage(systemName: "arrow.up.arrow.down.circle")
-//        return filterIcon
-//    }()
-//
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
@@ -198,13 +193,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func addRecord() {
-        let recordVC = RecordVC()
-        recordVC.title = "Add Record"
+        let recordVC = RecordVC(editRecord: nil)
         navigationController?.pushViewController(recordVC, animated: true)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        3
+        records.count
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -213,19 +207,24 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as! MoneyTrackerSectionHeaderView
-        cell.configure(date: "23-03-2023", incomeAmount: 978687, expenseAmount: 35343)
+        cell.configure(date: Array(records.keys)[section], incomeAmount: 978687, expenseAmount: 35343)
         return cell
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
+        records = RecordDataManager.shared.getAllRecord(month: 5, year: 2023)
+        tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath)
+        let record = Array(records.keys)[indexPath.section]
         var configuration = cell.defaultContentConfiguration()
-        configuration.text = "test"
-        configuration.image = UIImage(systemName: "pencil")
+        if let recordItems = records[record] {
+            configuration.text = recordItems[indexPath.row].category
+            configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
+        }
         configuration.imageProperties.tintColor = .label
         cell.contentConfiguration = configuration
         return cell
@@ -233,14 +232,18 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let decriptionVc = DescriptionVC()
-        decriptionVc.title = "Details"
-//        let navigationController = UINavigationController(rootViewController: decriptionVc)
-        navigationController?.pushViewController(decriptionVc, animated: true)
+        let recordItem = Array(records.keys)[indexPath.section]
+        if let recordItems = records[recordItem]{
+            let decriptionVc = DescriptionVC(recordId: recordItems[indexPath.row].id!)
+            decriptionVc.title = "Details"
+            navigationController?.pushViewController(decriptionVc, animated: true)
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        let recordItem = Array(records.keys)[section]
+        return records[recordItem]?.count ?? 0
     }
     
 }

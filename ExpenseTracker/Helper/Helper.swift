@@ -138,6 +138,15 @@ class Helper {
         return category
     }
     
+    static func getYearAndMonthFromDate(date: Date) -> (year: Int, month: Int){
+        let components = calendar.dateComponents([.year, .month], from: date)
+
+        if let year = components.year, let month = components.month {
+           return (year,month)
+        }
+        return (0,0)
+    }
+    
 }
 
 

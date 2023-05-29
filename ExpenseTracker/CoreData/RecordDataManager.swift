@@ -20,8 +20,37 @@ class RecordDataManager {
         return true
     }
     
-    func deleteCustomCategory(id: UUID) {
-        DatabaseManager.shared.removeCustomCategory(id: id)
+    func updateRecord(id: UUID, type: String, amount: Double, date: String, category: Category) {
+        let recordType: Int16 = (type == "Income") ? 0 : 1
+        let date: Date = Helper.convertStringToDate(value: date)
+        DatabaseManager.shared.updateRecord(id: id, newType: recordType, newAmount: amount, newIcon: category.sfSymbolName, newCategory: category.categoryName, newDate: date)
+    }
+    
+    func getAllRecord(month: Int, year: Int) -> [Date:[Record]] {
+        let allRecords = DatabaseManager.shared.getAllRecord()
+        var records: [Date: [Record]] = [:]
+        for record in allRecords {
+            let recordMonth = Helper.getYearAndMonthFromDate(date: record.date!).month
+            let recordYear = Helper.getYearAndMonthFromDate(date: record.date!).year
+            if recordYear == year && recordMonth == month {
+                if records[record.date!] != nil {
+                    records[record.date!]?.append(record)
+                }
+                else {
+                    records[record.date!] = []
+                    records[record.date!]?.append(record)
+                }
+            }
+        }
+        return records
+    }
+    
+    func deleteRecord(id: UUID) {
+        DatabaseManager.shared.removeRecord(id)
+    }
+    
+    func getRecord(id: UUID) -> Record {
+        DatabaseManager.shared.getRecord(id: id)!
     }
     
 //    func getCategoryList(for createdDate: String, and type: String) -> [Category] {

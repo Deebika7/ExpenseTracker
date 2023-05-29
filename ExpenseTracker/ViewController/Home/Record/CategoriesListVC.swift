@@ -11,7 +11,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     
     weak var categoryDelegate: CategoryDelegate?
     
-    lazy var check = false
+    private lazy var check = false
     
     private lazy var category: [Category] = {
         let category = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
@@ -140,7 +140,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.beginUpdates()
-            RecordDataManager.shared.deleteCustomCategory(id: customCategory[indexPath.row].id!)
+            CustomCategoryDataManager.shared.deleteCustomCategory(id: customCategory[indexPath.row].id!)
             customCategory.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             tableView.endUpdates()
