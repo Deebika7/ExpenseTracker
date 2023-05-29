@@ -33,4 +33,16 @@ class UserDefaultManager {
         return nil
     }
     
+    func saveSelectedAppearance(_ appearance: UIUserInterfaceStyle) {
+        UserDefaults.standard.set(appearance.rawValue, forKey: "SelectedAppearance")
+    }
+
+    func getSelectedAppearance() -> UIUserInterfaceStyle? {
+        if let rawValue = UserDefaults.standard.value(forKey: "SelectedAppearance") as? Int {
+            return UIUserInterfaceStyle(rawValue: rawValue)
+        }
+        return nil
+    }
+
+    
 }

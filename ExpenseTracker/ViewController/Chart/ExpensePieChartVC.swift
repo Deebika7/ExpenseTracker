@@ -41,7 +41,6 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(displaySearchBar))
         headerViewContainer.addSubview(hollowPieChart)
         view.addSubview(tableView)
         view.addSubview(headerViewContainer)
@@ -49,7 +48,6 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
         tableView.keyboardDismissMode = .onDrag
     }
-    
     
     func setupContraints() {
         NSLayoutConstraint.activate([
@@ -69,11 +67,6 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
         ])
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        navigationItem.title = "Chart"
-//        navigationController?.navigationBar.prefersLargeTitles = true
-//    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         1

@@ -36,11 +36,10 @@ class DescriptionCell: UITableViewCell {
             descriptiontitle.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             descriptiontitle.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
         ])
-
     }
     
     func configureCell(title: String, text: String) {
-        descriptiontitle.text = "\(title) :"
+        descriptiontitle.text = "\(title) "
         descriptionLabel.text = text
         descriptiontitle.textColor = UIColor.darkGray
         descriptiontitle.font = UIFont.systemFont(ofSize: 15)

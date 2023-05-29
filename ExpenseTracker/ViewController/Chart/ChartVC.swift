@@ -11,8 +11,8 @@ class ChartVC: UIViewController {
     
     private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
-        segmentedControl.insertSegment(withTitle: "Expense", at: 0, animated: false)
-        segmentedControl.insertSegment(withTitle: "Income", at: 1, animated: false)
+        segmentedControl.insertSegment(withTitle: "Expense", at: 0, animated: true)
+        segmentedControl.insertSegment(withTitle: "Income", at: 1, animated: true)
         segmentedControl.addTarget(self, action: #selector(switchSegmentedControl), for: .valueChanged)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false

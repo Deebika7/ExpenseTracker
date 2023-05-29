@@ -47,8 +47,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             isEditingEnabled = true
             editRecordId = editRecord.id
         }
-         
-        
     }
     
     // MARK: Validation
@@ -82,201 +80,201 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             }))
             self.present(alert, animated: true)
         }
-            
-        }
-        
-        // MARK: TableView Cells
-        private func registerCustomCells() {
-            tableView.register(CustomTextFieldCell.self, forCellReuseIdentifier: CustomTextFieldCell.reuseIdentifier)
-            tableView.register(CustomHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CustomHeaderFooterView.reuseIdentifier)
-            tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
-            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarView")
-            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TypeCell")
-            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarLabel")
-        }
-        
-        override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let indexPathValue = RecordField.allCases[indexPath.section]
-            switch indexPathValue {
-            case .type:
-                let cell = tableView.dequeueReusableCell(withIdentifier: "TypeCell" , for: indexPath)
-                var configuration = cell.defaultContentConfiguration()
-                
-                if let editRecord = editRecord {
-                    configuration.text = RecordType.allCases[Int(editRecord.type)].rawValue
-                    currentType = RecordType.allCases[Int(editRecord.type)].rawValue
-                }
-                else {
-                    configuration.text = currentType
-                }
-                cell.contentConfiguration = configuration
-                cell.accessoryType = .disclosureIndicator
-                
-                return cell
-                
-            case .amount:
-                let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
-                if let editRecord = editRecord {
-                    cell.textField.text = String(editRecord.amount)
-                }
-                cell.configureNumberKeyBoard()
-                return cell
-                
-            case .date:
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarLabel", for: indexPath)
-                    var configuration  = cell.defaultContentConfiguration()
-                    
-                    if let editRecord = editRecord {
-                        configuration.text = Helper.convertDateToString(date: editRecord.date!)
-                        changedDate = Helper.convertDateToString(date: editRecord.date!)
-                    }
-                    else if changedDate != nil && changedDate != date {
-                        configuration.text = changedDate!
-                    }
-                    else {
-                        configuration.text = "\(Helper.convertDateToString(date: Helper.defaultDate))"+" "+"(Today's Date)"
-                    }
-                    let systemName = isRowExpanded ? "calendar.badge.minus" : "calendar.badge.plus"
-                    cell.accessoryView = UIImageView(image: UIImage(systemName: systemName))
-                    cell.accessoryView?.tintColor = .label
-                    
-                    cell.contentConfiguration = configuration
-                    
-                    return cell
-                }
-                else if indexPath.row == 1 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarView", for: indexPath)
-                    cell.contentView.addSubview(calendarView)
-                    
-                    NSLayoutConstraint.activate([
-                        calendarView.leadingAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.leadingAnchor),
-                        calendarView.trailingAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.trailingAnchor),
-                        calendarView.bottomAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.bottomAnchor),
-                        calendarView.topAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.topAnchor)
-                    ])
-                    
-                    return cell
-                }
-            case .category:
-                let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
-                if let editRecord = editRecord {
-                    cell.configure(with: editRecord.icon!, and: editRecord.category!)
-                    changedCategory = Category(sfSymbolName: editRecord.icon!, categoryName: editRecord.category!)
-                }
-                else if changedCategory != nil {
-                    cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
-                }
-                else {
-                    cell.configure(with: "", and: "Select a Category")
-                }
-                
-                cell.accessoryType = .disclosureIndicator
-                editRecord = nil
-                return cell
-            }
-            return UITableViewCell()
-        }
-        
-        override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            UITableView.automaticDimension
-        }
-        
-        override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-            44
-        }
-        
-        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            tableView.deselectRow(at: indexPath, animated: true)
-            let indexPathValue = RecordField.allCases[indexPath.section]
-            switch indexPathValue {
-            case .type:
-                let typeVC = TypeVC(selectedType: currentType )
-                typeVC.title = "Type"
-                typeVC.selectionDelegate = self
-                isTypeChanged.toggle()
-                navigationController?.pushViewController(typeVC, animated: true)
-            case .amount:
-                print("")
-            case .category:
-                let categoryListVC = CategoriesListVC(selectedCategory: changedCategory, type: currentType)
-                categoryListVC.title = "Category"
-                categoryListVC.categoryDelegate = self
-                navigationController?.pushViewController(categoryListVC, animated: true)
-            case .date:
-                isRowExpanded.toggle()
-                tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
-            }
-        }
-        
-        override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-            let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomHeaderFooterView.reuseIdentifier) as! CustomHeaderFooterView
-            headerView.configureView(with: RecordField.allCases[section].rawValue)
-            return headerView
-        }
-        
-        override func numberOfSections(in tableView: UITableView) -> Int {
-            return RecordField.allCases.count
-        }
-        
-        override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            if isRowExpanded  && section == 2 {
-                return 2
-            }
-            return  1
-        }
-        
-        override func viewWillAppear(_ animated: Bool) {
-            navigationItem.title = "Add Record"
-        }
-        
-        // MARK: Selection Delegate
-        
-        func selectedType(_ text: String) {
-            previousType = currentType
-            currentType = text
-            if previousType != currentType {
-                tableView.reloadData()
-                changedCategory = nil
-            }
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
-        }
-        
-        // MARK: Category Delegate
-        
-        func selectedCategory(_ category: Category) {
-            changedCategory = category
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 3)], with: .none)
-        }
-        
-        // MARK: Calendar View Delegate
-        
-        func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-            changedDate = Helper.convertDateToString(date: dateComponents!.date!)
-            tableView.reloadRows(at: [IndexPath(row: 0, section: 2)], with: .none)
-        }
-        
-        // MARK: TableView Style
-        
-        convenience init(editRecord: Record?) {
-            self.init(style: .insetGrouped)
-            self.editRecord = editRecord
-        }
-        
-        override init(style: UITableView.Style) {
-            super.init(style: style)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        // MARK: Alert
-        
-        func showAlert(text: String) {
-            let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true)
-        }
         
     }
+    
+    // MARK: TableView Cells
+    private func registerCustomCells() {
+        tableView.register(CustomTextFieldCell.self, forCellReuseIdentifier: CustomTextFieldCell.reuseIdentifier)
+        tableView.register(CustomHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: CustomHeaderFooterView.reuseIdentifier)
+        tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarView")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TypeCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CalendarLabel")
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let indexPathValue = RecordField.allCases[indexPath.section]
+        switch indexPathValue {
+        case .type:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "TypeCell" , for: indexPath)
+            var configuration = cell.defaultContentConfiguration()
+            
+            if let editRecord = editRecord {
+                configuration.text = RecordType.allCases[Int(editRecord.type)].rawValue
+                currentType = RecordType.allCases[Int(editRecord.type)].rawValue
+            }
+            else {
+                configuration.text = currentType
+            }
+            cell.contentConfiguration = configuration
+            cell.accessoryType = .disclosureIndicator
+            
+            return cell
+            
+        case .amount:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
+            if let editRecord = editRecord {
+                cell.textField.text = String(editRecord.amount)
+            }
+            cell.configureNumberKeyBoard()
+            return cell
+            
+        case .date:
+            if indexPath.row == 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarLabel", for: indexPath)
+                var configuration  = cell.defaultContentConfiguration()
+                
+                if let editRecord = editRecord {
+                    configuration.text = Helper.convertDateToString(date: editRecord.date!)
+                    changedDate = Helper.convertDateToString(date: editRecord.date!)
+                }
+                else if changedDate != nil && changedDate != date {
+                    configuration.text = changedDate!
+                }
+                else {
+                    configuration.text = "\(Helper.convertDateToString(date: Helper.defaultDate))"+" "+"(Today's Date)"
+                }
+                let systemName = isRowExpanded ? "calendar.badge.minus" : "calendar.badge.plus"
+                cell.accessoryView = UIImageView(image: UIImage(systemName: systemName))
+                cell.accessoryView?.tintColor = .label
+                
+                cell.contentConfiguration = configuration
+                
+                return cell
+            }
+            else if indexPath.row == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarView", for: indexPath)
+                cell.contentView.addSubview(calendarView)
+                
+                NSLayoutConstraint.activate([
+                    calendarView.leadingAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.leadingAnchor),
+                    calendarView.trailingAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.trailingAnchor),
+                    calendarView.bottomAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.bottomAnchor),
+                    calendarView.topAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.topAnchor)
+                ])
+                
+                return cell
+            }
+        case .category:
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
+            if let editRecord = editRecord {
+                cell.configure(with: editRecord.icon!, and: editRecord.category!)
+                changedCategory = Category(sfSymbolName: editRecord.icon!, categoryName: editRecord.category!)
+            }
+            else if changedCategory != nil {
+                cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
+            }
+            else {
+                cell.configure(with: "", and: "Select a Category")
+            }
+            
+            cell.accessoryType = .disclosureIndicator
+            editRecord = nil
+            return cell
+        }
+        return UITableViewCell()
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        UITableView.automaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        44
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let indexPathValue = RecordField.allCases[indexPath.section]
+        switch indexPathValue {
+        case .type:
+            let typeVC = TypeVC(selectedType: currentType )
+            typeVC.title = "Type"
+            typeVC.selectionDelegate = self
+            isTypeChanged.toggle()
+            navigationController?.pushViewController(typeVC, animated: true)
+        case .amount:
+            print("")
+        case .category:
+            let categoryListVC = CategoriesListVC(selectedCategory: changedCategory, type: currentType)
+            categoryListVC.title = "Category"
+            categoryListVC.categoryDelegate = self
+            navigationController?.pushViewController(categoryListVC, animated: true)
+        case .date:
+            isRowExpanded.toggle()
+            tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomHeaderFooterView.reuseIdentifier) as! CustomHeaderFooterView
+        headerView.configureView(with: RecordField.allCases[section].rawValue)
+        return headerView
+    }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return RecordField.allCases.count
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isRowExpanded  && section == 2 {
+            return 2
+        }
+        return  1
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationItem.title = "Add Record"
+    }
+    
+    // MARK: Selection Delegate
+    
+    func selectedType(_ text: String) {
+        previousType = currentType
+        currentType = text
+        if previousType != currentType {
+            tableView.reloadData()
+            changedCategory = nil
+        }
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+    }
+    
+    // MARK: Category Delegate
+    
+    func selectedCategory(_ category: Category) {
+        changedCategory = category
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 3)], with: .none)
+    }
+    
+    // MARK: Calendar View Delegate
+    
+    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+        changedDate = Helper.convertDateToString(date: dateComponents!.date!)
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 2)], with: .none)
+    }
+    
+    // MARK: TableView Style
+    
+    convenience init(editRecord: Record?) {
+        self.init(style: .insetGrouped)
+        self.editRecord = editRecord
+    }
+    
+    override init(style: UITableView.Style) {
+        super.init(style: style)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Alert
+    
+    func showAlert(text: String) {
+        let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+    
+}

@@ -27,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        self.window?.viewWithTag(221122)?.removeFromSuperview()
+        self.window?.viewWithTag(1)?.removeFromSuperview()
 
     }
 
@@ -35,7 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.prominent)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = window!.frame
-            blurEffectView.tag = 221122
+            blurEffectView.tag = 1
 
             self.window?.addSubview(blurEffectView)
     }

@@ -49,6 +49,7 @@
 		1678A5FC2A2342A5000EE573 /* DescriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A5FB2A2342A5000EE573 /* DescriptionCell.swift */; };
 		1678A5FE2A235D60000EE573 /* IncomePieChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A5FD2A235D60000EE573 /* IncomePieChartVC.swift */; };
 		1678A6002A235DAF000EE573 /* ChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A5FF2A235DAF000EE573 /* ChartVC.swift */; };
+		1678A6022A24CE03000EE573 /* CustomAppearanceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6012A24CE03000EE573 /* CustomAppearanceCell.swift */; };
 		16BE360D2A1B33C2004C6A7B /* TextFieldDataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */; };
 		16BE36102A1B4B95004C6A7B /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360F2A1B4B95004C6A7B /* Helper.swift */; };
 		16BE36142A1B7CB5004C6A7B /* CategoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */; };
@@ -100,6 +101,7 @@
 		1678A5FB2A2342A5000EE573 /* DescriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionCell.swift; sourceTree = "<group>"; };
 		1678A5FD2A235D60000EE573 /* IncomePieChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomePieChartVC.swift; sourceTree = "<group>"; };
 		1678A5FF2A235DAF000EE573 /* ChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartVC.swift; sourceTree = "<group>"; };
+		1678A6012A24CE03000EE573 /* CustomAppearanceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAppearanceCell.swift; sourceTree = "<group>"; };
 		16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldDataDelegate.swift; sourceTree = "<group>"; };
 		16BE360F2A1B4B95004C6A7B /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDelegate.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */,
 				1678A5C62A208279000EE573 /* MoneyTrackerSectionHeaderView.swift */,
 				1678A5FB2A2342A5000EE573 /* DescriptionCell.swift */,
+				1678A6012A24CE03000EE573 /* CustomAppearanceCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -406,6 +409,7 @@
 				161402BE2A0A4FB80040E15E /* TabBar.swift in Sources */,
 				161402F92A138E5A0040E15E /* AddCategorySheet.swift in Sources */,
 				1678A5F82A23153E000EE573 /* DescriptionVC.swift in Sources */,
+				1678A6022A24CE03000EE573 /* CustomAppearanceCell.swift in Sources */,
 				161403512A180BC20040E15E /* HollowPieChart.swift in Sources */,
 				161402C22A0A761F0040E15E /* SearchController.swift in Sources */,
 				1630632D2A0A18D9009E6428 /* ExpenseTracker.xcdatamodeld in Sources */,
