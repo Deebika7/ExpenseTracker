@@ -213,6 +213,18 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            if let window = windowScene.windows.first {
+                if let savedAppearance = UserDefaultManager.shared.getSelectedAppearance() {
+                    window.overrideUserInterfaceStyle = savedAppearance
+                }
+                else {
+                    window.overrideUserInterfaceStyle = UIUserInterfaceStyle.unspecified
+//                    UserDefaultManager.shared.saveSelectedAppearance(UIUserInterfaceStyle.unspecified)
+                }
+                
+            }
+        }
         records = RecordDataManager.shared.getAllRecord(month: 5, year: 2023)
         tableView.reloadData()
     }

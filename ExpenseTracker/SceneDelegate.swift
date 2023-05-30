@@ -32,7 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-            let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.prominent)
+        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.regular)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = window!.frame
             blurEffectView.tag = 1

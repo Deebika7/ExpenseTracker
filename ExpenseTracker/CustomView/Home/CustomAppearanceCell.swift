@@ -42,6 +42,10 @@ class CustomAppearanceCell: UITableViewCell {
         if let selectedAppearance = UserDefaultManager.shared.getSelectedAppearance() {
             segmentedControl.selectedSegmentIndex = selectedAppearance.rawValue
         }
+        else {
+            segmentedControl.selectedSegmentIndex = 0
+        }
+        switchSegmentedControl()
     }
     
     required init?(coder: NSCoder) {
@@ -71,6 +75,7 @@ class CustomAppearanceCell: UITableViewCell {
     @objc func switchSegmentedControl() {
         if let selectedAppearance = UIUserInterfaceStyle(rawValue: segmentedControl.selectedSegmentIndex) {
             UserDefaultManager.shared.saveSelectedAppearance(selectedAppearance)
+            segmentedControl.selectedSegmentIndex = selectedAppearance.rawValue
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                 if let window = windowScene.windows.first {
                     window.overrideUserInterfaceStyle = selectedAppearance
@@ -78,5 +83,4 @@ class CustomAppearanceCell: UITableViewCell {
             }
         }
     }
-    
 }
