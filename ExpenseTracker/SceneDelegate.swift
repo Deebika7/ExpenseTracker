@@ -32,12 +32,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.regular)
+        if UserDefaultManager.shared.getContentBlurEffect() {
+            let blurEffect = UIBlurEffect(style: .regular)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = window!.frame
             blurEffectView.tag = 1
-
             self.window?.addSubview(blurEffectView)
+        }
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {

@@ -7,11 +7,25 @@
 
 import UIKit
 
-class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, MonthSelectionDelegate, PresentationModalSheetDelegate, UISearchResultsUpdating {
     
-    private lazy var searchController = SearchController()
+    private lazy var recordSearchResultsController = RecordSearchResultsController()
     
-    private lazy var records = RecordDataManager.shared.getAllRecord(month: 5, year: 2023)
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: recordSearchResultsController)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        return searchController
+    }()
+    
+    private lazy var selectedMonth: Int! = nil
+    
+    private lazy var selectedYear: Int! = nil
+    
+    private lazy var records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultYear, year: Helper.defaultMonth)
+    
     
     private lazy var blueView: UIView = {
         let blueView = UIView()
@@ -111,18 +125,90 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return tableView
     }()
     
+    private lazy var monthLabel: UILabel = {
+        let monthLabel = UILabel()
+        monthLabel.translatesAutoresizingMaskIntoConstraints = false
+        monthLabel.text = Helper.defaultMonthName
+        return monthLabel
+    }()
+    
+    private lazy var monthViewAccessory: UIImageView = {
+        let monthViewAccessory = UIImageView()
+        monthViewAccessory.translatesAutoresizingMaskIntoConstraints = false
+        monthViewAccessory.image = UIImage(systemName: "arrowtriangle.up.fill")
+        monthViewAccessory.tintColor = .label
+        return  monthViewAccessory
+    }()
+
+    private lazy var monthView: UIView = {
+        let monthView = UIView()
+        monthView.translatesAutoresizingMaskIntoConstraints = false
+        monthView.addSubview(monthLabel)
+        monthView.addSubview(monthViewAccessory)
+        return monthView
+    }()
+
+    private lazy var monthViewTapGestureRecognizer: UITapGestureRecognizer = {
+        let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
+        return monthViewTapGestureRecognizer
+    }()
+    
+    private lazy var containerView: UIView = {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        return containerView
+    }()
+
+    private lazy var monthVc: UIViewController = {
+        let monthVc = MonthCollectionVC()
+        monthVc.monthSelectionDelegate = self
+        return monthVc
+    }()
+    
+    @objc func didTapMonthView() {
+        view.addSubview(containerView)
+        setupContentViewConstraints()
+        navigationItem.searchController = nil
+        monthViewAccessory.image = UIImage(systemName: "arrowtriangle.up.fill")
+        addChild(monthVc)
+        containerView.addSubview(monthVc.view)
+        monthVc.view.frame = containerView.bounds
+        monthVc.didMove(toParent: self)
+    }
+    
+    func selectedMonth(_ month: (name: String, number: Int), year: Int) {
+        if let childViewController = children.first {
+            childViewController.view.removeFromSuperview()
+            childViewController.removeFromParent()
+        }
+        containerView.removeFromSuperview()
+        navigationItem.searchController = searchController
+        selectedMonth = month.number
+        selectedYear = year
+        monthLabel.text = month.name
+        monthViewAccessory.image = UIImage(systemName: "arrowtriangle.down.fill")
+        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
+        records = RecordDataManager.shared.getAllRecordForAMonth(month: selectedMonth, year: selectedYear)
+        tableView.reloadData()
+    }
+    
+    func setupContentViewConstraints() {
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
+            containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.title = "Home"
-        
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-
+        navigationItem.titleView = monthView
+    
         redView.addSubview(moneyTrackerView)
         moneyTrackerView.addSubview(blueView)
         blueView.addSubview(incomeLabel)
@@ -139,6 +225,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
         tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
+        monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
     }
     
     func setupContraints() {
@@ -155,7 +242,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             redView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             redView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
             redView.heightAnchor.constraint(equalToConstant: 120),
-            redView.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
+            redView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             
             incomeLabel.leadingAnchor.constraint(equalTo: blueView.leadingAnchor, constant: 20),
             incomeLabel.centerYAnchor.constraint(equalTo: blueView.centerYAnchor, constant: -20),
@@ -188,13 +275,24 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             tableView.topAnchor.constraint(equalTo: redView.bottomAnchor, constant: 20),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2),
+            
+            monthLabel.topAnchor.constraint(equalTo: monthView.topAnchor),
+            monthLabel.bottomAnchor.constraint(equalTo: monthView.bottomAnchor),
+            monthLabel.leadingAnchor.constraint(equalTo: monthView.leadingAnchor),
+            monthLabel.trailingAnchor.constraint(equalTo: monthView.trailingAnchor, constant: -8),
+            
+            monthViewAccessory.leadingAnchor.constraint(equalTo: monthLabel.trailingAnchor, constant: 6),
+            monthViewAccessory.heightAnchor.constraint(equalToConstant: 12),
+            monthViewAccessory.centerYAnchor.constraint(equalTo: monthView.centerYAnchor),
         ])
     }
     
     @objc func addRecord() {
         let recordVC = RecordVC(editRecord: nil)
-        navigationController?.pushViewController(recordVC, animated: true)
+        recordVC.presentationModalSheetDelegate = self
+        let navigationController = UINavigationController(rootViewController: recordVC)
+        present(navigationController, animated: true)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -212,7 +310,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
             if let window = windowScene.windows.first {
                 if let savedAppearance = UserDefaultManager.shared.getSelectedAppearance() {
@@ -220,12 +318,26 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 }
                 else {
                     window.overrideUserInterfaceStyle = UIUserInterfaceStyle.unspecified
-//                    UserDefaultManager.shared.saveSelectedAppearance(UIUserInterfaceStyle.unspecified)
                 }
-                
             }
         }
-        records = RecordDataManager.shared.getAllRecord(month: 5, year: 2023)
+        refreshTable()
+    }
+    
+    func dismissedPresentationModalSheet(_ isDismissed: Bool) {
+        if isDismissed {
+            refreshTable()
+        }
+    }
+    
+    func refreshTable() {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self){
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
+        }
+        else {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+        }
         tableView.reloadData()
     }
     
@@ -235,6 +347,8 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         var configuration = cell.defaultContentConfiguration()
         if let recordItems = records[record] {
             configuration.text = recordItems[indexPath.row].category
+            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(recordItems[indexPath.row].amount)" : "-\(recordItems[indexPath.row].amount)"
+            configuration.prefersSideBySideTextAndSecondaryText = true
             configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
         }
         configuration.imageProperties.tintColor = .label
@@ -248,9 +362,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         if let recordItems = records[recordItem]{
             let decriptionVc = DescriptionVC(recordId: recordItems[indexPath.row].id!)
             decriptionVc.title = "Details"
+            decriptionVc.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(decriptionVc, animated: true)
         }
-        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -258,5 +372,29 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         return records[recordItem]?.count ?? 0
     }
     
+    // MARK: search
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else {
+            return
+        }
+        let allRecords = RecordDataManager.shared.getAllRecord()
+        let filteredRecord = allRecords.filter { record in
+            let datePropeties = Helper.getDateProperties(date: record.date!)
+            return record.category!.localizedCaseInsensitiveContains(text) || String(datePropeties.day).contains(text) || String(datePropeties.month).contains(text) || String(datePropeties.year).contains(text)
+        }
+        var recordByDate: [Date: [Record]] = [:]
+        for record in filteredRecord {
+            if recordByDate[record.date!] != nil {
+                recordByDate[record.date!]?.append(record)
+            }
+            else {
+                recordByDate[record.date!] = []
+                recordByDate[record.date!]?.append(record)
+            }
+        }
+        recordSearchResultsController.updateSearchResults(recordByDate)
+    }
+
 }
+
 

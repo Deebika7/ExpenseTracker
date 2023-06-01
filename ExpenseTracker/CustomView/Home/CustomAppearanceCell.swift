@@ -30,7 +30,6 @@ class CustomAppearanceCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
     }
 
     
@@ -55,7 +54,7 @@ class CustomAppearanceCell: UITableViewCell {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            themeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            themeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             themeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
             segmentedControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),

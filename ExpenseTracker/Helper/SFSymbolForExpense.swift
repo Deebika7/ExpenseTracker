@@ -26,4 +26,8 @@ enum SFSymbolForExpense: String, CaseIterable {
     case Clothing = "tshirt"
     case Insurance = "checkmark.shield"
     case Others = "square.grid.3x3"
+    
+    static let test = "Square"
 }
+
+

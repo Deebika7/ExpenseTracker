@@ -9,17 +9,19 @@ import UIKit
 
 class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSingleDateDelegate, CategoryDelegate {
     
-    private var changedCategory: Category?
-    private var currentType: String = Helper.defaultType
-    private var previousType: String?
-    private var changedDate: String?
-    private var isRowExpanded: Bool = false
-    private var isTypeChanged: Bool = false
-    private var amount: Double = 0
-    private var date = ""
+    private lazy var changedCategory: Category? = nil
+    private lazy var currentType: String = Helper.defaultType
+    private lazy var previousType: String? = nil
+    private lazy var changedDate: String? = nil
+    private lazy var isRowExpanded: Bool = false
+    private lazy var isTypeChanged: Bool = false
+    private lazy var amount: Double = 0
+    private lazy var date = Helper.convertDateToString(date: Helper.defaultDate)
     private weak var editRecord: Record?
-    private var editRecordId: UUID?
-    private var isEditingEnabled: Bool = false
+    private lazy var editRecordId: UUID? = nil
+    private lazy var isEditingEnabled: Bool = false
+    private lazy var categoryType: Int = -1
+    weak var presentationModalSheetDelegate : PresentationModalSheetDelegate?
     
     private lazy var calendarView: UICalendarView = {
         let calendarView = UICalendarView()
@@ -40,6 +42,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         tableView.estimatedRowHeight = 44
         tableView.sectionHeaderHeight = 44
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(addRecord))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissAddRecord))
         navigationController?.navigationBar.prefersLargeTitles = true
         registerCustomCells()
         tableView.allowsSelection = true
@@ -56,7 +59,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         amount = Double(cell.getEnteredData()) ?? 0
         
         guard amount > 0 else {
-            
             showAlert(text: "Please enter amount")
             return
         }
@@ -67,20 +69,51 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         }
         if isEditingEnabled {
             RecordDataManager.shared.updateRecord(id: editRecordId!, type: currentType, amount: amount, date: changedDate!, category: changedCategory!)
+//            didEndEditing()
+            view.endEditing(true)
+            isEditingEnabled.toggle()
             let alert = UIAlertController(title: "", message: "Record updated", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-                self.navigationController?.popViewController(animated: true)
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
+                    self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
+                    self.dismiss(animated: true){ [weak self] in
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                })
             }))
             self.present(alert, animated: true)
         }
         else if RecordDataManager.shared.createRecord(type: currentType, amount: amount, createdDate: changedDate ?? Helper.convertDateToString(date: Helper.defaultDate), category: changedCategory!) {
+//            didEndEditing()
+            view.endEditing(true)
             let alert = UIAlertController(title: "", message: "Record added", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-                self.navigationController?.popViewController(animated: true)
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
+                    self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
+                    self.dismiss(animated: true){ [weak self] in
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                })
             }))
             self.present(alert, animated: true)
         }
         
+    }
+    
+    func didEndEditing() {
+        changedCategory = nil
+        currentType = Helper.defaultType
+        changedDate = nil
+    }
+    
+    @objc func dismissAddRecord() {
+        tableView.endEditing(true)
+        self.dismiss(animated: true)
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
+//            self.dismiss(animated: true){ [weak self] in
+////                self?.didEndEditing()
+//            }
+//        })
     }
     
     // MARK: TableView Cells
@@ -109,7 +142,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             }
             cell.contentConfiguration = configuration
             cell.accessoryType = .disclosureIndicator
-            
             return cell
             
         case .amount:
@@ -133,14 +165,13 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                     configuration.text = changedDate!
                 }
                 else {
-                    configuration.text = "\(Helper.convertDateToString(date: Helper.defaultDate))"+" "+"(Today's Date)"
+                    configuration.text = "\(Helper.convertDateToString(date: Helper.defaultDate))"+" "+"(Today)"
                 }
                 let systemName = isRowExpanded ? "calendar.badge.minus" : "calendar.badge.plus"
                 cell.accessoryView = UIImageView(image: UIImage(systemName: systemName))
                 cell.accessoryView?.tintColor = .label
                 
                 cell.contentConfiguration = configuration
-                
                 return cell
             }
             else if indexPath.row == 1 {
@@ -153,7 +184,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                     calendarView.bottomAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.bottomAnchor),
                     calendarView.topAnchor.constraint(equalTo: cell.contentView.safeAreaLayoutGuide.topAnchor)
                 ])
-                
                 return cell
             }
         case .category:
@@ -189,21 +219,23 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:
-            let typeVC = TypeVC(selectedType: currentType )
+            let typeVC = TypeVC(selectedType: currentType)
             typeVC.title = "Type"
             typeVC.selectionDelegate = self
             isTypeChanged.toggle()
-            navigationController?.pushViewController(typeVC, animated: true)
-        case .amount:
-            print("")
+            let navigationController = UINavigationController(rootViewController: typeVC)
+            present(navigationController, animated: true)
         case .category:
             let categoryListVC = CategoriesListVC(selectedCategory: changedCategory, type: currentType)
             categoryListVC.title = "Category"
             categoryListVC.categoryDelegate = self
-            navigationController?.pushViewController(categoryListVC, animated: true)
+            let navigationController = UINavigationController(rootViewController: categoryListVC)
+            present(navigationController, animated: true)
         case .date:
             isRowExpanded.toggle()
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .automatic)
+        default:
+            ()
         }
     }
     
@@ -233,18 +265,26 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     func selectedType(_ text: String) {
         previousType = currentType
         currentType = text
-        if previousType != currentType {
-            tableView.reloadData()
-            changedCategory = nil
+        if previousType != currentType && categoryType == Helper.categoryType.default {
+            print(categoryType)
+                tableView.reloadData()
+                changedCategory = nil
         }
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
     }
     
     // MARK: Category Delegate
     
-    func selectedCategory(_ category: Category) {
-        changedCategory = category
+    func selectedCategory(_ category: Category?, categoryType: Int) {
+        if let category = category {
+            changedCategory = category
+        }
+        else {
+            changedCategory = nil
+        }
+        self.categoryType = categoryType
         tableView.reloadRows(at: [IndexPath(row: 0, section: 3)], with: .none)
+        
     }
     
     // MARK: Calendar View Delegate
@@ -275,6 +315,10 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
+    }
+    
+    deinit{
+        print("destroyed")
     }
     
 }

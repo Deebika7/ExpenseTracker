@@ -26,12 +26,12 @@ class RecordDataManager {
         DatabaseManager.shared.updateRecord(id: id, newType: recordType, newAmount: amount, newIcon: category.sfSymbolName, newCategory: category.categoryName, newDate: date)
     }
     
-    func getAllRecord(month: Int, year: Int) -> [Date:[Record]] {
+    func getAllRecordForAMonth(month: Int, year: Int) -> [Date:[Record]] {
         let allRecords = DatabaseManager.shared.getAllRecord()
         var records: [Date: [Record]] = [:]
         for record in allRecords {
-            let recordMonth = Helper.getYearAndMonthFromDate(date: record.date!).month
-            let recordYear = Helper.getYearAndMonthFromDate(date: record.date!).year
+            let recordMonth = Helper.getDateProperties(date: record.date!).month
+            let recordYear = Helper.getDateProperties(date: record.date!).year
             if recordYear == year && recordMonth == month {
                 if records[record.date!] != nil {
                     records[record.date!]?.append(record)
@@ -53,16 +53,8 @@ class RecordDataManager {
         DatabaseManager.shared.getRecord(id: id)!
     }
     
-//    func getCategoryList(for createdDate: String, and type: String) -> [Category] {
-//        let records = DatabaseManager.shared.getAllRecord()
-//        let type: Int16 = (type == "Income") ? 0 : 1
-//        var category: [Category] = []
-//        for record in records {
-//            if type == record.type {
-//                category.append(Category(sfSymbolName: record.category!, categoryName: record.icon!))
-//            }
-//        }
-//        return category
-//    }
+    func getAllRecord() -> [Record] {
+        DatabaseManager.shared.getAllRecord()
+    }
     
 }

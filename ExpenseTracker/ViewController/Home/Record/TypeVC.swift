@@ -28,12 +28,16 @@ class TypeVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissTypeVC))
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissTypeVC))
         tableView.backgroundColor = .systemGroupedBackground
-        navigationItem.searchController = SearchController()
-        navigationItem.hidesSearchBarWhenScrolling = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "type")
         tableView.estimatedSectionHeaderHeight = 10
         tableView.sectionHeaderHeight = UITableView.automaticDimension
+    }
+    
+    @objc func dismissTypeVC() {
+        dismiss(animated: true)
     }
     
     // MARK: - Table view data source
@@ -68,7 +72,7 @@ class TypeVC: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         selectionDelegate?.selectedType( RecordType.allCases[indexPath.row].rawValue)
-        self.navigationController?.popViewController(animated: true)
+        dismissTypeVC()
     }
    
     override func viewWillAppear(_ animated: Bool) {

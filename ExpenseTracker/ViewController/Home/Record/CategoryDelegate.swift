@@ -8,5 +8,5 @@
 import UIKit
 
 protocol CategoryDelegate: AnyObject {
-    func selectedCategory(_ category: Category)
+    func selectedCategory(_ category: Category?, categoryType: Int)
 }

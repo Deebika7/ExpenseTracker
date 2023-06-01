@@ -33,6 +33,17 @@ class UserDefaultManager {
         return nil
     }
     
+    func saveContentBlurEffect(_ preference: Bool) {
+        UserDefaults.standard.set(preference, forKey: "ContentBlurEffect")
+    }
+    
+    func getContentBlurEffect() -> Bool {
+        if let value = UserDefaults.standard.value(forKey: "ContentBlurEffect") as? Bool {
+            return value
+        }
+        return false
+    }
+    
     func saveSelectedAppearance(_ appearance: UIUserInterfaceStyle) {
         UserDefaults.standard.set(appearance.rawValue, forKey: "SelectedAppearance")
     }

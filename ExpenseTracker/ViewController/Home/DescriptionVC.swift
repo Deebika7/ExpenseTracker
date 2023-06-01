@@ -7,11 +7,11 @@
 
 import UIKit
 
-class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PresentationModalSheetDelegate {
     
     private var recordId: UUID?
     
-    private lazy var record: Record! = nil
+    private lazy var record: Record! = RecordDataManager.shared.getRecord(id: recordId!)
     
     private lazy var edit: UIBarButtonItem = {
         UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(editRecord))
@@ -19,7 +19,9 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     @objc func editRecord() {
         let recordVC = RecordVC(editRecord: record)
-        navigationController?.pushViewController(recordVC, animated: true)
+        recordVC.presentationModalSheetDelegate = self
+        let navigationController = UINavigationController(rootViewController: recordVC)
+        present(navigationController, animated: true)
     }
     
     private lazy var delete: UIBarButtonItem = {
@@ -123,9 +125,11 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        record = RecordDataManager.shared.getRecord(id: recordId!)
-        tableView.reloadData()
+    func dismissedPresentationModalSheet(_ isDismissed: Bool) {
+        if isDismissed {
+            record = RecordDataManager.shared.getRecord(id: recordId!)
+            tableView.reloadData()
+        }
     }
     
 }

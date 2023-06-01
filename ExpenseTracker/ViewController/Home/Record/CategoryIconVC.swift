@@ -28,11 +28,18 @@ class CategoryIconVC: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController()
+        return searchController
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        isModalInPresentation = true
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissCategoryIconVC) )
-        navigationItem.searchController = SearchController()
+        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.hidesNavigationBarDuringPresentation = false
         tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryIcon")
     }
@@ -77,13 +84,17 @@ class CategoryIconVC: UITableViewController {
         let sectionItem = Array(customCategory.keys)[indexPath.section]
         if let categoryItems = customCategory[sectionItem] {
             let category = categoryItems[indexPath.row]
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: category.sfSymbolName, categoryName: category.categoryName))
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: category.sfSymbolName, categoryName: category.categoryName), categoryType: -1)
         }
         self.dismiss(animated: true, completion: nil)
     }
     
     @objc func dismissCategoryIconVC() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    deinit {
+        print("destroyed")
     }
     
 }

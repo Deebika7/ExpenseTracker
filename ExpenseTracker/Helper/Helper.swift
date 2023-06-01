@@ -8,12 +8,17 @@
 import Foundation
 
 class Helper {
-    
-    static let defaultCategory = Category(sfSymbolName: "fork.knife", categoryName: "Food")
+   
+    static let defaultMonth = getDateProperties(date: defaultDate).month
+    static let defaultYear = getDateProperties(date: defaultDate).year
     static let defaultType = "Income"
+    static let defaultMonthName = dataSource[defaultMonth-1].0
+    static let categoryType = (default: 0, custom: 1);
     static let defaultDate = Date()
     static let calendar = Calendar.current
 
+    static var dataSource: [(String, Int)] = [("Jan", 1), ("Feb", 2), ("Mar", 3), ("Apr", 4), ("May", 5), ("Jun", 6), ("Jul", 7), ("Aug", 8), ("Sep", 9), ("Oct", 10), ("Nov", 11), ("Dec", 12)]
+    
     static var customCategory: [String:[Category]] = [
         "Food" : [
             Category(sfSymbolName: "birthday.cake", categoryName: "Cake"),
@@ -138,13 +143,13 @@ class Helper {
         return category
     }
     
-    static func getYearAndMonthFromDate(date: Date) -> (year: Int, month: Int){
-        let components = calendar.dateComponents([.year, .month], from: date)
-
-        if let year = components.year, let month = components.month {
-           return (year,month)
+    static func getDateProperties(date: Date) -> (year: Int, month: Int, day: Int){
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        
+        if let year = components.year, let month = components.month, let day = components.day {
+           return (year,month,day)
         }
-        return (0,0)
+        return (0,0,0)
     }
     
 }

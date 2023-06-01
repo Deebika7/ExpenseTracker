@@ -26,7 +26,7 @@
 		161402EF2A11557A0040E15E /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402EE2A11557A0040E15E /* Category.swift */; };
 		161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */; };
 		161402F92A138E5A0040E15E /* AddCategorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161402F82A138E5A0040E15E /* AddCategorySheet.swift */; };
-		161403232A161F810040E15E /* SelectedIndexPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403222A161F810040E15E /* SelectedIndexPath.swift */; };
+		161403232A161F810040E15E /* SelectedDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403222A161F810040E15E /* SelectedDate.swift */; };
 		1614034A2A1749BB0040E15E /* CategoryIconVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403492A1749BB0040E15E /* CategoryIconVC.swift */; };
 		161403512A180BC20040E15E /* HollowPieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161403502A180BC20040E15E /* HollowPieChart.swift */; };
 		163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163063222A0A18D9009E6428 /* AppDelegate.swift */; };
@@ -50,6 +50,12 @@
 		1678A5FE2A235D60000EE573 /* IncomePieChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A5FD2A235D60000EE573 /* IncomePieChartVC.swift */; };
 		1678A6002A235DAF000EE573 /* ChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A5FF2A235DAF000EE573 /* ChartVC.swift */; };
 		1678A6022A24CE03000EE573 /* CustomAppearanceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6012A24CE03000EE573 /* CustomAppearanceCell.swift */; };
+		1678A6082A25D076000EE573 /* CustomCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6072A25D076000EE573 /* CustomCollectionViewCell.swift */; };
+		1678A60A2A25D106000EE573 /* MonthCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6092A25D106000EE573 /* MonthCollectionVC.swift */; };
+		1678A60C2A2620DB000EE573 /* MonthSelectionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A60B2A2620DB000EE573 /* MonthSelectionDelegate.swift */; };
+		1678A60E2A286D1D000EE573 /* RecordSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A60D2A286D1D000EE573 /* RecordSearchResultsController.swift */; };
+		1678A6102A28965B000EE573 /* CategoryResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A60F2A28965B000EE573 /* CategoryResultsController.swift */; };
+		1678A6122A28C550000EE573 /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6112A28C550000EE573 /* SwitchTableViewCell.swift */; };
 		16BE360D2A1B33C2004C6A7B /* TextFieldDataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */; };
 		16BE36102A1B4B95004C6A7B /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360F2A1B4B95004C6A7B /* Helper.swift */; };
 		16BE36142A1B7CB5004C6A7B /* CategoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */; };
@@ -76,7 +82,7 @@
 		161402EE2A11557A0040E15E /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		161402F02A1216530040E15E /* CustomDisclosureCellWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDisclosureCellWithImage.swift; sourceTree = "<group>"; };
 		161402F82A138E5A0040E15E /* AddCategorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategorySheet.swift; sourceTree = "<group>"; };
-		161403222A161F810040E15E /* SelectedIndexPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedIndexPath.swift; sourceTree = "<group>"; };
+		161403222A161F810040E15E /* SelectedDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedDate.swift; sourceTree = "<group>"; };
 		161403492A1749BB0040E15E /* CategoryIconVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryIconVC.swift; sourceTree = "<group>"; };
 		161403502A180BC20040E15E /* HollowPieChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HollowPieChart.swift; sourceTree = "<group>"; };
 		1630631F2A0A18D9009E6428 /* ExpenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExpenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +108,12 @@
 		1678A5FD2A235D60000EE573 /* IncomePieChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomePieChartVC.swift; sourceTree = "<group>"; };
 		1678A5FF2A235DAF000EE573 /* ChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartVC.swift; sourceTree = "<group>"; };
 		1678A6012A24CE03000EE573 /* CustomAppearanceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAppearanceCell.swift; sourceTree = "<group>"; };
+		1678A6072A25D076000EE573 /* CustomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCollectionViewCell.swift; sourceTree = "<group>"; };
+		1678A6092A25D106000EE573 /* MonthCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCollectionVC.swift; sourceTree = "<group>"; };
+		1678A60B2A2620DB000EE573 /* MonthSelectionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthSelectionDelegate.swift; sourceTree = "<group>"; };
+		1678A60D2A286D1D000EE573 /* RecordSearchResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSearchResultsController.swift; sourceTree = "<group>"; };
+		1678A60F2A28965B000EE573 /* CategoryResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryResultsController.swift; sourceTree = "<group>"; };
+		1678A6112A28C550000EE573 /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
 		16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldDataDelegate.swift; sourceTree = "<group>"; };
 		16BE360F2A1B4B95004C6A7B /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDelegate.swift; sourceTree = "<group>"; };
@@ -165,6 +177,7 @@
 		161402B02A0A2D100040E15E /* Record */ = {
 			isa = PBXGroup;
 			children = (
+				1678A60F2A28965B000EE573 /* CategoryResultsController.swift */,
 				161402F82A138E5A0040E15E /* AddCategorySheet.swift */,
 				161402A02A0A1C280040E15E /* RecordDescriptionVC.swift */,
 				1614029E2A0A1C0D0040E15E /* RecordVC.swift */,
@@ -176,6 +189,7 @@
 				16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */,
 				1678A5982A1C990E000EE573 /* SelectionDelegate.swift */,
 				1678A5BC2A1E788D000EE573 /* PresentationModalSheetDelegate.swift */,
+				1678A60B2A2620DB000EE573 /* MonthSelectionDelegate.swift */,
 			);
 			path = Record;
 			sourceTree = "<group>";
@@ -202,6 +216,8 @@
 			children = (
 				163063262A0A18D9009E6428 /* HomeVC.swift */,
 				1678A5F72A23153E000EE573 /* DescriptionVC.swift */,
+				1678A6092A25D106000EE573 /* MonthCollectionVC.swift */,
+				1678A60D2A286D1D000EE573 /* RecordSearchResultsController.swift */,
 				161402B02A0A2D100040E15E /* Record */,
 			);
 			path = Home;
@@ -218,6 +234,8 @@
 				1678A5C62A208279000EE573 /* MoneyTrackerSectionHeaderView.swift */,
 				1678A5FB2A2342A5000EE573 /* DescriptionCell.swift */,
 				1678A6012A24CE03000EE573 /* CustomAppearanceCell.swift */,
+				1678A6072A25D076000EE573 /* CustomCollectionViewCell.swift */,
+				1678A6112A28C550000EE573 /* SwitchTableViewCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -242,7 +260,7 @@
 		161403212A161F150040E15E /* CustomUserDefaults */ = {
 			isa = PBXGroup;
 			children = (
-				161403222A161F810040E15E /* SelectedIndexPath.swift */,
+				161403222A161F810040E15E /* SelectedDate.swift */,
 			);
 			path = CustomUserDefaults;
 			sourceTree = "<group>";
@@ -386,6 +404,7 @@
 				161402D62A0CADDF0040E15E /* UserDefaultManager.swift in Sources */,
 				1678A5C72A208279000EE573 /* MoneyTrackerSectionHeaderView.swift in Sources */,
 				16BE360D2A1B33C2004C6A7B /* TextFieldDataDelegate.swift in Sources */,
+				1678A60E2A286D1D000EE573 /* RecordSearchResultsController.swift in Sources */,
 				16BE36142A1B7CB5004C6A7B /* CategoryDelegate.swift in Sources */,
 				161402B82A0A42BA0040E15E /* MoneyTrackerView.swift in Sources */,
 				163063272A0A18D9009E6428 /* HomeVC.swift in Sources */,
@@ -397,18 +416,21 @@
 				161402C42A0B5DA50040E15E /* DatabaseManager.swift in Sources */,
 				1614029F2A0A1C0D0040E15E /* RecordVC.swift in Sources */,
 				1678A5C22A20796D000EE573 /* Record+CoreDataClass.swift in Sources */,
+				1678A6082A25D076000EE573 /* CustomCollectionViewCell.swift in Sources */,
 				1614029D2A0A1BEB0040E15E /* GraphVC.swift in Sources */,
 				16BE36102A1B4B95004C6A7B /* Helper.swift in Sources */,
 				163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */,
 				163063252A0A18D9009E6428 /* SceneDelegate.swift in Sources */,
+				1678A6122A28C550000EE573 /* SwitchTableViewCell.swift in Sources */,
 				1678A5C32A20796D000EE573 /* Record+CoreDataProperties.swift in Sources */,
 				161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */,
-				161403232A161F810040E15E /* SelectedIndexPath.swift in Sources */,
+				161403232A161F810040E15E /* SelectedDate.swift in Sources */,
 				1614029B2A0A1BCA0040E15E /* ExpensePieChartVC.swift in Sources */,
 				1678A5992A1C990E000EE573 /* SelectionDelegate.swift in Sources */,
 				161402BE2A0A4FB80040E15E /* TabBar.swift in Sources */,
 				161402F92A138E5A0040E15E /* AddCategorySheet.swift in Sources */,
 				1678A5F82A23153E000EE573 /* DescriptionVC.swift in Sources */,
+				1678A60C2A2620DB000EE573 /* MonthSelectionDelegate.swift in Sources */,
 				1678A6022A24CE03000EE573 /* CustomAppearanceCell.swift in Sources */,
 				161403512A180BC20040E15E /* HollowPieChart.swift in Sources */,
 				161402C22A0A761F0040E15E /* SearchController.swift in Sources */,
@@ -420,10 +442,12 @@
 				161402A32A0A1C570040E15E /* SettingsVC.swift in Sources */,
 				1678A5C42A20796D000EE573 /* CustomCategory+CoreDataClass.swift in Sources */,
 				161402AA2A0A297E0040E15E /* RecordType.swift in Sources */,
+				1678A60A2A25D106000EE573 /* MonthCollectionVC.swift in Sources */,
 				1678A5BD2A1E788D000EE573 /* PresentationModalSheetDelegate.swift in Sources */,
 				1614034A2A1749BB0040E15E /* CategoryIconVC.swift in Sources */,
 				161402EB2A0EABDC0040E15E /* TypeVC.swift in Sources */,
 				1678A5B72A1CA4C9000EE573 /* CustomCategoryDataManager.swift in Sources */,
+				1678A6102A28965B000EE573 /* CategoryResultsController.swift in Sources */,
 				1678A5FE2A235D60000EE573 /* IncomePieChartVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

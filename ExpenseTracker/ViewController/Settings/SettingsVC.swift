@@ -14,6 +14,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         view.addSubview(tableView)
         view.backgroundColor = .systemGroupedBackground
         tableView.register(CustomAppearanceCell.self, forCellReuseIdentifier: CustomAppearanceCell.reuseIdentifier)
+        tableView.register(SwitchTableViewCell.self, forCellReuseIdentifier: SwitchTableViewCell.reuseIdentifier)
     }
     
     private lazy var tableView: UITableView = {
@@ -40,12 +41,21 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1
+        2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CustomAppearanceCell.reuseIdentifier, for: indexPath) as! CustomAppearanceCell
-        return cell
+        if indexPath.row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: CustomAppearanceCell.reuseIdentifier, for: indexPath) as! CustomAppearanceCell
+            cell.selectionStyle = .none
+            return cell
+        }
+        else if indexPath.row == 1 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.reuseIdentifier, for: indexPath) as! SwitchTableViewCell
+            cell.selectionStyle = .none
+            return cell
+        }
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

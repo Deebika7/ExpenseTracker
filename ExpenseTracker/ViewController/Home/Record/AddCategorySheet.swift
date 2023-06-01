@@ -131,8 +131,10 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
         textField.text = String(text.prefix(limit))
     }
     
-    func selectedCategory(_ category: Category) {
-        selectedCategory = category
+    func selectedCategory(_ category: Category?, categoryType: Int) {
+        if let category = category {
+            selectedCategory = category
+        }
         tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .none)
     }
     
@@ -142,6 +144,10 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
         let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
+    }
+    
+    deinit {
+        print("destroyed")
     }
     
 }

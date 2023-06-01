@@ -20,7 +20,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     
     private lazy var customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
    
-    
     private lazy var searchController = SearchController()
     
     private var selectedCategory: Category?
@@ -51,17 +50,25 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        isModalInPresentation = true
         tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.searchController = searchController
+        searchController.hidesNavigationBarDuringPresentation = false
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItems = [add, edit]
+        navigationItem.rightBarButtonItems = customCategory.isEmpty ? [add] : [add, edit]
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissCategoryListVc))
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 30
         tableView.estimatedSectionHeaderHeight = 10
         tableView.sectionHeaderHeight = UITableView.automaticDimension
+        tableView.keyboardDismissMode = .onDrag
+    }
+    
+    @objc func dismissCategoryListVc() {
+        dismiss(animated: true)
     }
     
     @objc func enableEditing() {
@@ -69,6 +76,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     }
     
     @objc func addNewCategory(){
+        tableView.isEditing = false
         let addCategoryVC = AddCategorySheet()
         addCategoryVC.title = "Custom Category"
         addCategoryVC.presentationModalSheetDelegate = self
@@ -83,7 +91,8 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        section == 0 ? "Default Category" : (customCategory.isEmpty) ? "" : "Custom Category"
+        navigationItem.rightBarButtonItems = customCategory.isEmpty ? [add] : [add, edit]
+        return section == 0 ? "Default Category" : (customCategory.isEmpty) ? "" : "Custom Category"
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -116,15 +125,15 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 {
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: category[indexPath.row].sfSymbolName, categoryName: category[indexPath.row].categoryName))
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: category[indexPath.row].sfSymbolName, categoryName: category[indexPath.row].categoryName), categoryType: Helper.categoryType.default)
         }
         else {
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: customCategory[indexPath.row].icon!, categoryName: customCategory[indexPath.row].name!))
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: customCategory[indexPath.row].icon!, categoryName: customCategory[indexPath.row].name!), categoryType: Helper.categoryType.custom)
         }
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
-        self.navigationController?.popViewController(animated: true)
+        dismiss(animated: true)
     }
     
     // MARK: Edit
@@ -140,6 +149,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.beginUpdates()
+            categoryDelegate?.selectedCategory(nil, categoryType: -1)
             CustomCategoryDataManager.shared.deleteCustomCategory(id: customCategory[indexPath.row].id!)
             customCategory.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -157,6 +167,10 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate {
             customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
             tableView.reloadData()
         }
+    }
+    
+    deinit{
+        print("destroyed")
     }
     
 }
