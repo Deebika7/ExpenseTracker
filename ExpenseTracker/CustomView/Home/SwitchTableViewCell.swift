@@ -19,6 +19,8 @@ class SwitchTableViewCell: UITableViewCell {
     
     private lazy var blurEffectLabel: UILabel = {
         let blurEffectLabel = UILabel()
+        blurEffectLabel.translatesAutoresizingMaskIntoConstraints = false
+        blurEffectLabel.text = "Blur Foreground Content"
         return blurEffectLabel
     }()
 
@@ -56,6 +58,10 @@ class SwitchTableViewCell: UITableViewCell {
             blurEffectSwitch.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             blurEffectSwitch.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             blurEffectSwitch.heightAnchor.constraint(equalToConstant: 30),
+            
+            blurEffectLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            blurEffectLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
         ])
     }
 

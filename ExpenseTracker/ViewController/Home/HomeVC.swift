@@ -380,7 +380,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         let allRecords = RecordDataManager.shared.getAllRecord()
         let filteredRecord = allRecords.filter { record in
             let datePropeties = Helper.getDateProperties(date: record.date!)
-            return record.category!.localizedCaseInsensitiveContains(text) || String(datePropeties.day).contains(text) || String(datePropeties.month).contains(text) || String(datePropeties.year).contains(text)
+            return record.category!.localizedCaseInsensitiveContains(text) || String(datePropeties.day).localizedCaseInsensitiveContains(text) || String(datePropeties.month).localizedCaseInsensitiveContains(text) || String(datePropeties.year).localizedCaseInsensitiveContains(text)
         }
         var recordByDate: [Date: [Record]] = [:]
         for record in filteredRecord {

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoryIconVC: UITableViewController {
+class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
     
     weak var categoryDelegate: CategoryDelegate?
     
@@ -15,10 +15,21 @@ class CategoryIconVC: UITableViewController {
     
     private lazy var customCategory = Helper.customCategory
     
+    private lazy var searchResults = customCategory
+    
     convenience init(selectedCategory: Category?) {
         self.init(style: .insetGrouped)
         self.selectedCategory = selectedCategory
     }
+    
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController()
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        return searchController
+    }()
     
     override init(style: UITableView.Style) {
         super.init(style: style)
@@ -27,11 +38,6 @@ class CategoryIconVC: UITableViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private lazy var searchController: UISearchController = {
-        let searchController = UISearchController()
-        return searchController
-    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,28 +48,29 @@ class CategoryIconVC: UITableViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryIcon")
+        tableView.keyboardDismissMode = .onDrag
     }
     
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionItem = Array(customCategory.keys)[section]
-        return customCategory[sectionItem]?.count ?? 0
+        let sectionItem = Array(searchResults.keys)[section]
+        return searchResults[sectionItem]?.count ?? 0
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return customCategory.count
+        return searchResults.count
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        Array(customCategory.keys)[section]
+        Array(searchResults.keys)[section]
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryIcon", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
-        let sectionItem = Array(customCategory.keys)[indexPath.section]
-        if let categoryItems = customCategory[sectionItem] {
+        let sectionItem = Array(searchResults.keys)[indexPath.section]
+        if let categoryItems = searchResults[sectionItem] {
             let category = categoryItems[indexPath.row]
             configuration.text = category.categoryName
             configuration.textProperties.color = .label
@@ -81,8 +88,8 @@ class CategoryIconVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let sectionItem = Array(customCategory.keys)[indexPath.section]
-        if let categoryItems = customCategory[sectionItem] {
+        let sectionItem = Array(searchResults.keys)[indexPath.section]
+        if let categoryItems = searchResults[sectionItem] {
             let category = categoryItems[indexPath.row]
             categoryDelegate?.selectedCategory(Category(sfSymbolName: category.sfSymbolName, categoryName: category.categoryName), categoryType: -1)
         }
@@ -95,6 +102,30 @@ class CategoryIconVC: UITableViewController {
     
     deinit {
         print("destroyed")
+    }
+    
+    // MARK: search
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else {
+            return
+        }
+        searchResults = searchResults.filter { key, value in
+            key.localizedCaseInsensitiveContains(text) ||
+            value.contains { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text) }
+        }.mapValues { value in
+            value.filter { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text)
+            }
+        }
+        var searchedSection = customCategory.filter { customCategory in
+            return customCategory.key.localizedCaseInsensitiveContains(text)
+        }
+        searchResults.merge(searchedSection) {
+            $0 + $1
+        }
+        if text.isEmpty {
+            searchResults = customCategory
+        }
+        tableView.reloadData()
     }
     
 }
