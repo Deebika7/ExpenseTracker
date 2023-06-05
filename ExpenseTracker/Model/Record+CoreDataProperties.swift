@@ -2,7 +2,7 @@
 //  Record+CoreDataProperties.swift
 //  ExpenseTracker
 //
-//  Created by deebika-pt6680 on 23/05/23.
+//  Created by deebika-pt6680 on 04/06/23.
 //
 //
 
@@ -16,7 +16,7 @@ extension Record {
         return NSFetchRequest<Record>(entityName: "Record")
     }
 
-    @NSManaged public var amount: Double
+    @NSManaged public var amount: String?
     @NSManaged public var category: String?
     @NSManaged public var date: Date?
     @NSManaged public var icon: String?

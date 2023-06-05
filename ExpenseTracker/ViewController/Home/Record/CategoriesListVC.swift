@@ -164,11 +164,20 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         if editingStyle == .delete {
             tableView.beginUpdates()
             categoryDelegate?.selectedCategory(nil, categoryType: -1)
-            CustomCategoryDataManager.shared.deleteCustomCategory(id: searchedCustomCategory[indexPath.row].id!)
-            searchedCustomCategory.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-            tableView.endUpdates()
-            tableView.reloadData()
+            let alert = UIAlertController(title: "Delete Custom Category", message: "Records saved in this custom category will be moved to others", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default))
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
+                tableView.performBatchUpdates{
+                    RecordDataManager.shared.updateRecordForCustomCategory(customCategoryName: (self?.searchedCustomCategory[indexPath.row].name!)!)
+                    CustomCategoryDataManager.shared.deleteCustomCategory(id: (self?.searchedCustomCategory[indexPath.row].id!)!)
+                }
+                self?.searchedCustomCategory.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                tableView.endUpdates()
+                tableView.reloadData()
+            }))
+            self.present(alert, animated: true)
+            
         }
     }
     

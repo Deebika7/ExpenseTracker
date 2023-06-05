@@ -84,10 +84,10 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
         ])
     }
     
-    func configure(date: Date, incomeAmount: Double, expenseAmount: Double) {
+    func configure(date: Date, incomeAmount: String, expenseAmount: String) {
         dateLabel.text = Helper.convertDateToString(date: date)
-        self.incomeAmount.text = String(incomeAmount)
-        self.expenseAmount.text = String(expenseAmount)
+        self.incomeAmount.text = incomeAmount
+        self.expenseAmount.text = expenseAmount
     }
     
 }

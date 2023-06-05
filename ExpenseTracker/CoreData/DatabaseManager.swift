@@ -50,7 +50,7 @@ class DatabaseManager {
 
     }
     
-    func createRecord(id: UUID, recordType: Int16, category: String, amount: Double, icon: String, date: Date) {
+    func createRecord(id: UUID, recordType: Int16, category: String, amount: String, icon: String, date: Date) {
         let record = Record(context: context)
         record.id = id
         record.type = recordType
@@ -71,7 +71,7 @@ class DatabaseManager {
         saveContext()
     }
     
-    func updateRecord(id: UUID, newType: Int16, newAmount: Double, newIcon: String, newCategory: String, newDate: Date) {
+    func updateRecord(id: UUID, newType: Int16, newAmount: String, newIcon: String, newCategory: String, newDate: Date) {
         let record = getRecord(id: id)
         record?.type = newType
         record?.amount = newAmount

@@ -51,7 +51,9 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         var configuration = cell.defaultContentConfiguration()
         if let recordItems = searchResults[record] {
             configuration.text = recordItems[indexPath.row].category
-            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(recordItems[indexPath.row].amount)" : "-\(recordItems[indexPath.row].amount)"
+            let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
+            print(simplifiedAmount)
+            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
             configuration.prefersSideBySideTextAndSecondaryText = true
             configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
         }

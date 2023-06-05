@@ -119,9 +119,11 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         var searchedSection = customCategory.filter { customCategory in
             return customCategory.key.localizedCaseInsensitiveContains(text)
         }
+
         searchResults.merge(searchedSection) {
-            $0 + $1
+            (merge, _) in merge
         }
+        searchResults = searchResults.filter { !$0.value.isEmpty }
         if text.isEmpty {
             searchResults = customCategory
         }

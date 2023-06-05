@@ -24,8 +24,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     private lazy var selectedYear: Int! = nil
     
-    private lazy var records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultYear, year: Helper.defaultMonth)
+    private lazy var records = RecordDataManager.shared.getAllRecordByMonth(month: Helper.defaultYear, year: Helper.defaultMonth)
     
+    private lazy var recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultYear, year: Helper.defaultMonth)
+    
+    private lazy var isMonthViewExpanded: Bool = true
     
     private lazy var blueView: UIView = {
         let blueView = UIView()
@@ -94,7 +97,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         let balanceAmount = UILabel()
         balanceAmount.translatesAutoresizingMaskIntoConstraints = false
         balanceAmount.textColor = .darkGray
-        balanceAmount.text = "0000000"
         balanceAmount.textAlignment = .center
         return balanceAmount
     }()
@@ -102,7 +104,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     private lazy var expenseAmount: UILabel = {
         let expenseAmount = UILabel()
         expenseAmount.translatesAutoresizingMaskIntoConstraints = false
-        expenseAmount.text = "0000000"
         expenseAmount.textColor = .white
         return expenseAmount
     }()
@@ -110,7 +111,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     private lazy var incomeAmount: UILabel = {
         let incomeAmount = UILabel()
         incomeAmount.translatesAutoresizingMaskIntoConstraints = false
-        incomeAmount.text = "0000000"
         incomeAmount.textColor = .white
         return incomeAmount
     }()
@@ -166,29 +166,40 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     }()
     
     @objc func didTapMonthView() {
-        view.addSubview(containerView)
-        setupContentViewConstraints()
-        navigationItem.searchController = nil
-        monthViewAccessory.image = UIImage(systemName: "arrowtriangle.up.fill")
-        addChild(monthVc)
-        containerView.addSubview(monthVc.view)
-        monthVc.view.frame = containerView.bounds
-        monthVc.didMove(toParent: self)
+        if isMonthViewExpanded {
+            view.addSubview(containerView)
+            setupContentViewConstraints()
+            navigationItem.searchController = nil
+            monthViewAccessory.image = UIImage(systemName: "arrowtriangle.up.fill")
+            addChild(monthVc)
+            containerView.addSubview(monthVc.view)
+            monthVc.view.frame = containerView.bounds
+            monthVc.didMove(toParent: self)
+            isMonthViewExpanded = false
+        }
+        else{
+            closeMonthView()
+        }
     }
     
-    func selectedMonth(_ month: (name: String, number: Int), year: Int) {
+    func closeMonthView() {
         if let childViewController = children.first {
             childViewController.view.removeFromSuperview()
             childViewController.removeFromParent()
         }
         containerView.removeFromSuperview()
         navigationItem.searchController = searchController
+        isMonthViewExpanded = true
+    }
+    
+    func selectedMonth(_ month: (name: String, number: Int), year: Int) {
+        closeMonthView()
         selectedMonth = month.number
         selectedYear = year
         monthLabel.text = month.name
         monthViewAccessory.image = UIImage(systemName: "arrowtriangle.down.fill")
         UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
-        records = RecordDataManager.shared.getAllRecordForAMonth(month: selectedMonth, year: selectedYear)
+        records = RecordDataManager.shared.getAllRecordByMonth(month: selectedMonth, year: selectedYear)
         tableView.reloadData()
     }
     
@@ -226,6 +237,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
         tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
         monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
+        
     }
     
     func setupContraints() {
@@ -289,6 +301,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     }
     
     @objc func addRecord() {
+        closeMonthView()
         let recordVC = RecordVC(editRecord: nil)
         recordVC.presentationModalSheetDelegate = self
         let navigationController = UINavigationController(rootViewController: recordVC)
@@ -305,7 +318,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as! MoneyTrackerSectionHeaderView
-        cell.configure(date: Array(records.keys)[section], incomeAmount: 978687, expenseAmount: 35343)
+        var record = Array(records.keys)[section]
+        if let record = records[record] {
+            let incomeAmount = Helper.getSimplifiedAmount(record, 1)
+            let expenseAmount = Helper.getSimplifiedAmount(record, 0)
+            cell.configure(date: Array(records.keys)[section], incomeAmount: incomeAmount , expenseAmount: expenseAmount)
+        }
         return cell
     }
     
@@ -332,12 +350,20 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func refreshTable() {
         if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self){
-            records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            records = RecordDataManager.shared.getAllRecordByMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
         }
         else {
-            records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+            records = RecordDataManager.shared.getAllRecordByMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+            recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
         }
+        let incomeAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 1)
+        let expenseAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 0)
+        incomeAmount.text = incomeAmountValue
+        expenseAmount.text = expenseAmountValue
+        balanceAmount.text = Helper.convertNotationDifference(incomeAmountValue, expenseAmountValue)
+        print(Helper.convertNotationDifference(incomeAmountValue, expenseAmountValue))
         tableView.reloadData()
     }
     
@@ -347,7 +373,8 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         var configuration = cell.defaultContentConfiguration()
         if let recordItems = records[record] {
             configuration.text = recordItems[indexPath.row].category
-            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(recordItems[indexPath.row].amount)" : "-\(recordItems[indexPath.row].amount)"
+            let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
+            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
             configuration.prefersSideBySideTextAndSecondaryText = true
             configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
         }
@@ -394,7 +421,8 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         }
         recordSearchResultsController.updateSearchResults(recordByDate)
     }
-
+    //MARK: Separator
+    
 }
 
 

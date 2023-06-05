@@ -2,7 +2,7 @@
 //  CustomCategory+CoreDataProperties.swift
 //  ExpenseTracker
 //
-//  Created by deebika-pt6680 on 23/05/23.
+//  Created by deebika-pt6680 on 04/06/23.
 //
 //
 
@@ -16,9 +16,9 @@ extension CustomCategory {
         return NSFetchRequest<CustomCategory>(entityName: "CustomCategory")
     }
 
+    @NSManaged public var icon: String?
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
-    @NSManaged public var icon: String?
 
 }
 

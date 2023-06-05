@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class Helper {
    
@@ -150,6 +151,124 @@ class Helper {
            return (year,month,day)
         }
         return (0,0,0)
+    }
+
+   static func simplifyNumbers(_ numbers: [String], _ precision: Int) -> String {
+       var sum: Double = 0.0
+       
+       for numberString in numbers {
+           if let number = Double(numberString) {
+               sum += number
+           }
+       }
+       
+       let numberFormatter = NumberFormatter()
+       numberFormatter.numberStyle = .decimal
+       numberFormatter.maximumFractionDigits = precision // Set the desired precision
+       numberFormatter.groupingSeparator = "."
+       if abs(sum) >= 100000 {
+           let power = min(Int(log10(abs(sum)) / 3.0), 4) // Restrict the power value to a maximum of 4
+           let suffix = ["", "K", "M", "B", "T"][power]
+           
+           let simplifiedNumber = sum / pow(1000.0, Double(power))
+           numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
+           
+           if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
+               let truncatedString = String(simplifiedString.prefix(5)) // Truncate the string to a maximum of 5 characters
+               return truncatedString + suffix
+           }
+       } else {
+           if let simplifiedString = numberFormatter.string(from: NSNumber(value: sum)) {
+               let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "") // Remove the decimal separator
+               return formattedString
+           }
+       }
+       
+       return "\(sum)"
+   }
+    
+   static func convertNotationDifference(_ notation1: String, _ notation2: String) -> String {
+       var numericValue1: Double = 0
+       var numericValue2: Double = 0
+       
+       if let number1 = Double(notation1.filter { "0123456789.".contains($0) }) {
+           numericValue1 = number1
+       } else if notation1.hasSuffix("K"), let number1 = Double(notation1.dropLast()) {
+           numericValue1 = number1 * 1_000
+       } else if notation1.hasSuffix("M"), let number1 = Double(notation1.dropLast()) {
+           numericValue1 = number1 * 1_000_000
+       } else if notation1.hasSuffix("B"), let number1 = Double(notation1.dropLast()) {
+           numericValue1 = number1 * 1_000_000_000
+       } else if notation1.hasSuffix("T"), let number1 = Double(notation1.dropLast()) {
+           numericValue1 = number1 * 1_000_000_000_000
+       }
+       
+       if let number2 = Double(notation2.filter { "0123456789.".contains($0) }) {
+           numericValue2 = number2
+       } else if notation2.hasSuffix("K"), let number2 = Double(notation2.dropLast()) {
+           numericValue2 = number2 * 1_000
+       } else if notation2.hasSuffix("M"), let number2 = Double(notation2.dropLast()) {
+           numericValue2 = number2 * 1_000_000
+       } else if notation2.hasSuffix("B"), let number2 = Double(notation2.dropLast()) {
+           numericValue2 = number2 * 1_000_000_000
+       } else if notation2.hasSuffix("T"), let number2 = Double(notation2.dropLast()) {
+           numericValue2 = number2 * 1_000_000_000_000
+       }
+       
+       let difference = numericValue1 - numericValue2
+       
+       var notationDifference = ""
+       
+       if difference >= 1_000_000_000_000 {
+           notationDifference = String(format: "%.1fT", difference / 1_000_000_000_000)
+       } else if difference >= 1_000_000_000 {
+           notationDifference = String(format: "%.1fB", difference / 1_000_000_000)
+       } else if difference >= 1_000_000 {
+           notationDifference = String(format: "%.1fM", difference / 1_000_000)
+       } else if difference >= 1_000 {
+           notationDifference = String(format: "%.1fK", difference / 1_000)
+       } else {
+           notationDifference = String(format: "%.1f", difference)
+       }
+       
+       // Truncate or pad the notation difference to ensure length is 4 characters
+       if notationDifference.count > 4 {
+           let index = notationDifference.index(notationDifference.startIndex, offsetBy: 4)
+           notationDifference = String(notationDifference[..<index])
+       } else if notationDifference.count < 4 {
+           let paddingCount = 4 - notationDifference.count
+           notationDifference += String(repeating: " ", count: paddingCount)
+       }
+       
+       return notationDifference
+   }
+
+    static func getSimplifiedAmount(_ records: [Record], _ type: Int16) -> String {
+        var amount: [String]  = []
+        for record in records {
+            if record.type == type {
+                amount.append(record.amount!)
+            }
+        }
+        return simplifyNumbers(amount, 3)
+    }
+    
+    static func generateUniqueColors(_ count: Int) -> [UIColor] {
+        var colors: [UIColor] = []
+        
+        for _ in 0..<count {
+            var color: UIColor
+            
+            repeat {
+                let red = CGFloat.random(in: 0...1)
+                let green = CGFloat.random(in: 0...1)
+                let blue = CGFloat.random(in: 0...1)
+                color = UIColor(red: red, green: green, blue: blue, alpha: 1.0)
+            } while colors.contains(where: { $0.isEqual(color) })
+            
+            colors.append(color)
+        }
+        return colors
     }
     
 }

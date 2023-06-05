@@ -103,7 +103,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.configureCell(title: "Category", text: record.category!)
             }
             else if indexPath.row == 3 {
-                cell.configureCell(title: "Amount", text: String(record.amount))
+                cell.configureCell(title: "Amount", text: record.amount!)
             }
             else if indexPath.row == 4 {
                 cell.configureCell(title: "Date", text: Helper.convertDateToString(date: record.date!))
@@ -128,6 +128,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     func dismissedPresentationModalSheet(_ isDismissed: Bool) {
         if isDismissed {
             record = RecordDataManager.shared.getRecord(id: recordId!)
+            print(record)
             tableView.reloadData()
         }
     }

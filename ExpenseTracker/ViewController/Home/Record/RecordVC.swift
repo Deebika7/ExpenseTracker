@@ -15,12 +15,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     private lazy var changedDate: String? = nil
     private lazy var isRowExpanded: Bool = false
     private lazy var isTypeChanged: Bool = false
-    private lazy var amount: Double = 0
+    private lazy var amount: String = ""
     private lazy var date = Helper.convertDateToString(date: Helper.defaultDate)
     private weak var editRecord: Record?
     private lazy var editRecordId: UUID? = nil
     private lazy var isEditingEnabled: Bool = false
-    private lazy var categoryType: Int = -1
+    private lazy var categoryType: Int = 0
     weak var presentationModalSheetDelegate : PresentationModalSheetDelegate?
     
     private lazy var calendarView: UICalendarView = {
@@ -56,9 +56,9 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     
     @objc func addRecord() {
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! CustomTextFieldCell
-        amount = Double(cell.getEnteredData()) ?? 0
+        amount = (cell.getEnteredData())
         
-        guard amount > 0 else {
+        guard Double(amount) ?? 0 > 0 else {
             showAlert(text: "Please enter amount")
             return
         }
@@ -109,6 +109,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     @objc func dismissAddRecord() {
         tableView.endEditing(true)
         self.dismiss(animated: true)
+        self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
 //        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
 //            self.dismiss(animated: true){ [weak self] in
 ////                self?.didEndEditing()
@@ -147,7 +148,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         case .amount:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
             if let editRecord = editRecord {
-                cell.textField.text = String(editRecord.amount)
+                cell.textField.text = editRecord.amount!
             }
             cell.configureNumberKeyBoard()
             return cell
@@ -265,11 +266,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     func selectedType(_ text: String) {
         previousType = currentType
         currentType = text
+        print(Helper.categoryType.default)
         if previousType != currentType && categoryType == Helper.categoryType.default {
             print(categoryType)
                 tableView.reloadData()
                 changedCategory = nil
-        }
+        } 
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
     }
     
