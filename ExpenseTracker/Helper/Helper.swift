@@ -308,6 +308,26 @@ class Helper {
         return percentage
     }
         
+    static func getGraphData(_ records: [Record], type: Int16, category: String) -> [GraphData] {
+        lazy var graphData = [GraphData]()
+        lazy var totalAmount = Double()
+        for record in records {
+            if record.type == type {
+                if category == record.category ?? "" , let amount = record.amount {
+                        totalAmount += (Double(amount) ?? 0)
+                }
+            }
+        }
+        for record in records {
+            if record.type == type {
+                if category == record.category {
+                    graphData.append(GraphData(percentage: calculatePercentage(value: Double(record.amount ?? "") ?? 0, total: totalAmount), name: record.category ?? "", date: record.date ?? Date(), icon: record.icon ?? "" , amount: record.amount ?? "0"))
+                }
+            }
+        }
+        return graphData
+    }
+    
     static func getChartData(_ records: [Record], type: Int16) -> [ChartData] {
         lazy var recordByCategory = [String: [Record]]()
         lazy var chartData = [ChartData]()
@@ -342,6 +362,35 @@ class Helper {
         return chartData
     }
     
+    static func generateDateForgraph(_ date: String) -> [String] {
+        lazy var availableDates = [String]()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-yyyy"
+        let currentDate = Date()
+        
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: currentDate)
+        let month = calendar.component(.month, from: currentDate)
+
+        var dateComponents = DateComponents(year: year, month: month)
+        guard let startDateOfMonth = calendar.date(from: dateComponents) else {
+            return
+        }
+        let endDate: Date
+        let inputDateString = date
+        if let inputDate = dateFormatter.date(from: inputDateString) {
+            endDate = min(inputDate, currentDate)
+        } else {
+            endDate = currentDate
+        }
+
+        var currentDateInLoop = startDateOfMonth
+        while currentDateInLoop <= endDate {
+            availableDates.append(dateFormatter.string(from: currentDateInLoop))
+            currentDateInLoop = calendar.date(byAdding: .day, value: 1, to: currentDateInLoop)!
+        }
+        return availableDates
+    }
 }
 
 

@@ -102,6 +102,8 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 0, color: .red)
+        navigationController?.pushViewController(graphVc, animated: true)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -115,9 +117,10 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         dataSource = chartRecords.compactMap {$0.percentage}
         if let hollowPieChartView = hollowPieChart as? HollowPieChart {
             hollowPieChartView.data = dataSource
-//            hollowPieChartView.setNeedsDisplay()
+            hollowPieChartView.setNeedsDisplay()
         }
         tableView.reloadData()
     }
+    
 }
 

@@ -16,6 +16,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
+        textField.becomeFirstResponder()
         textField.text = String(textField.text?.prefix(12) ?? "")
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.layer.cornerRadius = 10

@@ -9,18 +9,18 @@ import Foundation
 import SwiftUI
 import Charts
 
-struct ExpenseGraphData: Identifiable {
+struct GraphValue: Identifiable {
     let id =  UUID()
-    let amount: Int
-    let date: Date
+    let percentage: Double
+    let date: String
 }
 
-struct ExpenseGraph: View {
+struct GraphView: View {
     
-    var graphValues: [ExpenseGraphData]
+    var graphValues: [GraphValue]
     var color: Color
     
-    init(graphValues: [ExpenseGraphData], color: Color) {
+    init(graphValues: [GraphValue], color: Color) {
         self.graphValues = graphValues
         self.color = color
     }
@@ -29,20 +29,19 @@ struct ExpenseGraph: View {
         Chart(graphValues) { expenseGraph in
             AreaMark(
                 x: .value("Date", expenseGraph.date),
-                y: .value("amount", expenseGraph.amount)
+                y: .value("amount", expenseGraph.percentage)
             ).foregroundStyle(LinearGradient(colors: [color,.clear], startPoint: .top, endPoint: .bottom))
             LineMark(
                 x: .value("Date", expenseGraph.date),
-                y: .value("amount", expenseGraph.amount)
+                y: .value("amount", expenseGraph.percentage)
             ).foregroundStyle(color)
             PointMark(
                 x: .value("Date", expenseGraph.date),
-                y: .value("amount", expenseGraph.amount)
+                y: .value("amount", expenseGraph.percentage)
             ).foregroundStyle(color)
         }.chartYAxis {
             AxisMarks(position: .leading)
         }
-        
     }
 }
 
