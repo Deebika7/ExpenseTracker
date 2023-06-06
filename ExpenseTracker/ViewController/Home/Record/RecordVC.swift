@@ -28,6 +28,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let gregorianCalendar = Calendar(identifier: .gregorian)
         let dateSelection = UICalendarSelectionSingleDate(delegate: self)
         calendarView.selectionBehavior = dateSelection
+        calendarView.availableDateRange = DateInterval(start: .distantPast, end: Date())
         calendarView.calendar = gregorianCalendar
         calendarView.layer.cornerRadius = 10.0
         calendarView.translatesAutoresizingMaskIntoConstraints = false

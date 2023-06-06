@@ -168,7 +168,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             alert.addAction(UIAlertAction(title: "Cancel", style: .default))
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
                 tableView.performBatchUpdates{
-                    RecordDataManager.shared.updateRecordForCustomCategory(customCategoryName: (self?.searchedCustomCategory[indexPath.row].name!)!)
+                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (self?.searchedCustomCategory[indexPath.row])!)
                     CustomCategoryDataManager.shared.deleteCustomCategory(id: (self?.searchedCustomCategory[indexPath.row].id!)!)
                 }
                 self?.searchedCustomCategory.remove(at: indexPath.row)

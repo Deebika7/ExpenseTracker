@@ -47,7 +47,6 @@ class DatabaseManager {
             }
         }
         return nil
-
     }
     
     func createRecord(id: UUID, recordType: Int16, category: String, amount: String, icon: String, date: Date) {

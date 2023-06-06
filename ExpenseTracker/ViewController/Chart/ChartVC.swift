@@ -81,7 +81,6 @@ class ChartVC: UIViewController {
         ])
         switchSegmentedControl()
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.title = "Charts"
         navigationController?.navigationBar.prefersLargeTitles = true

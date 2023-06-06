@@ -9,7 +9,7 @@ import UIKit
 
 class HollowPieChart: UIView {
     
-    var data: [String: Double] = [:] {
+    var data: [Double] = [] {
         didSet {
             setNeedsDisplay()
         }
@@ -28,10 +28,10 @@ class HollowPieChart: UIView {
         let radius = min(bounds.width, bounds.height) * 0.4
         let innerRadius = radius * 0.6 // Adjust the inner radius as desired
         
-        let totalValue = data.values.reduce(0, +)
+        let totalValue = data.reduce(0, +)
         var startAngle: CGFloat = 0
         
-        for (category, value) in data {
+        for value in data {
             let endAngle = startAngle + (CGFloat(value) / CGFloat(totalValue)) * 2 * .pi
             
             let path = UIBezierPath()
@@ -47,7 +47,7 @@ class HollowPieChart: UIView {
             arcColor.setFill()
             path.fill()
             
-            colorByCategory[category] = arcColor
+//            colorByCategory[category] = arcColor
             
             startAngle = endAngle
         }

@@ -9,7 +9,12 @@ import UIKit
 
 class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var dataSource: [String : Double] = ["Category 1": 30, "Category 2": 40, "Category 3": 20, "Category 4": 10]
+    var dataSource = [Double]()
+    
+    private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+
+    private lazy var chartRecords = [ChartData]()
+
     
     private lazy var hollowPieChart: UIView = {
         let hollowPieChartView = HollowPieChart()
@@ -76,13 +81,44 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         dataSource.count
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        "Expense List"
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
-        cell.textLabel?.text = Array(dataSource.keys)[indexPath.row]
+        var configuration = cell.defaultContentConfiguration()
+        configuration.text = chartRecords[indexPath.row].name
+        configuration.secondaryText = String(format: "%.2f", chartRecords[indexPath.row].percentage) + "%"
+        configuration.prefersSideBySideTextAndSecondaryText = true
+        configuration.image = UIImage(systemName: chartRecords[indexPath.row].sfSymbol)
+        configuration.imageProperties.tintColor = .label
+        cell.contentConfiguration = configuration
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        44
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            }
+        else {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+        }
+        chartRecords = Helper.getChartData(records, type: 1)
+        dataSource = chartRecords.compactMap {$0.percentage}
+        if let hollowPieChartView = hollowPieChart as? HollowPieChart {
+            hollowPieChartView.data = dataSource
+            hollowPieChartView.setNeedsDisplay()
+        }
+        tableView.reloadData()
+    }
+    
 }

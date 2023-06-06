@@ -318,10 +318,10 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as! MoneyTrackerSectionHeaderView
-        var record = Array(records.keys)[section]
+        let record = Array(records.keys)[section]
         if let record = records[record] {
-            let incomeAmount = Helper.getSimplifiedAmount(record, 1)
-            let expenseAmount = Helper.getSimplifiedAmount(record, 0)
+            let incomeAmount = Helper.getSimplifiedAmount(record, 0)
+            let expenseAmount = Helper.getSimplifiedAmount(record, 1)
             cell.configure(date: Array(records.keys)[section], incomeAmount: incomeAmount , expenseAmount: expenseAmount)
         }
         return cell
@@ -358,14 +358,15 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
             records = RecordDataManager.shared.getAllRecordByMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
             recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
         }
-        let incomeAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 1)
-        let expenseAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 0)
+        let incomeAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 0)
+        let expenseAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 1)
         incomeAmount.text = incomeAmountValue
         expenseAmount.text = expenseAmountValue
-        balanceAmount.text = Helper.convertNotationDifference(incomeAmountValue, expenseAmountValue)
-        print(Helper.convertNotationDifference(incomeAmountValue, expenseAmountValue))
+        balanceAmount.text = Helper.simplifyDifferenceBetweenNumbers(Helper.getRecordAmount(recordForAMonth, 1), Helper.getRecordAmount(recordForAMonth, 0), 3)
         tableView.reloadData()
     }
+    
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath)
@@ -374,7 +375,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         if let recordItems = records[record] {
             configuration.text = recordItems[indexPath.row].category
             let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
-            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
+            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "-\(simplifiedAmount)" : "\(simplifiedAmount)"
             configuration.prefersSideBySideTextAndSecondaryText = true
             configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
         }

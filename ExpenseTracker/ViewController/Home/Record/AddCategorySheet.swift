@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AddCategorySheet: UITableViewController, CategoryDelegate {
+class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDelegate {
     
     var selectedCategory: Category?
     
@@ -15,6 +15,8 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
     
     private lazy var textField: UITextField = {
         let textField = UITextField()
+        textField.delegate = self
+        textField.text = String(textField.text?.prefix(12) ?? "")
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.layer.cornerRadius = 10
         textField.placeholder = "Category Name"
@@ -64,15 +66,18 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
         }
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        44
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath)
             cell.contentView.addSubview(textField)
-            
             NSLayoutConstraint.activate([
-                textField.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
                 textField.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 20),
-                textField.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
+                textField.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+
             ])
             return cell
         }
@@ -102,15 +107,23 @@ class AddCategorySheet: UITableViewController, CategoryDelegate {
             return
         }
         
-        if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text!).trimMoreThanOneSpaces(), category: selectedCategory!) {
-            let alert = UIAlertController(title: "", message: "Category added", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
-                    self.dismiss(animated: true){ [weak self] in
-                        self?.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
-                    }
-                })
-            }))
+        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: textField.text!)) {
+            
+            if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text!).trimMoreThanOneSpaces(), category: selectedCategory!) {
+                let alert = UIAlertController(title: "", message: "Category added", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
+                        self.dismiss(animated: true){ [weak self] in
+                            self?.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
+                        }
+                    })
+                }))
+                self.present(alert, animated: true)
+            }
+        }
+        else {
+            let alert = UIAlertController(title: "", message: "Custom Category Exist Already", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             self.present(alert, animated: true)
         }
         

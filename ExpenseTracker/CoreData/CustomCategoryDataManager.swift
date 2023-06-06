@@ -22,6 +22,19 @@ class CustomCategoryDataManager {
         DatabaseManager.shared.getAllCustomCategory()
     }
     
+    func isCustomCategoryPresent(newCustomCategory: Category) -> Bool {
+        let customCategories = getAllCustomCategory()
+        for customCategory in customCategories {
+            guard let name = customCategory.name else {
+                break
+            }
+            if newCustomCategory.categoryName == name {
+                return true
+            }
+        }
+        return false
+    }
+    
     func deleteCustomCategory(id: UUID) {
         DatabaseManager.shared.removeCustomCategory(id: id)
     }

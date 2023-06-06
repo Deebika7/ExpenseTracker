@@ -187,61 +187,50 @@ class Helper {
        return "\(sum)"
    }
     
-   static func convertNotationDifference(_ notation1: String, _ notation2: String) -> String {
-       var numericValue1: Double = 0
-       var numericValue2: Double = 0
+   static func simplifyDifferenceBetweenNumbers(_ numbers1: [String], _ numbers2: [String], _ precision: Int) -> String? {
+       let count = max(numbers1.count, numbers2.count) // Get the maximum count of the two arrays
        
-       if let number1 = Double(notation1.filter { "0123456789.".contains($0) }) {
-           numericValue1 = number1
-       } else if notation1.hasSuffix("K"), let number1 = Double(notation1.dropLast()) {
-           numericValue1 = number1 * 1_000
-       } else if notation1.hasSuffix("M"), let number1 = Double(notation1.dropLast()) {
-           numericValue1 = number1 * 1_000_000
-       } else if notation1.hasSuffix("B"), let number1 = Double(notation1.dropLast()) {
-           numericValue1 = number1 * 1_000_000_000
-       } else if notation1.hasSuffix("T"), let number1 = Double(notation1.dropLast()) {
-           numericValue1 = number1 * 1_000_000_000_000
+       var differenceSum: Double = 0.0
+       
+       for index in 0..<count {
+           let numberString1 = index < numbers1.count ? numbers1[index] : "0" // Use "0" for missing values in numbers1
+           let numberString2 = index < numbers2.count ? numbers2[index] : "0" // Use "0" for missing values in numbers2
+           
+           guard let number1 = Double(numberString1),
+                 let number2 = Double(numberString2) else {
+               return nil // Return nil if any value is not a valid number
+           }
+           
+           let difference = number2 - number1 // Subtract numbers1 from numbers2
+           differenceSum += difference // Add the difference to the differenceSum
        }
        
-       if let number2 = Double(notation2.filter { "0123456789.".contains($0) }) {
-           numericValue2 = number2
-       } else if notation2.hasSuffix("K"), let number2 = Double(notation2.dropLast()) {
-           numericValue2 = number2 * 1_000
-       } else if notation2.hasSuffix("M"), let number2 = Double(notation2.dropLast()) {
-           numericValue2 = number2 * 1_000_000
-       } else if notation2.hasSuffix("B"), let number2 = Double(notation2.dropLast()) {
-           numericValue2 = number2 * 1_000_000_000
-       } else if notation2.hasSuffix("T"), let number2 = Double(notation2.dropLast()) {
-           numericValue2 = number2 * 1_000_000_000_000
-       }
+       let numberFormatter = NumberFormatter()
+       numberFormatter.numberStyle = .decimal
+       numberFormatter.maximumFractionDigits = precision // Set the desired precision
+       numberFormatter.groupingSeparator = "."
        
-       let difference = numericValue1 - numericValue2
-       
-       var notationDifference = ""
-       
-       if difference >= 1_000_000_000_000 {
-           notationDifference = String(format: "%.1fT", difference / 1_000_000_000_000)
-       } else if difference >= 1_000_000_000 {
-           notationDifference = String(format: "%.1fB", difference / 1_000_000_000)
-       } else if difference >= 1_000_000 {
-           notationDifference = String(format: "%.1fM", difference / 1_000_000)
-       } else if difference >= 1_000 {
-           notationDifference = String(format: "%.1fK", difference / 1_000)
+       if abs(differenceSum) >= 100000 {
+           let power = min(Int(log10(abs(differenceSum)) / 3.0), 4) // Restrict the power value to a maximum of 4
+           let suffix = ["", "K", "M", "B", "T"][power]
+           
+           let simplifiedNumber = differenceSum / pow(1000.0, Double(power))
+           numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
+           
+           if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
+               let truncatedString = String(simplifiedString.prefix(5)) // Truncate the string to a maximum of 5 characters
+               return truncatedString + suffix
+           }
        } else {
-           notationDifference = String(format: "%.1f", difference)
+           if let simplifiedString = numberFormatter.string(from: NSNumber(value: differenceSum)) {
+               let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "") // Remove the decimal separator
+               return formattedString
+           }
        }
        
-       // Truncate or pad the notation difference to ensure length is 4 characters
-       if notationDifference.count > 4 {
-           let index = notationDifference.index(notationDifference.startIndex, offsetBy: 4)
-           notationDifference = String(notationDifference[..<index])
-       } else if notationDifference.count < 4 {
-           let paddingCount = 4 - notationDifference.count
-           notationDifference += String(repeating: " ", count: paddingCount)
-       }
-       
-       return notationDifference
+       return "\(differenceSum)"
    }
+
 
     static func getSimplifiedAmount(_ records: [Record], _ type: Int16) -> String {
         var amount: [String]  = []
@@ -252,6 +241,17 @@ class Helper {
         }
         return simplifyNumbers(amount, 3)
     }
+    
+    static func getRecordAmount(_ records: [Record], _ type: Int16) -> [String] {
+        var amount: [String]  = []
+        for record in records {
+            if record.type == type {
+                amount.append(record.amount!)
+            }
+        }
+        return amount
+    }
+    
     
     static func generateUniqueColors(_ count: Int) -> [UIColor] {
         var colors: [UIColor] = []
@@ -269,6 +269,77 @@ class Helper {
             colors.append(color)
         }
         return colors
+    }
+    
+    static func convertToString(from notation: String) -> String? {
+        let trimmedNotation = notation.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard let numericValue = Double(trimmedNotation) else {
+            return String(trimmedNotation)
+        }
+        
+        if numericValue < 1000 {
+            return String(numericValue)
+        }
+        
+        var convertedValue: Double
+        
+        switch trimmedNotation.suffix(1).lowercased() {
+        case "K":
+            convertedValue = numericValue * 1_000
+        case "M":
+            convertedValue = numericValue * 1_000_000
+        case "B":
+            convertedValue = numericValue * 1_000_000_000
+        case "T":
+            convertedValue = numericValue * 1_000_000_000_000
+        default:
+            return nil
+        }
+        return String(convertedValue)
+    }
+
+    static func calculatePercentage(value: Double, total: Double) -> Double {
+        guard total != 0 else {
+            return 0
+        }
+        
+        let percentage = (value / total) * 100
+        return percentage
+    }
+        
+    static func getChartData(_ records: [Record], type: Int16) -> [ChartData] {
+        lazy var recordByCategory = [String: [Record]]()
+        lazy var chartData = [ChartData]()
+        lazy var totalAmount = Double()
+        for record in records {
+            if record.type == type {
+                if let category = record.category {
+                    if recordByCategory[category] != nil {
+                        recordByCategory[category]?.append(record)
+                    }
+                    else {
+                        recordByCategory[category] = []
+                        recordByCategory[category]?.append(record)
+                    }
+                }
+                if let amount = record.amount {
+                    totalAmount += (Double(amount) ?? 0)
+                }
+            }
+        }
+        for (key, value) in recordByCategory {
+            lazy var icon = String()
+            lazy var categoryAmount = Double()
+            for record in value {
+                if let recordIcon = record.icon, let amount = record.amount {
+                    icon =  recordIcon
+                    categoryAmount += Double(amount) ?? 0
+                }
+            }
+            chartData.append(ChartData(percentage: calculatePercentage(value: categoryAmount, total: totalAmount), sfSymbol: icon, name: key))
+        }
+        return chartData
     }
     
 }

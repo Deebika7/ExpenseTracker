@@ -116,7 +116,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
             value.filter { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text)
             }
         }
-        var searchedSection = customCategory.filter { customCategory in
+        let searchedSection = customCategory.filter { customCategory in
             return customCategory.key.localizedCaseInsensitiveContains(text)
         }
 

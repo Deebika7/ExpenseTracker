@@ -128,7 +128,6 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     func dismissedPresentationModalSheet(_ isDismissed: Bool) {
         if isDismissed {
             record = RecordDataManager.shared.getRecord(id: recordId!)
-            print(record)
             tableView.reloadData()
         }
     }

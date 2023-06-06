@@ -1,16 +1,20 @@
+////
+////  IncomePieChartVC.swift
+////  ExpenseTracker
+////
+////  Created by deebika-pt6680 on 28/05/23.
+////
 //
-//  IncomePieChartVC.swift
-//  ExpenseTracker
-//
-//  Created by deebika-pt6680 on 28/05/23.
-//
-
 import UIKit
 
 class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
-    var dataSource: [String : Double] = ["Category 1": 30, "Category 2": 40, "Category 3": 20]
-    
+
+    var dataSource = [Double]()
+
+    private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+
+    private lazy var chartRecords = [ChartData]()
+
     private lazy var hollowPieChart: UIView = {
         let hollowPieChartView = HollowPieChart()
         hollowPieChartView.data = dataSource
@@ -18,7 +22,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         hollowPieChartView.backgroundColor = .secondarySystemGroupedBackground
         return hollowPieChartView
     }()
-    
+
     private lazy var headerViewContainer: UIView = {
         let headerViewContainer = UIView()
         headerViewContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -26,7 +30,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         headerViewContainer.layer.cornerRadius = 8
         return headerViewContainer
     }()
-    
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds, style: .insetGrouped)
         tableView.delegate = self
@@ -35,7 +39,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         tableView.backgroundColor = .systemGroupedBackground
         return tableView
     }()
-    
+
     private lazy var searchController = SearchController()
 
     override func viewDidLoad() {
@@ -46,45 +50,74 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         view.addSubview(headerViewContainer)
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
-        tableView.keyboardDismissMode = .onDrag
     }
-    
-    
+
+
     func setupContraints() {
         NSLayoutConstraint.activate([
             hollowPieChart.heightAnchor.constraint(equalToConstant: 160),
             hollowPieChart.widthAnchor.constraint(equalToConstant: 160),
             hollowPieChart.centerYAnchor.constraint(equalTo: headerViewContainer.centerYAnchor),
             hollowPieChart.centerXAnchor.constraint(equalTo: headerViewContainer.centerXAnchor),
-            
+
             headerViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             headerViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -16),
             headerViewContainer.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
             headerViewContainer.heightAnchor.constraint(equalToConstant: 160),
-            
+
             tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: -20),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
         ])
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource.count
+        chartRecords.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
-        cell.textLabel?.text = Array(dataSource.keys)[indexPath.row]
+        var configuration = cell.defaultContentConfiguration()
+        configuration.text = chartRecords[indexPath.row].name
+        configuration.secondaryText = String(format: "%.2f", chartRecords[indexPath.row].percentage) + "%"
+        configuration.prefersSideBySideTextAndSecondaryText = true
+        configuration.image = UIImage(systemName: chartRecords[indexPath.row].sfSymbol)
+        configuration.imageProperties.tintColor = .label
+        cell.contentConfiguration = configuration
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        "Income List"
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        44
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            }
+        else {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+        }
+        chartRecords = Helper.getChartData(records, type: 0)
+        dataSource = chartRecords.compactMap {$0.percentage}
+        if let hollowPieChartView = hollowPieChart as? HollowPieChart {
+            hollowPieChartView.data = dataSource
+//            hollowPieChartView.setNeedsDisplay()
+        }
+        tableView.reloadData()
     }
 }
 

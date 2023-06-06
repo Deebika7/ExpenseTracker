@@ -67,7 +67,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
     
     @objc func handleOnEditing() {
         let text = textField.text ?? ""
-        let limit = 21
+        let limit = 8
         textField.text = String(text.prefix(limit))
     }
 }
