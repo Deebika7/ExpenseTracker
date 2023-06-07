@@ -11,6 +11,7 @@ import UIKit
 class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private lazy var searchResults = [Date:[Record]]()
+    private lazy var searchText = String()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.frame, style: .insetGrouped)
@@ -27,8 +28,9 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         tableView.keyboardDismissMode = .onDrag
     }
     
-    func updateSearchResults(_ results: [Date:[Record]]) {
+    func updateSearchResults(_ results: [Date:[Record]], searchText: String) {
         searchResults = results
+        self.searchText =  searchText
         tableView.reloadData()
     }
     
@@ -50,12 +52,17 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         let record = Array(searchResults.keys)[indexPath.section]
         var configuration = cell.defaultContentConfiguration()
         if let recordItems = searchResults[record] {
-            configuration.text = recordItems[indexPath.row].category
             let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
-            print(simplifiedAmount)
             configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
             configuration.prefersSideBySideTextAndSecondaryText = true
             configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
+            let category = recordItems[indexPath.row].category ?? ""
+            let attributedString = NSMutableAttributedString(string: category)
+            if let range = category.range(of: searchText, options: .caseInsensitive) {
+                let nsRange = NSRange(range, in: category)
+                attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+            }
+            configuration.attributedText = attributedString
         }
         configuration.imageProperties.tintColor = .label
         cell.contentConfiguration = configuration
@@ -74,5 +81,5 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
             present(navigationController, animated: true)
         }
     }
-    
 }
+

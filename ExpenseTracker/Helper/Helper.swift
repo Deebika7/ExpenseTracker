@@ -152,6 +152,22 @@ class Helper {
         }
         return (0,0,0)
     }
+    
+    static func isCategoryPresent(_ text: String) -> Bool {
+        let incomeCategories = Helper.incomeCategory()
+        let expenseCategories = Helper.expenseCategory()
+        for category in incomeCategories {
+            if category.categoryName.caseInsensitiveCompare(text)  == .orderedSame {
+                return true
+            }
+        }
+        for category in expenseCategories {
+            if category.categoryName.caseInsensitiveCompare(text)  == .orderedSame {
+                return true
+            }
+        }
+        return false
+    }
 
    static func simplifyNumbers(_ numbers: [String], _ precision: Int) -> String {
        var sum: Double = 0.0
@@ -362,35 +378,54 @@ class Helper {
         return chartData
     }
     
-    static func generateDateForgraph(_ date: String) -> [String] {
-        lazy var availableDates = [String]()
+    static func generateDateForgraph(_ date: Date) -> [String] {
+        var availableDates = [String]()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
+
+        // Current Date
         let currentDate = Date()
-        
+
         let calendar = Calendar.current
-        let year = calendar.component(.year, from: currentDate)
-        let month = calendar.component(.month, from: currentDate)
+        let currentYear = calendar.component(.year, from: currentDate)
+        let currentMonth = calendar.component(.month, from: currentDate)
 
-        var dateComponents = DateComponents(year: year, month: month)
-        guard let startDateOfMonth = calendar.date(from: dateComponents) else {
-            return
+        let dateComponents = DateComponents(year: currentYear, month: currentMonth)
+        guard let currentStartDateOfMonth = calendar.date(from: dateComponents) else {
+            return []
         }
+        let startDate: Date
         let endDate: Date
-        let inputDateString = date
-        if let inputDate = dateFormatter.date(from: inputDateString) {
-            endDate = min(inputDate, currentDate)
-        } else {
-            endDate = currentDate
+        
+        // Input date
+        let inputYear = calendar.component(.year, from: date)
+        let inputMonth = calendar.component(.month, from: date)
+        var components = DateComponents()
+        components.year = inputYear
+        components.month = inputMonth
+        guard let inputDateOfMonth = calendar.date(from: components) else {
+            return []
         }
-
-        var currentDateInLoop = startDateOfMonth
+        let lastDayOfMonth = calendar.date(byAdding: .day, value: -1, to: inputDateOfMonth)
+    
+        
+        if inputYear == currentYear && inputMonth == currentMonth {
+            startDate = currentStartDateOfMonth
+            endDate = Date()
+        }
+        else {
+            startDate = inputDateOfMonth
+            endDate = lastDayOfMonth ?? Date()
+        }
+        
+        var currentDateInLoop = startDate
         while currentDateInLoop <= endDate {
             availableDates.append(dateFormatter.string(from: currentDateInLoop))
             currentDateInLoop = calendar.date(byAdding: .day, value: 1, to: currentDateInLoop)!
         }
         return availableDates
     }
+
 }
 
 

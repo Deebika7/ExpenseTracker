@@ -28,7 +28,7 @@ class CustomCategoryDataManager {
             guard let name = customCategory.name else {
                 break
             }
-            if newCustomCategory.categoryName == name {
+            if newCustomCategory.categoryName.caseInsensitiveCompare(name) == .orderedSame  {
                 return true
             }
         }

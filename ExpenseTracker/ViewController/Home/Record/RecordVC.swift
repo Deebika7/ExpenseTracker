@@ -258,10 +258,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         return  1
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        navigationItem.title = "Add Record"
-    }
-    
     // MARK: Selection Delegate
     
     func selectedType(_ text: String) {
@@ -324,4 +320,14 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         print("destroyed")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if editRecord != nil {
+            navigationItem.title = "Edit Record"
+        }
+        else {
+            navigationItem.title = "Add Record"
+        }
+    }
+    
 }
+

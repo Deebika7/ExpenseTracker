@@ -18,33 +18,33 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
         return dateLabel
     }()
     
-    private lazy var expenseAmount: UILabel = {
+    private lazy var incomeAmount: UILabel = {
         let expenseAmount = UILabel()
         expenseAmount.translatesAutoresizingMaskIntoConstraints = false
-        expenseAmount.textColor = UIColor(named: "red")
+        expenseAmount.textColor = UIColor(named: "blue")
         return expenseAmount
     }()
     
-    private lazy var expenseSymbol: UIImageView = {
+    private lazy var incomeSymbol: UIImageView = {
         let expenseSymbol = UIImageView()
-        expenseSymbol.image = UIImage(systemName: "arrow.down.app.fill")
-        expenseSymbol.tintColor = UIColor(named: "red")
+        expenseSymbol.image = UIImage(systemName: "arrow.up.square.fill")
+        expenseSymbol.tintColor = UIColor(named: "blue")
         expenseSymbol.translatesAutoresizingMaskIntoConstraints = false
         return expenseSymbol
     }()
     
-    private lazy var incomeSymbol: UIImageView = {
+    private lazy var expenseSymbol: UIImageView = {
         let incomeSymbol = UIImageView()
-        incomeSymbol.image = UIImage(systemName: "arrow.up.square.fill")
-        incomeSymbol.tintColor = UIColor(named: "blue")
+        incomeSymbol.image = UIImage(systemName: "arrow.down.square.fill")
+        incomeSymbol.tintColor = UIColor(named: "red")
         incomeSymbol.translatesAutoresizingMaskIntoConstraints = false
         return incomeSymbol
     }()
     
-    private lazy var incomeAmount: UILabel = {
+    private lazy var expenseAmount: UILabel = {
         let incomeAmount = UILabel()
         incomeAmount.translatesAutoresizingMaskIntoConstraints = false
-        incomeAmount.textColor = UIColor(named: "blue")
+        incomeAmount.textColor = UIColor(named: "red")
         return incomeAmount
     }()
     
@@ -58,11 +58,11 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(incomeAmount)
         contentView.addSubview(expenseAmount)
+        contentView.addSubview(incomeAmount)
         contentView.addSubview(dateLabel)
-        contentView.addSubview(expenseSymbol)
         contentView.addSubview(incomeSymbol)
+        contentView.addSubview(expenseSymbol)
         setupContraints()
     }
     
@@ -70,24 +70,43 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
         NSLayoutConstraint.activate([
             dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             dateLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-            
-            incomeAmount.leadingAnchor.constraint(equalTo: incomeSymbol.trailingAnchor, constant: 3),
-            incomeAmount.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
-            incomeAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-            incomeSymbol.trailingAnchor.constraint(equalTo: incomeAmount.leadingAnchor, constant: -3),
-            incomeSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+            expenseAmount.leadingAnchor.constraint(equalTo: expenseSymbol.trailingAnchor, constant: 3),
+            expenseAmount.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
+            expenseAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
             
             expenseSymbol.trailingAnchor.constraint(equalTo: expenseAmount.leadingAnchor, constant: -3),
             expenseSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-            expenseAmount.trailingAnchor.constraint(equalTo: incomeSymbol.leadingAnchor, constant: -8),
-            expenseAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+            
+            incomeSymbol.trailingAnchor.constraint(equalTo: incomeAmount.leadingAnchor, constant: -3),
+            incomeSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+            
+            incomeAmount.trailingAnchor.constraint(equalTo: expenseSymbol.leadingAnchor, constant: -8),
+            incomeAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
         ])
     }
     
+//    func setupBothConstraints() {
+//        NSLayoutConstraint.activate([
+//            expenseAmount.leadingAnchor.constraint(equalTo: expenseSymbol.trailingAnchor, constant: 3),
+//            expenseAmount.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
+//            expenseAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+//
+//            expenseSymbol.trailingAnchor.constraint(equalTo: expenseAmount.leadingAnchor, constant: -3),
+//            expenseSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+//
+//            incomeSymbol.trailingAnchor.constraint(equalTo: incomeAmount.leadingAnchor, constant: -3),
+//            incomeSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+//
+//            incomeAmount.trailingAnchor.constraint(equalTo: expenseSymbol.leadingAnchor, constant: -8),
+//            incomeAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
+//        ])
+//    }
+
     func configure(date: Date, incomeAmount: String, expenseAmount: String) {
         dateLabel.text = Helper.convertDateToString(date: date)
-        self.incomeAmount.text = incomeAmount
         self.expenseAmount.text = expenseAmount
+        self.incomeAmount.text = incomeAmount
+        
     }
     
 }

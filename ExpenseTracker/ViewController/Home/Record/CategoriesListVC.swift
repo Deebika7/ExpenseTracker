@@ -13,6 +13,8 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     private lazy var check = false
     
+    private lazy var searchText = String()
+    
     private lazy var searchedCategory: [Category] = {
         let category = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
         return category
@@ -117,14 +119,26 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
         if indexPath.section == 0 {
-            configuration.text = searchedCategory[indexPath.row].categoryName
+            let category = searchedCategory[indexPath.row].categoryName
+            let attributedString = NSMutableAttributedString(string: category)
+            if let range = category.range(of: searchText, options: .caseInsensitive) {
+                let nsRange = NSRange(range, in: category)
+                attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+            }
+            configuration.attributedText = attributedString
             configuration.image = UIImage(systemName: searchedCategory[indexPath.row].sfSymbolName)
             if selectedCategory != nil {
                 cell.accessoryType = (searchedCategory[indexPath.row].categoryName  == selectedCategory!.categoryName) ? .checkmark: .none
             }
         }
         else if indexPath.section == 1 {
-            configuration.text = searchedCustomCategory[indexPath.row].name
+            let category = searchedCustomCategory[indexPath.row].name ?? ""
+            let attributedString = NSMutableAttributedString(string: category)
+            if let range = category.range(of: searchText, options: .caseInsensitive) {
+                let nsRange = NSRange(range, in: category)
+                attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+            }
+            configuration.attributedText = attributedString
             configuration.image = UIImage(systemName: searchedCustomCategory[indexPath.row].icon!)
             if selectedCategory != nil {
                 cell.accessoryType = (searchedCustomCategory[indexPath.row].name  == selectedCategory!.categoryName) ? .checkmark: .none
@@ -196,7 +210,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         guard let text = searchController.searchBar.text else {
             return
         }
-        
+        searchText = text
         searchedCategory = category.filter{ category in
             return category.categoryName.localizedCaseInsensitiveContains(text) || category.sfSymbolName.localizedCaseInsensitiveContains(text)
         }

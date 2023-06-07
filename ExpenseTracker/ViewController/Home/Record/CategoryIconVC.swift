@@ -17,6 +17,8 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
     
     private lazy var searchResults = customCategory
     
+    private lazy var searchText = String()
+    
     convenience init(selectedCategory: Category?) {
         self.init(style: .insetGrouped)
         self.selectedCategory = selectedCategory
@@ -72,7 +74,12 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         let sectionItem = Array(searchResults.keys)[indexPath.section]
         if let categoryItems = searchResults[sectionItem] {
             let category = categoryItems[indexPath.row]
-            configuration.text = category.categoryName
+            let attributedString = NSMutableAttributedString(string: category.categoryName)
+            if let range = category.categoryName.range(of: searchText, options: .caseInsensitive) {
+                let nsRange = NSRange(range, in: category.categoryName)
+                attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+            }
+            configuration.attributedText = attributedString
             configuration.textProperties.color = .label
             configuration.image = UIImage(systemName: category.sfSymbolName)
             configuration.imageProperties.tintColor = .label
@@ -109,6 +116,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         guard let text = searchController.searchBar.text else {
             return
         }
+        searchText = text
         searchResults = searchResults.filter { key, value in
             key.localizedCaseInsensitiveContains(text) ||
             value.contains { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text) }

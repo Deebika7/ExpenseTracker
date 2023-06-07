@@ -15,6 +15,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         view.backgroundColor = .systemGroupedBackground
         tableView.register(CustomAppearanceCell.self, forCellReuseIdentifier: CustomAppearanceCell.reuseIdentifier)
         tableView.register(SwitchTableViewCell.self, forCellReuseIdentifier: SwitchTableViewCell.reuseIdentifier)
+        tableView.bounces = false
     }
     
     private lazy var tableView: UITableView = {

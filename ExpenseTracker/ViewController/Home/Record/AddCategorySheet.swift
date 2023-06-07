@@ -108,7 +108,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             return
         }
         
-        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: textField.text!)) {
+        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: textField.text!)) && !Helper.isCategoryPresent(textField.text!) {
             
             if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text!).trimMoreThanOneSpaces(), category: selectedCategory!) {
                 let alert = UIAlertController(title: "", message: "Category added", preferredStyle: .alert)

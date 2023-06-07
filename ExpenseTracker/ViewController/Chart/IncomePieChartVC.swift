@@ -103,6 +103,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 0, color: .red)
+        graphVc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(graphVc, animated: true)
     }
 

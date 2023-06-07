@@ -170,7 +170,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
             view.addSubview(containerView)
             setupContentViewConstraints()
             navigationItem.searchController = nil
-            monthViewAccessory.image = UIImage(systemName: "arrowtriangle.up.fill")
+            monthViewAccessory.image = UIImage(systemName: "arrowtriangle.down.fill")
             addChild(monthVc)
             containerView.addSubview(monthVc.view)
             monthVc.view.frame = containerView.bounds
@@ -182,7 +182,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         }
     }
     
+    @objc func dismissChildVC() {
+        closeMonthView()
+    }
+    
     func closeMonthView() {
+        monthViewAccessory.image = UIImage(systemName: "arrowtriangle.up.fill")
         if let childViewController = children.first {
             childViewController.view.removeFromSuperview()
             childViewController.removeFromParent()
@@ -197,9 +202,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         selectedMonth = month.number
         selectedYear = year
         monthLabel.text = month.name
-        monthViewAccessory.image = UIImage(systemName: "arrowtriangle.down.fill")
         UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
         records = RecordDataManager.shared.getAllRecordByMonth(month: selectedMonth, year: selectedYear)
+        refreshTable()
         tableView.reloadData()
     }
     
@@ -237,7 +242,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
         tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
         monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
-        
+        lazy var tapGesture = UITapGestureRecognizer()
+        tapGesture.addTarget(self, action: #selector(dismissChildVC))
+        view.addGestureRecognizer(tapGesture)
     }
     
     func setupContraints() {
@@ -305,6 +312,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         let recordVC = RecordVC(editRecord: nil)
         recordVC.presentationModalSheetDelegate = self
         let navigationController = UINavigationController(rootViewController: recordVC)
+        navigationController.title = "Add Record"
         present(navigationController, animated: true)
     }
     
@@ -420,9 +428,8 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
                 recordByDate[record.date!]?.append(record)
             }
         }
-        recordSearchResultsController.updateSearchResults(recordByDate)
+        recordSearchResultsController.updateSearchResults(recordByDate, searchText: text)
     }
-    //MARK: Separator
     
 }
 

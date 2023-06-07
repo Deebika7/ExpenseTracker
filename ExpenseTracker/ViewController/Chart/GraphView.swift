@@ -41,7 +41,19 @@ struct GraphView: View {
             ).foregroundStyle(color)
         }.chartYAxis {
             AxisMarks(position: .leading)
-        }
+        }.chartYScale(domain: 0...100)
+//            .overlay(
+//                    GeometryReader { geometry in
+//                        if let point = (x: 20,y: 20) {
+//                            Text("\(point.y, specifier: "%.2f")")
+//                                .font(.headline)
+//                                .foregroundColor(.white)
+//                                .padding(0.5)
+//                                .background(Color.black.opacity(0.5))
+//                                .cornerRadius(2)
+//                                .position(x: CGFloat(point.x), y: CGFloat(point.y))
+//                        }
+//                    }
+//                )
     }
 }
-
