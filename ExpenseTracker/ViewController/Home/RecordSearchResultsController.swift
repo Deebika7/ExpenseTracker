@@ -53,7 +53,7 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         var configuration = cell.defaultContentConfiguration()
         if let recordItems = searchResults[record] {
             let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
-            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
+            configuration.secondaryText = (recordItems[indexPath.row].type == 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
             configuration.prefersSideBySideTextAndSecondaryText = true
             configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
             let category = recordItems[indexPath.row].category ?? ""
@@ -67,7 +67,6 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         configuration.imageProperties.tintColor = .label
         cell.contentConfiguration = configuration
         return cell
-        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -81,5 +80,8 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
             present(navigationController, animated: true)
         }
     }
+                                                                        
+                                                                            
+                                                                            
 }
 

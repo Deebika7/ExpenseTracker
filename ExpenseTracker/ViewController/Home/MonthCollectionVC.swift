@@ -97,8 +97,6 @@ class MonthCollectionVC: UIViewController, UICollectionViewDataSource, UICollect
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.dataSource = self
         collectionView.delegate = self
-        
-        
         return collectionView
     }()
     

@@ -59,8 +59,13 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! CustomTextFieldCell
         amount = (cell.getEnteredData())
         
-        guard Double(amount) ?? 0 > 0 else {
+        guard !amount.isEmpty else {
             showAlert(text: "Please enter amount")
+            return
+        }
+        
+        guard Double(amount) ?? 0 > 0 else {
+            showAlert(text: "Amount should be greater than 0")
             return
         }
         
@@ -73,7 +78,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
 //            didEndEditing()
             view.endEditing(true)
             isEditingEnabled.toggle()
-            let alert = UIAlertController(title: "", message: "Record updated", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Record updated", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
                     self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
@@ -87,7 +92,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         else if RecordDataManager.shared.createRecord(type: currentType, amount: amount, createdDate: changedDate ?? Helper.convertDateToString(date: Helper.defaultDate), category: changedCategory!) {
 //            didEndEditing()
             view.endEditing(true)
-            let alert = UIAlertController(title: "", message: "Record added", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Record added", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
                     self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)

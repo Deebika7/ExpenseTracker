@@ -9,14 +9,11 @@ import UIKit
 
 class HollowPieChart: UIView {
     
-    var data: [Double] = [] {
+    var data: [Double: UIColor] = [:] {
         didSet {
             setNeedsDisplay()
         }
     }
-    
-    var colorByCategory: [String: UIColor] = [:]
-    
     override func draw(_ rect: CGRect)  {
         super.draw(rect)
         
@@ -28,11 +25,11 @@ class HollowPieChart: UIView {
         let radius = min(bounds.width, bounds.height) * 0.4
         let innerRadius = radius * 0.6 // Adjust the inner radius as desired
         
-        let totalValue = data.reduce(0, +)
+        let totalValue = data.keys.reduce(0, +)
         var startAngle: CGFloat = 0
         
-        for value in data {
-            let endAngle = startAngle + (CGFloat(value) / CGFloat(totalValue)) * 2 * .pi
+        for (key, value) in data {
+            let endAngle = startAngle + (CGFloat(key) / CGFloat(totalValue)) * 2 * .pi
             
             let path = UIBezierPath()
             path.move(to: center)
@@ -43,12 +40,10 @@ class HollowPieChart: UIView {
             
             path.close()
             
-            let arcColor = UIColor.random()
+            let arcColor = value
             arcColor.setFill()
             path.fill()
-            
-//            colorByCategory[category] = arcColor
-            
+                        
             startAngle = endAngle
         }
         
@@ -56,11 +51,3 @@ class HollowPieChart: UIView {
     
 }
 
-extension UIColor {
-    static func random() -> UIColor {
-        let red = CGFloat.random(in: 0...1)
-        let green = CGFloat.random(in: 0...1)
-        let blue = CGFloat.random(in: 0...1)
-        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
-    }
-}

@@ -37,7 +37,7 @@ class Helper {
             Category(sfSymbolName: "bus", categoryName: "Bus"),
             Category(sfSymbolName: "box.truck", categoryName: "truck"),
             Category(sfSymbolName: "airplane", categoryName: "Airplane"),
-            Category(sfSymbolName: "train", categoryName: "Train"),
+            Category(sfSymbolName: "train.side.front.car", categoryName: "Train"),
             Category(sfSymbolName: "scooter", categoryName: "Scooter"),
             Category(sfSymbolName: "road.lanes", categoryName: "Road"),
         ],
@@ -268,25 +268,6 @@ class Helper {
         return amount
     }
     
-    
-    static func generateUniqueColors(_ count: Int) -> [UIColor] {
-        var colors: [UIColor] = []
-        
-        for _ in 0..<count {
-            var color: UIColor
-            
-            repeat {
-                let red = CGFloat.random(in: 0...1)
-                let green = CGFloat.random(in: 0...1)
-                let blue = CGFloat.random(in: 0...1)
-                color = UIColor(red: red, green: green, blue: blue, alpha: 1.0)
-            } while colors.contains(where: { $0.isEqual(color) })
-            
-            colors.append(color)
-        }
-        return colors
-    }
-    
     static func convertToString(from notation: String) -> String? {
         let trimmedNotation = notation.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -364,7 +345,8 @@ class Helper {
                 }
             }
         }
-        for (key, value) in recordByCategory {
+        let colors = Helper.generateThemeColors(count: recordByCategory.count)
+        for (index, (key, value)) in recordByCategory.enumerated() {
             lazy var icon = String()
             lazy var categoryAmount = Double()
             for record in value {
@@ -373,7 +355,7 @@ class Helper {
                     categoryAmount += Double(amount) ?? 0
                 }
             }
-            chartData.append(ChartData(percentage: calculatePercentage(value: categoryAmount, total: totalAmount), sfSymbol: icon, name: key))
+            chartData.append(ChartData(percentage: calculatePercentage(value: categoryAmount, total: totalAmount), sfSymbol: icon, name: key, color: colors[index % colors.count]))
         }
         return chartData
     }
@@ -382,48 +364,58 @@ class Helper {
         var availableDates = [String]()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
-
-        // Current Date
-        let currentDate = Date()
-
-        let calendar = Calendar.current
-        let currentYear = calendar.component(.year, from: currentDate)
-        let currentMonth = calendar.component(.month, from: currentDate)
-
-        let dateComponents = DateComponents(year: currentYear, month: currentMonth)
-        guard let currentStartDateOfMonth = calendar.date(from: dateComponents) else {
-            return []
-        }
-        let startDate: Date
-        let endDate: Date
         
-        // Input date
         let inputYear = calendar.component(.year, from: date)
         let inputMonth = calendar.component(.month, from: date)
         var components = DateComponents()
         components.year = inputYear
         components.month = inputMonth
-        guard let inputDateOfMonth = calendar.date(from: components) else {
-            return []
-        }
-        let lastDayOfMonth = calendar.date(byAdding: .day, value: -1, to: inputDateOfMonth)
-    
-        
-        if inputYear == currentYear && inputMonth == currentMonth {
-            startDate = currentStartDateOfMonth
-            endDate = Date()
-        }
-        else {
-            startDate = inputDateOfMonth
-            endDate = lastDayOfMonth ?? Date()
-        }
-        
-        var currentDateInLoop = startDate
-        while currentDateInLoop <= endDate {
-            availableDates.append(dateFormatter.string(from: currentDateInLoop))
-            currentDateInLoop = calendar.date(byAdding: .day, value: 1, to: currentDateInLoop)!
+        components.day = 1
+        if let firstDayOfMonth = calendar.date(from: components) {
+            if let range = calendar.range(of: .day, in: .month, for: firstDayOfMonth) {
+                for day in range {
+                    components.day = day
+                    if let date = calendar.date(from: components) {
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "dd-MM-yyyy"
+                        let formattedDate = dateFormatter.string(from: date)
+                        availableDates.append(formattedDate)
+                    }
+                }
+            }
         }
         return availableDates
+    }
+    
+    static func getCategoryName(for icon: String) -> String {
+        let customCategoryList = customCategory
+        for (_, value) in customCategoryList {
+            for category in value {
+                if category.sfSymbolName == icon{
+                    return category.categoryName
+                }
+            }
+        }
+        return ""
+    }
+    
+    static func generateThemeColors(count: Int) -> [UIColor] {
+        var colors: [UIColor] = []
+        
+        let hueRange: ClosedRange<CGFloat> = 0...1
+        
+        let brightness: CGFloat = 0.8
+        let saturation: CGFloat = 0.8
+        
+        let hueIncrement = (hueRange.upperBound - hueRange.lowerBound) / CGFloat(count)
+        
+        for i in 0..<count {
+            let hue = hueRange.lowerBound + CGFloat(i) * hueIncrement
+            let color = UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
+            colors.append(color)
+        }
+        
+        return colors
     }
 
 }

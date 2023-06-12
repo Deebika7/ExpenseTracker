@@ -61,7 +61,15 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
+        if searchResults.count == 0 {
+            tableView.backgroundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
+            tableView.translatesAutoresizingMaskIntoConstraints = false
+        }
+        else {
+            tableView.backgroundView = nil
+        }
         return searchResults.count
+        
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -84,9 +92,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
             configuration.image = UIImage(systemName: category.sfSymbolName)
             configuration.imageProperties.tintColor = .label
             if selectedCategory != nil {
-                if category.categoryName  == selectedCategory.categoryName {
-                    cell.accessoryType = .checkmark
-                }
+                cell.accessoryType = (selectedCategory.categoryName  == category.categoryName) ? .checkmark : .none
             }
         }
         cell.contentConfiguration = configuration

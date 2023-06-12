@@ -13,10 +13,6 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     private lazy var record: Record! = RecordDataManager.shared.getRecord(id: recordId!)
     
-    private lazy var edit: UIBarButtonItem = {
-        UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(editRecord))
-    }()
-    
     @objc func editRecord() {
         let recordVC = RecordVC(editRecord: record)
         recordVC.presentationModalSheetDelegate = self
@@ -24,8 +20,19 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         present(navigationController, animated: true)
     }
     
+    @objc func dismissDescriptionVC() {
+        dismiss(animated: true)
+    }
+    
+    private lazy var edit: UIBarButtonItem = {
+        let edit = UIBarButtonItem(image:  UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(editRecord))
+        return edit
+    }()
+    
     private lazy var delete: UIBarButtonItem = {
-        UIBarButtonItem(image: UIImage(systemName: "trash"), style: .done, target: self, action: #selector(deleteRecord))
+        let trashButton = UIBarButtonItem(image:  UIImage(systemName: "trash"), style: .done, target: self, action: #selector(deleteRecord))
+        trashButton.tintColor = UIColor.systemRed
+        return trashButton
     }()
     
     @objc func deleteRecord() {
@@ -59,6 +66,9 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DescriptionCell")
         navigationItem.rightBarButtonItems = [delete, edit]
         tableView.register(DescriptionCell.self, forCellReuseIdentifier: DescriptionCell.reuseIdentifier)
+        if presentingViewController != nil {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissDescriptionVC))
+        }
     }
     
     private lazy var tableView: UITableView = {

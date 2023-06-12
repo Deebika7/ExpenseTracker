@@ -42,10 +42,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     private lazy var type: String! = nil
     
-    private lazy var edit: UIBarButtonItem = {
-        UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(enableEditing))
-    }()
-    
     private lazy var add: UIBarButtonItem = {
         UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCategory))
     }()
@@ -74,7 +70,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         searchController.hidesNavigationBarDuringPresentation = false
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItems = searchedCustomCategory.isEmpty ? [add] : [add, edit]
+        navigationItem.rightBarButtonItems = [add]
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissCategoryListVc))
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 30
@@ -87,14 +83,10 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         dismiss(animated: true)
     }
     
-    @objc func enableEditing() {
-        tableView.isEditing  =  tableView.isEditing ? false : true
-    }
     
     @objc func addNewCategory(){
-        tableView.isEditing = false
-        let addCategoryVC = AddCategorySheet()
-        addCategoryVC.title = "Custom Category"
+        let addCategoryVC = AddCategorySheet(editCustomCategory: nil)
+        addCategoryVC.title = "Add Custom Category"
         addCategoryVC.presentationModalSheetDelegate = self
         let navigationController = UINavigationController(rootViewController: addCategoryVC)
         navigationController.modalPresentationStyle = .formSheet
@@ -107,12 +99,20 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        navigationItem.rightBarButtonItems = searchedCustomCategory.isEmpty ? [add] : [add, edit]
         return section == 0 ? (searchedCategory.isEmpty) ? "" : "Default Category" : (searchedCustomCategory.isEmpty) ? "" : "Custom Category"
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        section == 0 ? searchedCategory.count : searchedCustomCategory.count
+        if searchedCategory.count == 0 && searchedCustomCategory.count == 0 {
+            tableView.backgroundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
+            tableView.backgroundView?.translatesAutoresizingMaskIntoConstraints = false
+            tableView.backgroundView!.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 150).isActive = true
+            tableView.backgroundView!.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 30).isActive = true
+        }
+        else {
+            tableView.backgroundView = nil
+        }
+        return section == 0 ? searchedCategory.count : searchedCustomCategory.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -166,34 +166,9 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     // MARK: Edit
     
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        indexPath.section == 1 ? true : false
-    }
-    
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        .delete
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            tableView.beginUpdates()
-            categoryDelegate?.selectedCategory(nil, categoryType: -1)
-            let alert = UIAlertController(title: "Delete Custom Category", message: "Records saved in this custom category will be moved to others", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Cancel", style: .default))
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
-                tableView.performBatchUpdates{
-                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (self?.searchedCustomCategory[indexPath.row])!)
-                    CustomCategoryDataManager.shared.deleteCustomCategory(id: (self?.searchedCustomCategory[indexPath.row].id!)!)
-                }
-                self?.searchedCustomCategory.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-                tableView.endUpdates()
-                tableView.reloadData()
-            }))
-            self.present(alert, animated: true)
-            
-        }
-    }
+//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+//        indexPath.section == 1 ? true : false
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -223,7 +198,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             searchedCategory = category
             searchedCustomCategory = customCategory
         }
-        
         tableView.reloadData()
     }
 }

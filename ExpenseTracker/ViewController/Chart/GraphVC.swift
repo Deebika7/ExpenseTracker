@@ -21,6 +21,24 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private lazy var records = [Record]()
     
+    private lazy var totalAmount: Double = 0
+    
+    private lazy var averageAmount: Double = 0
+    
+    private lazy var totalAmountLabel: UILabel = {
+        let totalAmount = UILabel()
+        totalAmount.translatesAutoresizingMaskIntoConstraints = false
+        return totalAmount
+    }()
+    
+    private lazy var averageAmountLabel: UILabel = {
+        let averageAmount = UILabel()
+        averageAmount.translatesAutoresizingMaskIntoConstraints = false
+        averageAmount.font = UIFont.systemFont(ofSize: 14)
+        averageAmount.textColor = .secondaryLabel
+        return averageAmount
+    }()
+    
     private lazy var graphContainerView: UIView = {
         let graphContainerView = UIView()
         graphContainerView.backgroundColor = .secondarySystemGroupedBackground
@@ -62,8 +80,10 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             return
         }
         view.addSubview(graphContainerView)
-        graphContainerView.addSubview(graphView)
         view.addSubview(tableView)
+        graphContainerView.addSubview(totalAmountLabel)
+        graphContainerView.addSubview(averageAmountLabel)
+        graphContainerView.addSubview(graphView)
         graphView.backgroundColor = .secondarySystemGroupedBackground
         graphView.translatesAutoresizingMaskIntoConstraints = false
         setupContraints()
@@ -72,20 +92,38 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             graphView.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor, constant: -4),
             graphView.bottomAnchor.constraint(equalTo: graphContainerView.bottomAnchor, constant: -4),
         ])
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "GraphCell")
+        tableView.register(GraphCell.self, forCellReuseIdentifier: GraphCell.reuseIdentifier)
+        tableView.allowsSelection = false
+        totalAmount = graphData.reduce(0) {
+            result , data in
+            return result + (Double(data.amount) ?? 0)
+        }
+        totalAmountLabel.text = "Total Amount: \(totalAmount)"
+        averageAmount = totalAmount / Double(generateGraphValues().count)
+        averageAmountLabel.text = "Daily Average Amount: \(averageAmount)"
     }
     
     func setupContraints() {
         NSLayoutConstraint.activate([
             graphContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             graphContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            graphContainerView.heightAnchor.constraint(equalToConstant: 200),
+            graphContainerView.heightAnchor.constraint(equalToConstant: 220),
             graphContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             
             tableView.topAnchor.constraint(equalTo: graphContainerView.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            totalAmountLabel.topAnchor.constraint(equalTo: graphContainerView.topAnchor, constant: 8),
+            totalAmountLabel.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor, constant: 4),
+            totalAmountLabel.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
+            totalAmountLabel.heightAnchor.constraint(equalToConstant: 14),
+            
+            averageAmountLabel.topAnchor.constraint(equalTo: totalAmountLabel.bottomAnchor, constant: 8),
+            averageAmountLabel.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor, constant: 4),
+            averageAmountLabel.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
+            averageAmountLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
     }
     
@@ -94,19 +132,9 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GraphCell", for: indexPath)
-        var configuration = cell.defaultContentConfiguration()
-        configuration.image =  UIImage(systemName: graphData[indexPath.row].icon)
-        configuration.imageProperties.tintColor = .label
-        configuration.secondaryText = String(format: "%.2f", graphData[indexPath.row].percentage) + "%"
-        configuration.text = Helper.convertDateToString(date: graphData[indexPath.row].date)
-        configuration.prefersSideBySideTextAndSecondaryText = true
-        cell.contentConfiguration = configuration
+        let cell = tableView.dequeueReusableCell(withIdentifier: GraphCell.reuseIdentifier, for: indexPath) as! GraphCell
+        cell.configure(percentage: String(format: "%.2f", graphData[indexPath.row].percentage), date: Helper.convertDateToString(date: graphData[indexPath.row].date), amount: String(graphData[indexPath.row].amount))
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -141,10 +169,6 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             }
         }
         return graphValues
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        navigationItem.title = "Graph"
     }
     
 }

@@ -6,15 +6,17 @@
 //
 
 import UIKit
+import SwiftUI
 
 class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var dataSource = [Double]()
+    var dataSource = [Double: UIColor]()
     
     private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
 
     private lazy var chartRecords = [ChartData]()
-
+    
+    private lazy var colors = [UIColor]()
     
     private lazy var hollowPieChart: UIView = {
         let hollowPieChartView = HollowPieChart()
@@ -78,11 +80,22 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource.count
+        if chartRecords.isEmpty {
+            headerViewContainer.isHidden = true
+            tableView.backgroundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
+            tableView.backgroundView?.translatesAutoresizingMaskIntoConstraints = false
+            tableView.backgroundView!.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 50).isActive = true
+            tableView.backgroundView!.centerXAnchor.constraint(equalTo: tableView.centerXAnchor, constant: -100).isActive = true
+        }
+        else {
+            tableView.backgroundView = nil
+            headerViewContainer.isHidden = false
+        }
+        return  dataSource.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Expense List"
+        dataSource.isEmpty ? "" : "Expense List"
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,7 +105,7 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         configuration.secondaryText = String(format: "%.2f", chartRecords[indexPath.row].percentage) + "%"
         configuration.prefersSideBySideTextAndSecondaryText = true
         configuration.image = UIImage(systemName: chartRecords[indexPath.row].sfSymbol)
-        configuration.imageProperties.tintColor = .label
+        configuration.imageProperties.tintColor = chartRecords[indexPath.row].color
         cell.contentConfiguration = configuration
         return cell
     }
@@ -103,8 +116,9 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 1, color: .red)
+        let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 1, color: Color(uiColor: chartRecords[indexPath.row].color))
         graphVc.hidesBottomBarWhenPushed = true
+        graphVc.title = chartRecords[indexPath.row].name
         navigationController?.pushViewController(graphVc, animated: true)
     }
     
@@ -116,7 +130,14 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
         }
         chartRecords = Helper.getChartData(records, type: 1)
-        dataSource = chartRecords.compactMap {$0.percentage}
+        
+        chartRecords = chartRecords.sorted (by: {
+            $0.percentage > $1.percentage
+        })
+        
+        dataSource = chartRecords.reduce(into: [Double: UIColor]()){
+            result, chartRecord in result[chartRecord.percentage] = chartRecord.color
+        }
         if let hollowPieChartView = hollowPieChart as? HollowPieChart {
             hollowPieChartView.data = dataSource
             hollowPieChartView.setNeedsDisplay()

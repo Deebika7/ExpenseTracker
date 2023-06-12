@@ -98,6 +98,12 @@ class DatabaseManager {
         saveContext()
     }
     
+    func updateCustomCategory(oldCustomCategory: CustomCategory, newCustomCategory: Category) {
+        oldCustomCategory.name = newCustomCategory.categoryName
+        oldCustomCategory.icon = newCustomCategory.sfSymbolName
+        saveContext()
+    }
+    
     func removeCustomCategory(id : UUID) {
         let customCategory = getAllCustomCategory()
         for category in customCategory {

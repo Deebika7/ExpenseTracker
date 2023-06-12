@@ -84,23 +84,6 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
             incomeAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
         ])
     }
-    
-//    func setupBothConstraints() {
-//        NSLayoutConstraint.activate([
-//            expenseAmount.leadingAnchor.constraint(equalTo: expenseSymbol.trailingAnchor, constant: 3),
-//            expenseAmount.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
-//            expenseAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-//
-//            expenseSymbol.trailingAnchor.constraint(equalTo: expenseAmount.leadingAnchor, constant: -3),
-//            expenseSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-//
-//            incomeSymbol.trailingAnchor.constraint(equalTo: incomeAmount.leadingAnchor, constant: -3),
-//            incomeSymbol.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-//
-//            incomeAmount.trailingAnchor.constraint(equalTo: expenseSymbol.leadingAnchor, constant: -8),
-//            incomeAmount.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -5),
-//        ])
-//    }
 
     func configure(date: Date, incomeAmount: String, expenseAmount: String) {
         dateLabel.text = Helper.convertDateToString(date: date)

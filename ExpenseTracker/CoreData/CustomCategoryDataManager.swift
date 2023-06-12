@@ -25,14 +25,32 @@ class CustomCategoryDataManager {
     func isCustomCategoryPresent(newCustomCategory: Category) -> Bool {
         let customCategories = getAllCustomCategory()
         for customCategory in customCategories {
-            guard let name = customCategory.name else {
+            guard let name = customCategory.name, let icon = customCategory.icon else {
                 break
             }
-            if newCustomCategory.categoryName.caseInsensitiveCompare(name) == .orderedSame  {
+            if newCustomCategory.categoryName.caseInsensitiveCompare(name) == .orderedSame && newCustomCategory.sfSymbolName.caseInsensitiveCompare(icon) == .orderedSame  {
                 return true
             }
         }
         return false
+    }
+    
+//    func getCustomCategory(customCategory: Category) -> CustomCategory? {
+//        let customCategories = getAllCustomCategory()
+//        for category in customCategories {
+//            guard let name = category.name else {
+//                break
+//            }
+//            if customCategory.categoryName.caseInsensitiveCompare(name) == .orderedSame  {
+//                return category
+//            }
+//        }
+//        return nil
+//    }
+    
+    func updateCustomCategory(oldCustomCategory: CustomCategory, newCustomCategory: Category) {
+            DatabaseManager.shared.updateCustomCategory(oldCustomCategory: oldCustomCategory, newCustomCategory: newCustomCategory)
+        
     }
     
     func deleteCustomCategory(id: UUID) {

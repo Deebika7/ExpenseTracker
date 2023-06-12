@@ -20,7 +20,7 @@ class SwitchTableViewCell: UITableViewCell {
     private lazy var blurEffectLabel: UILabel = {
         let blurEffectLabel = UILabel()
         blurEffectLabel.translatesAutoresizingMaskIntoConstraints = false
-        blurEffectLabel.text = "Blur Foreground Content"
+        blurEffectLabel.text = "Blur Contents in Background"
         return blurEffectLabel
     }()
 

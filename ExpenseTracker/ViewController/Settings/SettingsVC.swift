@@ -15,6 +15,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         view.backgroundColor = .systemGroupedBackground
         tableView.register(CustomAppearanceCell.self, forCellReuseIdentifier: CustomAppearanceCell.reuseIdentifier)
         tableView.register(SwitchTableViewCell.self, forCellReuseIdentifier: SwitchTableViewCell.reuseIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Edit Custom Category")
         tableView.bounces = false
     }
     
@@ -26,7 +27,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.dataSource = self
         return tableView
     }()
-    
+
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.title = "Settings"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -42,7 +43,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -56,6 +57,14 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             cell.selectionStyle = .none
             return cell
         }
+        else if indexPath.row == 2 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Edit Custom Category", for: indexPath)
+            var configuration = cell.defaultContentConfiguration()
+            configuration.text = "Edit Custom Category"
+            cell.contentConfiguration = configuration
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        }
         return UITableViewCell()
     }
     
@@ -65,5 +74,11 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.row == 2 {
+            let editCustomCategoryVc = EditCustomCategory(style: .insetGrouped)
+            editCustomCategoryVc.title = "Custom Category List"
+            navigationController?.pushViewController(editCustomCategoryVc, animated: true)
+        }
     }
+    
 }

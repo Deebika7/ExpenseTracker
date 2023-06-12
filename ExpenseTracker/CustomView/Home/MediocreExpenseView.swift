@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MoneyTrackerView: UIView {
+class MediocreExpenseView: UIView {
     override func draw(_ rect: CGRect) {
         
         guard let redView = subviews.first else {

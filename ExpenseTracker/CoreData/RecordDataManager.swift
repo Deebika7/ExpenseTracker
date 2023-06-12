@@ -25,12 +25,12 @@ class RecordDataManager {
         let date: Date = Helper.convertStringToDate(value: date)
         DatabaseManager.shared.updateRecord(id: id, newType: recordType, newAmount: amount, newIcon: category.sfSymbolName, newCategory: category.categoryName, newDate: date)
     }
-    
-    func updateRecordForCustomCategory(customCategory: CustomCategory) {
+
+    func updateRecordForCustomCategory(customCategory: CustomCategory, newIcon: String, newCategory: String) {
         let allRecords = DatabaseManager.shared.getAllRecord()
         for record in allRecords {
-            if record.category! == customCategory.name && record.icon! == customCategory.icon  {
-                DatabaseManager.shared.updateRecord(id: record.id!, newType: record.type, newAmount: record.amount!, newIcon: "square.grid.3x3", newCategory: "Others", newDate: record.date!)
+            if record.category! == customCategory.name && record.icon! == customCategory.icon! {
+                DatabaseManager.shared.updateRecord(id: record.id!, newType: record.type, newAmount: record.amount!, newIcon: newIcon, newCategory: newCategory, newDate: record.date!)
             }
         }
     }
