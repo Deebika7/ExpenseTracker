@@ -80,39 +80,39 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         monthView.translatesAutoresizingMaskIntoConstraints = false
         monthView.addSubview(monthLabel)
         monthView.addSubview(monthAccessoryView)
-        monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
+//        monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
         return monthView
     }()
     
-    private lazy var monthViewTapGestureRecognizer: UITapGestureRecognizer = {
-        let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
-        return monthViewTapGestureRecognizer
-    }()
+//    private lazy var monthViewTapGestureRecognizer: UITapGestureRecognizer = {
+//        let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
+//        return monthViewTapGestureRecognizer
+//    }()
     
-    private lazy var monthVc: UIViewController = {
-        let monthVc = MonthCollectionVC()
-        monthVc.monthSelectionDelegate = self
-        return monthVc
-    }()
+//    private lazy var monthVc: UIViewController = {
+//        let monthVc = MonthCollectionVC()
+//        monthVc.monthSelectionDelegate = self
+//        return monthVc
+//    }()
     
-    @objc func didTapMonthView() {
-        if isMonthViewExpanded {
-            UIView.transition(with: containerView, duration: 0.4, options: .transitionFlipFromBottom, animations: nil, completion: nil)
-            view.addSubview(monthContainerView)
-            setupContentViewConstraints()
-            navigationItem.searchController = nil
-            navigationItem.title = nil
-            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
-            addChild(monthVc)
-            containerView.addSubview(monthVc.view)
-            monthVc.view.frame = monthContainerView.bounds
-            monthVc.didMove(toParent: self)
-            isMonthViewExpanded = false
-        }
-        else {
-            closeMonthView()
-        }
-    }
+//    @objc func didTapMonthView() {
+//        if isMonthViewExpanded {
+//            UIView.transition(with: containerView, duration: 0.4, options: .transitionFlipFromBottom, animations: nil, completion: nil)
+//            view.addSubview(monthContainerView)
+//            setupContentViewConstraints()
+//            navigationItem.searchController = nil
+//            navigationItem.title = nil
+//            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
+//            addChild(monthVc)
+//            containerView.addSubview(monthVc.view)
+//            monthVc.view.frame = monthContainerView.bounds
+//            monthVc.didMove(toParent: self)
+//            isMonthViewExpanded = false
+//        }
+//        else {
+//            closeMonthView()
+//        }
+//    }
     
     func setupContentViewConstraints() {
         NSLayoutConstraint.activate([
@@ -164,16 +164,16 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         view.addGestureRecognizer(tapGesture)
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        let touchLocation = touch.location(in: self.view)
-        if monthContainerView.bounds.contains(touchLocation) {
-            return false
-        }
-        if monthVc.view.bounds.contains(touchLocation) {
-            return false
-        }
-        return true
-    }
+//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+//        let touchLocation = touch.location(in: self.view)
+//        if monthContainerView.bounds.contains(touchLocation) {
+//            return false
+//        }
+//        if monthVc.view.bounds.contains(touchLocation) {
+//            return false
+//        }
+//        return true
+//    }
     
     func selectedMonth(_ month: (name: String, number: Int), year: Int) {
         selectedMonth = month.number

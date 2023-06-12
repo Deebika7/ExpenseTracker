@@ -414,10 +414,9 @@ class Helper {
             let color = UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
             colors.append(color)
         }
-        
         return colors
     }
-
+    
 }
 
 

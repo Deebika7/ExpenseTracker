@@ -11,6 +11,13 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     private lazy var recordSearchResultsController = RecordSearchResultsController()
     
+    struct SectionData {
+        let date: Date
+        var rows: [Record]
+    }
+    
+    var datasource = [SectionData]()
+    
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: recordSearchResultsController)
         searchController.searchResultsUpdater = self
@@ -24,9 +31,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     private lazy var selectedYear: Int! = nil
     
-    private lazy var records = RecordDataManager.shared.getAllRecordByMonth(month: Helper.defaultYear, year: Helper.defaultMonth)
-    
-    private lazy var recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultYear, year: Helper.defaultMonth)
+    private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
     
     private lazy var isMonthViewExpanded: Bool = true
     
@@ -68,8 +73,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         mediocreExpenseView.backgroundColor = .clear
         return mediocreExpenseView
     }()
-    
-    
     
     private lazy var expenseLabel: UILabel = {
         let expenseLabel = UILabel()
@@ -141,13 +144,22 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         monthAccessoryView.tintColor = .label
         return  monthAccessoryView
     }()
+    
+    private lazy var clickableView: UIView = {
+       let clickableView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        clickableView.addGestureRecognizer(monthViewTapGestureRecognizer)
+        clickableView.backgroundColor = .clear
+        return clickableView
+    }()
 
     private lazy var monthView: UIView = {
-        let monthView = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 60))
+        let monthView = UIView()
         monthView.translatesAutoresizingMaskIntoConstraints = false
+        monthView.addSubview(clickableView)
+        clickableView.center = monthView.center
         monthView.addSubview(monthLabel)
         monthView.addSubview(monthAccessoryView)
-        monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
+        monthView.bringSubviewToFront(clickableView)
         return monthView
     }()
 
@@ -162,9 +174,15 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         return containerView
     }()
 
-    private lazy var monthVc: UIViewController = {
-        let monthVc = MonthCollectionVC()
+    private lazy var monthVc: MonthCollectionVC = {
+        let monthVc = MonthCollectionVC.init()
+        monthVc.translatesAutoresizingMaskIntoConstraints = false
+        monthVc.configureView()
         monthVc.monthSelectionDelegate = self
+        monthVc.collectionView.dataSource = self
+        monthVc.collectionView.delegate = self
+        monthVc.forwardChevron.addTarget(self, action: #selector(forwardChevronTapped), for: .touchUpInside)
+        monthVc.backwardChevron.addTarget(self, action: #selector(backwardChevronTapped), for: .touchUpInside)
         return monthVc
     }()
     
@@ -173,22 +191,125 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         return add
     }()
     
-    private lazy var edit: UIBarButtonItem = {
-        let edit = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addRecord))
-        return edit
+    private lazy var sort: UIBarButtonItem = {
+        let sort = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"), menu: setupMenu() )
+        return sort
     }()
+    
+    func getSectionSortOption() -> SectionSortOption {
+        return UserDefaultManager.shared.getSavedSectionSortOptions() ?? .newestFirst
+    }
+    
+    func getRowSortOption() -> RowSortOption {
+        return UserDefaultManager.shared.getSavedRowSortOption() ?? .income(.amountHighToLow)
+    }
+    
+    func sectionSortOptionChanged(to option: SectionSortOption) {
+        UserDefaultManager.shared.saveSectionSortOptions(option)
+        refreshTable()
+    }
+    
+    func rowSortOptionChanged(to option: RowSortOption) {
+        UserDefaultManager.shared.saveRowSortOption(option)
+        refreshTable()
+    }
+    
+    func setupMenu() -> UIMenu {
+        
+        let groupOptionMenuElement = UIDeferredMenuElement.uncached { completion in
+            let sortByDate = self.getSectionSortOption()
+
+            let newestFirst = UIAction(title: "Newest First", state: sortByDate == .newestFirst ? .on : .off, handler: {
+                _ in
+                self.sectionSortOptionChanged(to: .newestFirst)
+            })
+            
+            let oldestFirst = UIAction(title: "Oldest First", state: sortByDate == .oldestFirst ? .on : .off, handler: {
+                _ in
+                self.sectionSortOptionChanged(to: .oldestFirst)
+            })
+            
+            DispatchQueue.main.async {
+                completion([newestFirst, oldestFirst])
+            }
+        }
+        
+        let sortOptionMenuElement = UIDeferredMenuElement.uncached { completion in
+            var incomeState: UIMenuElement.State = .off
+            var expenseState: UIMenuElement.State = .off
+            let sortOption = self.getRowSortOption()
+
+            switch sortOption {
+            case .income(_):
+                incomeState = .on
+            case .expense(_):
+                expenseState = .on
+            }
+            
+            let income = UIAction(title: "Income", state: incomeState,  handler: { _ in
+                self.rowSortOptionChanged(to: .income(.amountHighToLow))
+            })
+            
+            let expense = UIAction(title: "Expense", state: expenseState, handler: { _ in
+                self.rowSortOptionChanged(to: .expense(.amountHighToLow))
+            })
+            
+            var children = [UIMenuElement]()
+            
+            let currentSortSettings = self.getRowSortOption()
+            
+            switch currentSortSettings {
+            case .expense(let sortByAmount), .income(let sortByAmount):
+                let amountLowToHigh = UIAction(title: "Amount Low To High",state: sortByAmount == .amountLowToHigh ? .on : .off, handler: { _ in
+                    if case RowSortOption.expense(_) = currentSortSettings {
+                        self.rowSortOptionChanged(to: .expense(.amountLowToHigh))
+                    } else {
+                        self.rowSortOptionChanged(to: .income(.amountLowToHigh))
+                    }
+                })
+                
+                let amountHighToLow = UIAction(title: "Amount High To Low",state: sortByAmount == .amountHighToLow ? .on : .off, handler: { _ in
+                    if case RowSortOption.expense(_) = currentSortSettings {
+                        self.rowSortOptionChanged(to: .expense(.amountHighToLow))
+                    } else {
+                        self.rowSortOptionChanged(to: .income(.amountHighToLow))
+                    }
+                })
+                
+                children.append(contentsOf: [amountLowToHigh, amountHighToLow])
+            }
+            
+            let rowSortMenu = UIMenu(options: [.displayInline], children: [income, expense])
+            let rowSortByMenu = UIMenu(options: [.displayInline], children:children)
+            
+            let sortMenu = UIMenu(title: "Sort By", subtitle: incomeState == .on ? "Income" : "Expense", image: UIImage(systemName: "arrow.up.arrow.down"), children: [rowSortMenu, rowSortByMenu])
+            
+            DispatchQueue.main.async {
+                completion([sortMenu])
+            }
+        }
+
+        let sortBy = UIMenu(title: "Group By Date", children: [groupOptionMenuElement, sortOptionMenuElement])
+        return sortBy
+    }
+    
+    private lazy var sortMenu: UIMenu = {
+        let sortMenu = UIMenu(title: "Sort By", image: UIImage(systemName: "arrow.up.arrow.down"), children: [])
+        return sortMenu
+    }()
+    
+    func configureDatasource(with month: Int = Helper.defaultYear, and year: Int = Helper.defaultMonth) {
+        let records = RecordDataManager.shared.getAllRecordByMonth(month: month, year: year)
+        datasource = records.map({ SectionData(date: $0.key, rows: $0.value) })
+    }
     
     @objc func didTapMonthView() {
         if isMonthViewExpanded {
-            UIView.transition(with: containerView, duration: 0.4, options: .transitionFlipFromBottom, animations: nil, completion: nil)
-            view.addSubview(containerView)
+            UIView.transition(with: monthVc, duration: 0.4, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            view.addSubview(monthVc)
             setupContentViewConstraints()
             navigationItem.searchController = nil
             monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
-            addChild(monthVc)
-            containerView.addSubview(monthVc.view)
-            monthVc.view.frame = containerView.bounds
-            monthVc.didMove(toParent: self)
             isMonthViewExpanded = false
         }
         else {
@@ -202,21 +323,18 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func setupContentViewConstraints() {
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
-            containerView.heightAnchor.constraint(equalToConstant: 250),
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            monthVc.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -5),
+            monthVc.heightAnchor.constraint(equalToConstant: 300),
+            monthVc.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            monthVc.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
     
     func closeMonthView() {
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
-        UIView.transition(with: containerView, duration: 0.6, options: .autoreverse, animations: {
+        UIView.transition(with: containerView, duration: 0.6, options: .transitionCrossDissolve, animations: {
         }) { [self] _  in
-            if let childViewController = children.first {
-                childViewController.view.removeFromSuperview()
-                childViewController.removeFromParent()
-            }
+            monthVc.removeFromSuperview()
             navigationItem.searchController = searchController
             isMonthViewExpanded = true
         }
@@ -227,7 +345,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         selectedYear = year
         monthLabel.text = month.name
         UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
-        records = RecordDataManager.shared.getAllRecordByMonth(month: selectedMonth, year: selectedYear)
         refreshTable()
         closeMonthView()
         tableView.reloadData()
@@ -236,11 +353,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
-        navigationItem.rightBarButtonItem =
+        navigationItem.rightBarButtonItems = [sort, add]
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.titleView = monthView
-    
+        
         redView.addSubview(mediocreExpenseView)
         mediocreExpenseView.addSubview(blueView)
         blueView.addSubview(incomeLabel)
@@ -255,6 +372,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         view.addSubview(redView)
         view.addSubview(tableView)
         setupContraints()
+        configureDatasource()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
         tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissChildVC))
@@ -264,13 +382,58 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         let touchLocation = touch.location(in: self.view)
-        if containerView.bounds.contains(touchLocation) {
-            return false
-        }
-        if monthVc.view.bounds.contains(touchLocation) {
+        if monthVc.bounds.contains(touchLocation) {
             return false
         }
         return true
+    }
+    
+    func sortDatasource() {
+        let sectionSortOption = UserDefaultManager.shared.getSavedSectionSortOptions() ?? .newestFirst
+        let rowSortOption = UserDefaultManager.shared.getSavedRowSortOption() ?? .income(.amountHighToLow)
+        
+        if sectionSortOption == .newestFirst {
+            datasource = datasource.sorted(by: { $0.date > $1.date })
+        } else {
+            datasource = datasource.sorted(by: { $0.date > $1.date })
+        }
+        
+        switch rowSortOption {
+        case .expense(let sortByAmount):
+            if case .amountHighToLow = sortByAmount {
+                for i in 0..<datasource.count {
+                    let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
+                    datasource[i].rows = expenseArr + incomeArr
+                }
+            }
+            else {
+                for i in 0..<datasource.count {
+                    let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
+                    datasource[i].rows = expenseArr + incomeArr
+                }
+            }
+        case.income(let sortByAmount):
+            if case .amountHighToLow = sortByAmount {
+                for i in 0..<datasource.count {
+                    let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
+                    datasource[i].rows = incomeArr + expenseArr
+                }
+            }
+            else {
+                for i in 0..<datasource.count {
+                    let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
+                    datasource[i].rows = incomeArr + expenseArr
+                }
+            }
+        }
     }
     
     func setupContraints() {
@@ -342,7 +505,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        records.count
+        datasource.count
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -351,12 +514,10 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as! MoneyTrackerSectionHeaderView
-        let record = Array(records.keys)[section]
-        if let record = records[record] {
-            let incomeAmount = Helper.getSimplifiedAmount(record, 0)
-            let expenseAmount = Helper.getSimplifiedAmount(record, 1)
-            cell.configure(date: Array(records.keys)[section], incomeAmount: incomeAmount , expenseAmount: expenseAmount)
-        }
+        let sectionData = datasource[section]
+        let incomeAmount = Helper.getSimplifiedAmount(sectionData.rows, 0)
+        let expenseAmount = Helper.getSimplifiedAmount(sectionData.rows, 1)
+        cell.configure(date: sectionData.date, incomeAmount: incomeAmount , expenseAmount: expenseAmount)
         return cell
     }
     
@@ -383,14 +544,13 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func refreshTable() {
         if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
-            records = RecordDataManager.shared.getAllRecordByMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
-            recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            configureDatasource(with: savedYearAndMonth.selectedMonth, and: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
         }
         else {
-            records = RecordDataManager.shared.getAllRecordByMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
-            recordForAMonth = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+            configureDatasource()
         }
+        let recordForAMonth = datasource.flatMap({ $0.rows })
         let incomeAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 0)
         let expenseAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 1)
         incomeAmount.text = incomeAmountValue
@@ -401,15 +561,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath)
-        let record = Array(records.keys)[indexPath.section]
-        var configuration = cell.defaultContentConfiguration()
-        if let recordItems = records[record] {
-            configuration.text = recordItems[indexPath.row].category
-            let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
-            configuration.secondaryText = (recordItems[indexPath.row].type != 0) ? "-\(simplifiedAmount)" : "\(simplifiedAmount)"
-            configuration.prefersSideBySideTextAndSecondaryText = true
-            configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
-        }
+        let record = datasource[indexPath.section].rows[indexPath.row]
+        var configuration = UIListContentConfiguration.valueCell()
+        configuration.text = record.category
+        let simplifiedAmount = Helper.simplifyNumbers([record.amount!], 3)
+        configuration.secondaryText = (record.type != 0) ? "-\(simplifiedAmount)" : "\(simplifiedAmount)"
+        configuration.image = UIImage(systemName: record.icon!)
         configuration.imageProperties.tintColor = .label
         cell.contentConfiguration = configuration
         return cell
@@ -417,18 +574,15 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let recordItem = Array(records.keys)[indexPath.section]
-        if let recordItems = records[recordItem]{
-            let decriptionVc = DescriptionVC(recordId: recordItems[indexPath.row].id!)
-            decriptionVc.title = "Details"
-            decriptionVc.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(decriptionVc, animated: true)
-        }
+        let record = datasource[indexPath.section].rows[indexPath.row]
+        let decriptionVc = DescriptionVC(recordId: record.id!)
+        decriptionVc.title = "Details"
+        decriptionVc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(decriptionVc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let recordItem = Array(records.keys)[section]
-        return records[recordItem]?.count ?? 0
+        return datasource[section].rows.count
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -457,7 +611,60 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         }
         recordSearchResultsController.updateSearchResults(recordByDate, searchText: text)
     }
-    
+
 }
 
-
+extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        3
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        4
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
+        if indexPath.section == 0 {
+            cell.configure(collectionViewDatasource[indexPath.row].0)
+        }
+        else if indexPath.section == 1 {
+            cell.configure(collectionViewDatasource[indexPath.row + 4].0)
+        }
+        else{
+            cell.configure(collectionViewDatasource[indexPath.row + 8].0)
+        }
+        cell.layer.shadowColor = UIColor.systemGray.cgColor
+        cell.layer.shadowOpacity = 0.5
+        cell.layer.shadowOffset = CGSize(width: 0, height: 0)
+        cell.layer.shadowRadius = 4
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        if indexPath.section == 0 {
+            selectedMonth((name: collectionViewDatasource[indexPath.row].0 , number: collectionViewDatasource[indexPath.row].1), year: getYear())
+        }
+        else if indexPath.section == 1 {
+            selectedMonth((name: collectionViewDatasource[indexPath.row + 4].0 , number: collectionViewDatasource[indexPath.row + 4].1), year: getYear())
+        }
+        else if indexPath.section == 2 {
+            selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
+        }
+    }
+    
+    @objc func backwardChevronTapped() {
+        let value = Int(monthVc.yearLabel.text ?? "0")!
+        monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
+    }
+    
+    @objc func forwardChevronTapped() {
+        let value = Int(monthVc.yearLabel.text ?? "0")!
+        monthVc.yearLabel.text = "\(value + 1)"
+    }
+    
+    private func getYear() -> Int {
+        Int(monthVc.yearLabel.text!) ?? 0
+    }
+}

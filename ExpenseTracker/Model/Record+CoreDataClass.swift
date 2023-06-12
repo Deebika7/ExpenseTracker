@@ -12,4 +12,6 @@ import CoreData
 @objc(Record)
 public class Record: NSManagedObject {
 
+    var recordType: RecordType { return type == 0 ? .income : .expense }
+    
 }

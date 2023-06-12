@@ -7,45 +7,36 @@
 
 import UIKit
 
-class MonthCollectionVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MonthCollectionVC: UIView {
     
-    private lazy var dataSource: [(String, Int)] = Helper.dataSource
     
     weak var monthSelectionDelegate: MonthSelectionDelegate?
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        3
-    }
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        4
-    }
 
-    private lazy var yearView: UIView = {
+    lazy var yearView: UIView = {
         let yearView = UIView()
         yearView.backgroundColor = .systemGroupedBackground
         yearView.translatesAutoresizingMaskIntoConstraints = false
         return yearView
     }()
     
-    private lazy var forwardChevron: UIImageView = {
-        let forwardChevron = UIImageView()
-        forwardChevron.image = UIImage(systemName: "chevron.forward")
+    lazy var forwardChevron: UIButton = {
+        let forwardChevron = UIButton()
         forwardChevron.tintColor = .label
-        forwardChevron.isUserInteractionEnabled = true
         forwardChevron.translatesAutoresizingMaskIntoConstraints = false
+        forwardChevron.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         return forwardChevron
     }()
     
-    private lazy var backwardChevron: UIImageView = {
-        let backwardChevron = UIImageView()
-        backwardChevron.image = UIImage(systemName: "chevron.backward")
-        backwardChevron.isUserInteractionEnabled = true
+    lazy var backwardChevron: UIButton = {
+        let backwardChevron = UIButton()
         backwardChevron.tintColor = .label
         backwardChevron.translatesAutoresizingMaskIntoConstraints = false
+        backwardChevron.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         return backwardChevron
     }()
     
-    private lazy var yearLabel: UILabel = {
+    lazy var yearLabel: UILabel = {
         let yearLabel = UILabel()
         yearLabel.translatesAutoresizingMaskIntoConstraints = false
         yearLabel.font = UIFont.systemFont(ofSize: 22)
@@ -53,102 +44,49 @@ class MonthCollectionVC: UIViewController, UICollectionViewDataSource, UICollect
         return yearLabel
     }()
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
-        if indexPath.section == 0 {
-            cell.configure(dataSource[indexPath.row].0)
-        }
-        else if indexPath.section == 1 {
-            cell.configure(dataSource[indexPath.row + 4].0)
-        }
-        else{
-            cell.configure(dataSource[indexPath.row + 8].0)
-        }
-        cell.layer.shadowColor = UIColor.systemGray.cgColor
-        cell.layer.shadowOpacity = 0.5
-        cell.layer.shadowOffset = CGSize(width: 0, height: 0)
-        cell.layer.shadowRadius = 4
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.deselectItem(at: indexPath, animated: true)
-        if indexPath.section == 0 {
-            print(dataSource[indexPath.row])
-            monthSelectionDelegate?.selectedMonth((name:dataSource[indexPath.row].0 , number:dataSource[indexPath.row].1), year: getYear())
-        }
-        else if indexPath.section == 1 {
-            print(dataSource[indexPath.row + 4])
-            monthSelectionDelegate?.selectedMonth((name:dataSource[indexPath.row+4].0 , number:dataSource[indexPath.row+4].1), year: getYear())
-        }
-        else if indexPath.section == 2 {
-            print(dataSource[indexPath.row + 8])
-            monthSelectionDelegate?.selectedMonth((name:dataSource[indexPath.row+8].0 , number:dataSource[indexPath.row+8].1), year: getYear())
-        }
-    }
-    
-    private lazy var collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.sectionInset = UIEdgeInsets(top: 8, left: 32, bottom: 8, right: -16)
-        flowLayout.minimumInteritemSpacing = 36
+        flowLayout.sectionInset = UIEdgeInsets(top: 8, left: 5, bottom: 8, right: 5)
+        flowLayout.minimumInteritemSpacing = 5
+        flowLayout.estimatedItemSize = CGSize(width: 82, height: 40)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = .systemGroupedBackground
-        collectionView.dataSource = self
-        collectionView.delegate = self
         return collectionView
     }()
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.addSubview(collectionView)
-        view.addSubview(yearView)
+    func configureView() {
         yearView.addSubview(forwardChevron)
         yearView.addSubview(backwardChevron)
-        view.addSubview(yearLabel)
+        yearView.addSubview(yearLabel)
+        
+        self.addSubview(yearView)
+        self.addSubview(collectionView)
+        
         collectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         NSLayoutConstraint.activate([
-            yearView.topAnchor.constraint(equalTo: view.topAnchor),
-            yearView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            yearView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                                    
-                                    
             collectionView.topAnchor.constraint(equalTo: yearView.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.heightAnchor.constraint(equalToConstant: 210),
+            collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
+            collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
+            collectionView.heightAnchor.constraint(equalToConstant: 200),
+
+            yearView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
+            yearView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            yearView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            yearView.heightAnchor.constraint(equalToConstant: 50),
+                                    
+            forwardChevron.centerYAnchor.constraint(equalTo: yearView.centerYAnchor),
+            forwardChevron.trailingAnchor.constraint(equalTo: yearView.trailingAnchor, constant: -25),
             
-            forwardChevron.topAnchor.constraint(equalTo: yearView.topAnchor, constant: 30),
-            forwardChevron.trailingAnchor.constraint(equalTo: yearView.trailingAnchor,constant: -54),
-            
-            
-            backwardChevron.topAnchor.constraint(equalTo: yearView.topAnchor, constant: 30),
-            backwardChevron.leadingAnchor.constraint(equalTo: yearView.leadingAnchor,constant: 40),
+            backwardChevron.centerYAnchor.constraint(equalTo: yearView.centerYAnchor),
+            backwardChevron.leadingAnchor.constraint(equalTo: yearView.leadingAnchor, constant: 25),
             
             yearLabel.centerYAnchor.constraint(equalTo: yearView.centerYAnchor),
             yearLabel.centerXAnchor.constraint(equalTo: yearView.centerXAnchor, constant: -4),
-            yearLabel.topAnchor.constraint(equalTo: yearView.topAnchor, constant: 10),
             yearLabel.heightAnchor.constraint(equalToConstant: 50)
             
         ])
-        
-        let backwardChevronTapGesture = UITapGestureRecognizer(target: self, action: #selector(backwardChevronTapped))
-        backwardChevron.addGestureRecognizer(backwardChevronTapGesture)
-        
-        let forwardChevronTapGesture = UITapGestureRecognizer(target: self, action: #selector(forwardChevronTapped))
-        forwardChevron.addGestureRecognizer(forwardChevronTapGesture)
-    }
-    
-    @objc func backwardChevronTapped() {
-        let value = Int(yearLabel.text ?? "0")!
-        yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
-    }
-    
-    @objc func forwardChevronTapped() {
-        let value = Int(yearLabel.text ?? "0")!
-        yearLabel.text = "\(value + 1)"
     }
     
     private func getYear() -> Int {

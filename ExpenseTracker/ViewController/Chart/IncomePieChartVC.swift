@@ -51,6 +51,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         view.addSubview(headerViewContainer)
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
+        tableView.keyboardDismissMode = .onDrag
     }
 
 

@@ -30,6 +30,8 @@ class CustomCollectionViewCell: UICollectionViewCell {
     
     private func setupCellLayout() {
         NSLayoutConstraint.activate([
+            capsuleView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            capsuleView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             capsuleView.heightAnchor.constraint(equalToConstant: 40),
             capsuleView.widthAnchor.constraint(equalToConstant: 82),
             textLabel.centerXAnchor.constraint(equalTo: capsuleView.centerXAnchor),
