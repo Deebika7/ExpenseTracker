@@ -7,17 +7,15 @@
 
 import UIKit
 
-class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDelegate, MonthSelectionDelegate {
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        
-    }
+class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDelegate {
     
     private lazy var isMonthViewExpanded: Bool = true
 
     private lazy var selectedMonth: Int! = nil
     
     private lazy var selectedYear: Int! = nil
+    
+    private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
     
     private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
@@ -53,13 +51,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         containerView.translatesAutoresizingMaskIntoConstraints = false
         return containerView
     }()
-    
-    private lazy var monthContainerView: UIView = {
-        let monthContainerView = UIView()
-        monthContainerView.translatesAutoresizingMaskIntoConstraints = false
-        return monthContainerView
-    }()
-    
+        
     private lazy var monthLabel: UILabel = {
         let monthLabel = UILabel()
         monthLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -74,73 +66,88 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         monthAccessoryView.tintColor = .label
         return  monthAccessoryView
     }()
+    
+    private lazy var clickableView: UIView = {
+       let clickableView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        clickableView.addGestureRecognizer(monthViewTapGestureRecognizer)
+        clickableView.backgroundColor = .clear
+        return clickableView
+    }()
 
     private lazy var monthView: UIView = {
-        let monthView = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 60))
+        let monthView = UIView()
         monthView.translatesAutoresizingMaskIntoConstraints = false
+        monthView.addSubview(clickableView)
+        clickableView.center = monthView.center
         monthView.addSubview(monthLabel)
         monthView.addSubview(monthAccessoryView)
-//        monthView.addGestureRecognizer(monthViewTapGestureRecognizer)
+        monthView.bringSubviewToFront(clickableView)
         return monthView
     }()
-    
-//    private lazy var monthViewTapGestureRecognizer: UITapGestureRecognizer = {
-//        let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
-//        return monthViewTapGestureRecognizer
-//    }()
-    
-//    private lazy var monthVc: UIViewController = {
-//        let monthVc = MonthCollectionVC()
-//        monthVc.monthSelectionDelegate = self
-//        return monthVc
-//    }()
-    
-//    @objc func didTapMonthView() {
-//        if isMonthViewExpanded {
-//            UIView.transition(with: containerView, duration: 0.4, options: .transitionFlipFromBottom, animations: nil, completion: nil)
-//            view.addSubview(monthContainerView)
-//            setupContentViewConstraints()
-//            navigationItem.searchController = nil
-//            navigationItem.title = nil
-//            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
-//            addChild(monthVc)
-//            containerView.addSubview(monthVc.view)
-//            monthVc.view.frame = monthContainerView.bounds
-//            monthVc.didMove(toParent: self)
-//            isMonthViewExpanded = false
-//        }
-//        else {
-//            closeMonthView()
-//        }
-//    }
-    
-    func setupContentViewConstraints() {
-        NSLayoutConstraint.activate([
-            monthContainerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 70),
-            monthContainerView.heightAnchor.constraint(equalToConstant: 300),
-            monthContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            monthContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-    }
 
+    private lazy var monthViewTapGestureRecognizer: UITapGestureRecognizer = {
+        let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
+        return monthViewTapGestureRecognizer
+    }()
+
+    private lazy var monthVc: MonthCollectionVC = {
+        let monthVc = MonthCollectionVC.init()
+        monthVc.translatesAutoresizingMaskIntoConstraints = false
+        monthVc.configureView()
+        monthVc.collectionView.dataSource = self
+        monthVc.collectionView.delegate = self
+        monthVc.forwardChevron.addTarget(self, action: #selector(forwardChevronTapped), for: .touchUpInside)
+        monthVc.backwardChevron.addTarget(self, action: #selector(backwardChevronTapped), for: .touchUpInside)
+        return monthVc
+    }()
+    
+    @objc func didTapMonthView() {
+        if isMonthViewExpanded {
+            navigationItem.title = nil
+            navigationController?.navigationBar.prefersLargeTitles = false
+            UIView.transition(with: monthVc, duration: 0.4, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            view.addSubview(monthVc)
+            setupContentViewConstraints()
+            navigationItem.searchController = nil
+            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
+            isMonthViewExpanded = false
+        }
+        else {
+            closeMonthView()
+        }
+    }
+    
     @objc func dismissChildVC() {
         closeMonthView()
     }
     
+    func setupContentViewConstraints() {
+        NSLayoutConstraint.activate([
+            monthVc.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -5),
+            monthVc.heightAnchor.constraint(equalToConstant: 300),
+            monthVc.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            monthVc.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
     func closeMonthView() {
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
-        UIView.transition(with: monthContainerView, duration: 0.3, options: .autoreverse, animations: {
+        UIView.transition(with: monthVc, duration: 0.6, options: .transitionCrossDissolve, animations: {
         }) { [self] _  in
-            if let childViewController = children.first(where: {
-                $0 is MonthCollectionVC
-            }) {
-                childViewController.view.removeFromSuperview()
-                childViewController.removeFromParent()
-            }
+            navigationController?.navigationBar.prefersLargeTitles = true
             navigationItem.title = "Chart"
+            monthVc.removeFromSuperview()
             navigationItem.searchController = searchController
             isMonthViewExpanded = true
         }
+    }
+    
+    func selectedMonth(_ month: (name: String, number: Int), year: Int) {
+        selectedMonth = month.number
+        selectedYear = year
+        monthLabel.text = month.name
+        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
+        closeMonthView()
     }
     
     override func viewDidLoad() {
@@ -164,26 +171,12 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         view.addGestureRecognizer(tapGesture)
     }
     
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-//        let touchLocation = touch.location(in: self.view)
-//        if monthContainerView.bounds.contains(touchLocation) {
-//            return false
-//        }
-//        if monthVc.view.bounds.contains(touchLocation) {
-//            return false
-//        }
-//        return true
-//    }
-    
-    func selectedMonth(_ month: (name: String, number: Int), year: Int) {
-        selectedMonth = month.number
-        selectedYear = year
-        monthLabel.text = month.name
-        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
-//        records = RecordDataManager.shared.getAllRecordByMonth(month: selectedMonth, year: selectedYear)
-//        refreshTable()
-        closeMonthView()
-//        tableView.reloadData()
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let touchLocation = touch.location(in: self.view)
+        if monthVc.bounds.contains(touchLocation) {
+            return false
+        }
+        return true
     }
     
     func setupConstraints() {
@@ -205,6 +198,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
             
             monthAccessoryView.heightAnchor.constraint(equalToConstant: 12),
             monthAccessoryView.centerYAnchor.constraint(equalTo: monthView.centerYAnchor, constant: 10),
+            
         ])
     }
     
@@ -251,4 +245,64 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         }
     }
     
+    func updateSearchResults(for searchController: UISearchController) {
+        
+    }
+    
 }
+
+extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        3
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        4
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
+        if indexPath.section == 0 {
+            cell.configure(collectionViewDatasource[indexPath.row].0)
+        }
+        else if indexPath.section == 1 {
+            cell.configure(collectionViewDatasource[indexPath.row + 4].0)
+        }
+        else{
+            cell.configure(collectionViewDatasource[indexPath.row + 8].0)
+        }
+        cell.layer.shadowColor = UIColor.systemGray.cgColor
+        cell.layer.shadowOpacity = 0.5
+        cell.layer.shadowOffset = CGSize(width: 0, height: 0)
+        cell.layer.shadowRadius = 4
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        if indexPath.section == 0 {
+            selectedMonth((name: collectionViewDatasource[indexPath.row].0 , number: collectionViewDatasource[indexPath.row].1), year: getYear())
+        }
+        else if indexPath.section == 1 {
+            selectedMonth((name: collectionViewDatasource[indexPath.row + 4].0 , number: collectionViewDatasource[indexPath.row + 4].1), year: getYear())
+        }
+        else if indexPath.section == 2 {
+            selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
+        }
+    }
+
+    @objc func backwardChevronTapped() {
+        let value = Int(monthVc.yearLabel.text ?? "0")!
+        monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
+    }
+
+    @objc func forwardChevronTapped() {
+        let value = Int(monthVc.yearLabel.text ?? "0")!
+        monthVc.yearLabel.text = "\(value + 1)"
+    }
+
+    private func getYear() -> Int {
+        Int(monthVc.yearLabel.text!) ?? 0
+    }
+}
+

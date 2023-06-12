@@ -65,6 +65,7 @@
 		1678A6592A35BDC2000EE573 /* HighExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6582A35BDC2000EE573 /* HighExpenseView.swift */; };
 		1678A65B2A35BDD7000EE573 /* LowExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */; };
 		1678A6612A3726C6000EE573 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6602A3726C6000EE573 /* SortOption.swift */; };
+		1678A6642A378897000EE573 /* CustomMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6632A378897000EE573 /* CustomMonthView.swift */; };
 		16BE360D2A1B33C2004C6A7B /* TextFieldDataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */; };
 		16BE36102A1B4B95004C6A7B /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360F2A1B4B95004C6A7B /* Helper.swift */; };
 		16BE36142A1B7CB5004C6A7B /* CategoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */; };
@@ -132,6 +133,7 @@
 		1678A6582A35BDC2000EE573 /* HighExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighExpenseView.swift; sourceTree = "<group>"; };
 		1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowExpenseView.swift; sourceTree = "<group>"; };
 		1678A6602A3726C6000EE573 /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
+		1678A6632A378897000EE573 /* CustomMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMonthView.swift; sourceTree = "<group>"; };
 		16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldDataDelegate.swift; sourceTree = "<group>"; };
 		16BE360F2A1B4B95004C6A7B /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDelegate.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 		161402A82A0A245D0040E15E /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1678A6622A378855000EE573 /* CustomMonthView */,
 				1678A65E2A372692000EE573 /* Home */,
 				1678A61B2A2CE4F2000EE573 /* Record+CoreDataClass.swift */,
 				1678A61C2A2CE4F2000EE573 /* Record+CoreDataProperties.swift */,
@@ -361,6 +364,14 @@
 			path = SortEnums;
 			sourceTree = "<group>";
 		};
+		1678A6622A378855000EE573 /* CustomMonthView */ = {
+			isa = PBXGroup;
+			children = (
+				1678A6632A378897000EE573 /* CustomMonthView.swift */,
+			);
+			path = CustomMonthView;
+			sourceTree = "<group>";
+		};
 		16BE360E2A1B4B78004C6A7B /* Helper */ = {
 			isa = PBXGroup;
 			children = (
@@ -461,6 +472,7 @@
 				161402DE2A0D6F520040E15E /* CustomHeaderFooterView.swift in Sources */,
 				161402C42A0B5DA50040E15E /* DatabaseManager.swift in Sources */,
 				1614029F2A0A1C0D0040E15E /* RecordVC.swift in Sources */,
+				1678A6642A378897000EE573 /* CustomMonthView.swift in Sources */,
 				1678A64F2A2F2A19000EE573 /* GraphData.swift in Sources */,
 				1678A6082A25D076000EE573 /* CustomCollectionViewCell.swift in Sources */,
 				1614029D2A0A1BEB0040E15E /* GraphVC.swift in Sources */,

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, MonthSelectionDelegate, PresentationModalSheetDelegate, UISearchResultsUpdating, UIGestureRecognizerDelegate {
+class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PresentationModalSheetDelegate, UISearchResultsUpdating, UIGestureRecognizerDelegate {
     
     private lazy var recordSearchResultsController = RecordSearchResultsController()
     
@@ -17,6 +17,8 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     }
     
     var datasource = [SectionData]()
+    
+    private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: recordSearchResultsController)
@@ -30,9 +32,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     private lazy var selectedMonth: Int! = nil
     
     private lazy var selectedYear: Int! = nil
-    
-    private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
-    
+        
     private lazy var isMonthViewExpanded: Bool = true
     
     private lazy var blueView: UIView = {
@@ -167,18 +167,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
         return monthViewTapGestureRecognizer
     }()
-    
-    private lazy var containerView: UIView = {
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        return containerView
-    }()
 
     private lazy var monthVc: MonthCollectionVC = {
         let monthVc = MonthCollectionVC.init()
         monthVc.translatesAutoresizingMaskIntoConstraints = false
         monthVc.configureView()
-        monthVc.monthSelectionDelegate = self
         monthVc.collectionView.dataSource = self
         monthVc.collectionView.delegate = self
         monthVc.forwardChevron.addTarget(self, action: #selector(forwardChevronTapped), for: .touchUpInside)
@@ -301,6 +294,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     func configureDatasource(with month: Int = Helper.defaultYear, and year: Int = Helper.defaultMonth) {
         let records = RecordDataManager.shared.getAllRecordByMonth(month: month, year: year)
         datasource = records.map({ SectionData(date: $0.key, rows: $0.value) })
+        sortDatasource()
     }
     
     @objc func didTapMonthView() {
@@ -332,7 +326,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
     
     func closeMonthView() {
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
-        UIView.transition(with: containerView, duration: 0.6, options: .transitionCrossDissolve, animations: {
+        UIView.transition(with: monthVc, duration: 0.6, options: .transitionCrossDissolve, animations: {
         }) { [self] _  in
             monthVc.removeFromSuperview()
             navigationItem.searchController = searchController
@@ -377,6 +371,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissChildVC))
         tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
     
@@ -395,7 +390,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Mont
         if sectionSortOption == .newestFirst {
             datasource = datasource.sorted(by: { $0.date > $1.date })
         } else {
-            datasource = datasource.sorted(by: { $0.date > $1.date })
+            datasource = datasource.sorted(by: { $0.date < $1.date })
         }
         
         switch rowSortOption {
@@ -622,7 +617,7 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         4
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
         if indexPath.section == 0 {
@@ -640,7 +635,7 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.layer.shadowRadius = 4
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         if indexPath.section == 0 {
@@ -653,17 +648,17 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
             selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
         }
     }
-    
+
     @objc func backwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
         monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
     }
-    
+
     @objc func forwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
         monthVc.yearLabel.text = "\(value + 1)"
     }
-    
+
     private func getYear() -> Int {
         Int(monthVc.yearLabel.text!) ?? 0
     }
