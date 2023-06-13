@@ -86,7 +86,5 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         }
     }
                                                                         
-                                                                            
-                                                                            
 }
 

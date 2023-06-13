@@ -38,12 +38,12 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         return searchController
     }()
     
-    private lazy var expenseChartVC: UIViewController = {
+    private lazy var expenseChartVC: ExpensePieChartVC = {
         let expenseChartVC = ExpensePieChartVC()
         return expenseChartVC
     }()
     
-    private lazy var incomeChartVC: UIViewController = {
+    private lazy var incomeChartVC: IncomePieChartVC = {
         let incomeChartVC = IncomePieChartVC()
         return incomeChartVC
     }()
@@ -220,7 +220,6 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     }
     
     @objc func switchSegmentedControl() {
-        print(selectedSegmentIndex)
         selectedSegmentIndex = segmentedControl.selectedSegmentIndex
         
         if let currentChildViewController = children.first {
@@ -253,12 +252,10 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
             return
         }
         if selectedSegmentIndex == 1 {
-            let incomePieChartVC = IncomePieChartVC()
-            incomePieChartVC.updateSearchResults(text)
+            incomeChartVC.updateSearchResults(text)
         }
         else {
-            let expensePieChartVC = ExpensePieChartVC()
-            expensePieChartVC.updateSearchResults(text)
+            expenseChartVC.updateSearchResults(text)
         }
     }
     

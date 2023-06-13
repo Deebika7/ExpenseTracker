@@ -62,24 +62,26 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-            let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
-                self?.deleteCustomCategory(indexPath)
-            }
-            deleteAction.image = UIImage(systemName: "trash")
-            deleteAction.title = "delete"
-            
-            let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
-            }
-            editAction.title = "edit"
-            editAction.backgroundColor = .systemBlue
-            editAction.image = UIImage(systemName: "pencil")
-            
-            let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
-            return configuration
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
+            self?.deleteCustomCategory(indexPath)
+        }
+        
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.title = "delete"
+        
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
+            self?.editCustomCategory(indexPath)
+        }
+        editAction.title = "edit"
+        editAction.backgroundColor = .systemBlue
+        editAction.image = UIImage(systemName: "pencil")
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        return configuration
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-      if searchedCustomCategory.count == 0  && customCategory.count != 0  {
+        if searchedCustomCategory.count == 0  && customCategory.count != 0  {
             tableView.backgroundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
             tableView.backgroundView?.translatesAutoresizingMaskIntoConstraints = false
             tableView.backgroundView!.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 150).isActive = true
@@ -88,7 +90,6 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         else {
             tableView.backgroundView = nil
         }
-        
         return searchedCustomCategory.count
     }
     
@@ -127,10 +128,10 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
                 RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (searchedCustomCategory[indexPath.row]), newIcon: "square.grid.3x3", newCategory: "Others")
                 CustomCategoryDataManager.shared.deleteCustomCategory(id: (searchedCustomCategory[indexPath.row].id!))
             }
-           searchedCustomCategory.remove(at: indexPath.row)
-           tableView.deleteRows(at: [indexPath], with: .automatic)
-           tableView.endUpdates()
-           tableView.reloadData()
+            searchedCustomCategory.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
+            tableView.reloadData()
         }))
         self.present(alert, animated: true)
     }

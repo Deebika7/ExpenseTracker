@@ -20,6 +20,8 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     private lazy var colors = [UIColor]()
     
+    private lazy var searchText = String()
+    
     private lazy var hollowPieChart: UIView = {
         let hollowPieChartView = HollowPieChart()
         hollowPieChartView.data = dataSource
@@ -108,8 +110,20 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
-        configuration.text = searchResults[indexPath.row].name
-        configuration.secondaryText = String(format: "%.2f", searchResults[indexPath.row].percentage) + "%"
+        let category = searchResults[indexPath.row].name
+        let attributedText = NSMutableAttributedString(string: category)
+        if let range = category.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: category)
+            attributedText.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        configuration.attributedText = attributedText
+        let percentage = String(format: "%.2f", searchResults[indexPath.row].percentage) + "%"
+        let secondaryAttributedText = NSMutableAttributedString(string: percentage)
+        if let range = percentage.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: percentage)
+            secondaryAttributedText.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        configuration.secondaryAttributedText = secondaryAttributedText
         configuration.prefersSideBySideTextAndSecondaryText = true
         configuration.image = UIImage(systemName: searchResults[indexPath.row].sfSymbol)
         configuration.imageProperties.tintColor = searchResults[indexPath.row].color
@@ -160,10 +174,11 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func updateSearchResults(_ text: String) {
         configureDataSource()
-        searchResults = searchResults.filter{ chartData in
-           return chartData.name.localizedCaseInsensitiveContains(text)
+        searchText = text
+        searchResults = chartRecords.filter{ chartData in
+            let percentage = String(format: "%.2f", chartData.percentage) + "%"
+            return chartData.name.localizedCaseInsensitiveContains(text) || percentage.localizedCaseInsensitiveContains(text)
         }
-        print(searchResults)
         if text.isEmpty {
             searchResults = chartRecords
         }

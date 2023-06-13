@@ -36,7 +36,6 @@ class GraphCell: UITableViewCell {
        let amountLabel = UILabel()
         amountLabel.translatesAutoresizingMaskIntoConstraints = false
         amountLabel.font = UIFont.systemFont(ofSize: 12)
-//        amountLabel.textColor = .
        return amountLabel
     }()
     

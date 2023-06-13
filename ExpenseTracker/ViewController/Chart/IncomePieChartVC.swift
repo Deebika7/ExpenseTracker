@@ -15,6 +15,10 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
 
     private lazy var chartRecords = [ChartData]()
+    
+    private lazy var searchResults = [ChartData]()
+    
+    private lazy var searchText = String()
 
     private lazy var hollowPieChart: UIView = {
         let hollowPieChartView = HollowPieChart()
@@ -69,7 +73,6 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         configureTable()
     }
 
-
     func setupContraints() {
         NSLayoutConstraint.activate([
             hollowPieChart.heightAnchor.constraint(equalToConstant: 160),
@@ -94,23 +97,35 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chartRecords.count
+        return searchResults.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
-        configuration.text = chartRecords[indexPath.row].name
-        configuration.secondaryText = String(format: "%.2f", chartRecords[indexPath.row].percentage) + "%"
+        let category = searchResults[indexPath.row].name
+        let attributedText = NSMutableAttributedString(string: category)
+        if let range = category.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: category)
+            attributedText.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        configuration.attributedText = attributedText
+        let percentage = String(format: "%.2f", searchResults[indexPath.row].percentage) + "%"
+        let secondaryAttributedText = NSMutableAttributedString(string: percentage)
+        if let range = percentage.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: percentage)
+            secondaryAttributedText.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        configuration.secondaryAttributedText = secondaryAttributedText
         configuration.prefersSideBySideTextAndSecondaryText = true
-        configuration.image = UIImage(systemName: chartRecords[indexPath.row].sfSymbol)
-        configuration.imageProperties.tintColor = chartRecords[indexPath.row].color
+        configuration.image = UIImage(systemName: searchResults[indexPath.row].sfSymbol)
+        configuration.imageProperties.tintColor = searchResults[indexPath.row].color
         cell.contentConfiguration = configuration
         return cell
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        chartRecords.isEmpty ? "" : "Income List"
+        searchResults.isEmpty ? "" : "Income List"
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -119,9 +134,9 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 0, color: Color(uiColor: chartRecords[indexPath.row].color))
+        let graphVc = GraphVC(records: records, categoryName: searchResults[indexPath.row].name, type: 0, color: Color(uiColor: searchResults[indexPath.row].color))
         graphVc.hidesBottomBarWhenPushed = true
-        graphVc.title = chartRecords[indexPath.row].name
+        graphVc.title = searchResults[indexPath.row].name
         navigationController?.pushViewController(graphVc, animated: true)
     }
     
@@ -141,6 +156,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         dataSource = chartRecords.reduce(into: [Double: UIColor]()) {
             result, chartRecord in result[chartRecord.percentage] = chartRecord.color
         }
+        searchResults = chartRecords
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -153,8 +169,17 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         tableView.reloadData()
     }
     
-    func updateSearchResults(_ Text: String) {
-        
+    func updateSearchResults(_ text: String) {
+        configureDataSource()
+        searchText = text
+        searchResults = chartRecords.filter{ chartData in
+            let percentage = String(format: "%.2f", chartData.percentage) + "%"
+            return chartData.name.localizedCaseInsensitiveContains(text) || percentage.localizedCaseInsensitiveContains(text)
+        }
+        if text.isEmpty {
+            searchResults = chartRecords
+        }
+        tableView.reloadData()
     }
     
 }
