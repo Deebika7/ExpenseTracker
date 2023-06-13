@@ -17,6 +17,8 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
     
+    private lazy var selectedSegmentIndex = Int()
+    
     private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.insertSegment(withTitle: "Expense", at: 0, animated: true)
@@ -146,8 +148,9 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         selectedMonth = month.number
         selectedYear = year
         monthLabel.text = month.name
-        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
+        UserDefaultManager.shared.addUserDefaultObject("selectedDateForChart", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
         closeMonthView()
+        switchSegmentedControl()
     }
     
     override func viewDidLoad() {
@@ -168,6 +171,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         switchSegmentedControl()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissChildVC))
         tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
     }
     
@@ -198,10 +202,8 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
             
             monthAccessoryView.heightAnchor.constraint(equalToConstant: 12),
             monthAccessoryView.centerYAnchor.constraint(equalTo: monthView.centerYAnchor, constant: 10),
-            
         ])
     }
-    
     
     @objc func handleSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
         if gesture.direction == .left {
@@ -218,7 +220,8 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     }
     
     @objc func switchSegmentedControl() {
-        let selectedSegmentIndex = segmentedControl.selectedSegmentIndex
+        print(selectedSegmentIndex)
+        selectedSegmentIndex = segmentedControl.selectedSegmentIndex
         
         if let currentChildViewController = children.first {
             currentChildViewController.willMove(toParent: nil)
@@ -246,7 +249,17 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        
+        guard let text = searchController.searchBar.text else {
+            return
+        }
+        if selectedSegmentIndex == 1 {
+            let incomePieChartVC = IncomePieChartVC()
+            incomePieChartVC.updateSearchResults(text)
+        }
+        else {
+            let expensePieChartVC = ExpensePieChartVC()
+            expensePieChartVC.updateSearchResults(text)
+        }
     }
     
 }

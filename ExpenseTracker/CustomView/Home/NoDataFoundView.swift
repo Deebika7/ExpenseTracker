@@ -21,13 +21,8 @@ class NoDataFoundView: UIView {
         message.translatesAutoresizingMaskIntoConstraints = false
         message.font = UIFont.systemFont(ofSize: 30)
         message.textColor = UIColor.secondaryLabel
+        message.textAlignment = .center
         return message
-    }()
-    
-    lazy var containerView: UIView = {
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        return containerView
     }()
     
     init() {
@@ -37,10 +32,9 @@ class NoDataFoundView: UIView {
     convenience init(image: String, message: String) {
         self.init()
         imageView.image = UIImage(systemName: image)
-        containerView.addSubview(imageView)
+        self.addSubview(imageView)
         messageLabel.text = message
-        containerView.addSubview(messageLabel)
-        addSubview(containerView)
+        self.addSubview(messageLabel)
         setupConstraints()
     }
     
@@ -51,14 +45,13 @@ class NoDataFoundView: UIView {
     func setupConstraints() {
         NSLayoutConstraint.activate([
             messageLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 4),
-            messageLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            messageLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            messageLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            messageLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 80),
             imageView.widthAnchor.constraint(equalToConstant: 80)
         ])
-        
     }
     
 }

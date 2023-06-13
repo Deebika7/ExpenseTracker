@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, UISearchResultsUpdating {
+class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, UISearchResultsUpdating, UISearchBarDelegate {
     
     weak var categoryDelegate: CategoryDelegate?
     
@@ -35,6 +35,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
         return searchController
     }()
     
@@ -44,6 +45,11 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     private lazy var add: UIBarButtonItem = {
         UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCategory))
+    }()
+    
+    private lazy var noDataFoundView: UIView = {
+        let noDataFoundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
+        return noDataFoundView
     }()
     
     convenience init(selectedCategory: Category?, type: String) {
@@ -65,7 +71,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         isModalInPresentation = true
         tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.searchController = searchController
         searchController.hidesNavigationBarDuringPresentation = false
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -103,15 +108,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if searchedCategory.count == 0 && searchedCustomCategory.count == 0 {
-            tableView.backgroundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
-            tableView.backgroundView?.translatesAutoresizingMaskIntoConstraints = false
-            tableView.backgroundView!.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 150).isActive = true
-            tableView.backgroundView!.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 30).isActive = true
-        }
-        else {
-            tableView.backgroundView = nil
-        }
         return section == 0 ? searchedCategory.count : searchedCustomCategory.count
     }
     
@@ -164,12 +160,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         dismiss(animated: true)
     }
     
-    // MARK: Edit
-    
-//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-//        indexPath.section == 1 ? true : false
-//    }
-    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
@@ -182,6 +172,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     }
     
     func updateSearchResults(for searchController: UISearchController) {
+        tableView.backgroundView = nil
         guard let text = searchController.searchBar.text else {
             return
         }
@@ -193,13 +184,28 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         searchedCustomCategory = customCategory.filter{ customCategory in
             return customCategory.name!.localizedCaseInsensitiveContains(text) || customCategory.icon!.localizedCaseInsensitiveContains(text)
         }
+        if searchedCategory.count == 0 && searchedCustomCategory.count == 0 {
+            tableView.backgroundView = noDataFoundView
+        }
+        else {
+            tableView.backgroundView = nil
+        }
         
         if text.isEmpty {
             searchedCategory = category
             searchedCustomCategory = customCategory
         }
+        
         tableView.reloadData()
     }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchedCategory = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
+        searchedCustomCategory = customCategory
+        tableView.backgroundView = nil
+        tableView.reloadData()
+    }
+    
 }
 
 

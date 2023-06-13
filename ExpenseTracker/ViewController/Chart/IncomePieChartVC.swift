@@ -43,6 +43,20 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
 
     private lazy var searchController = SearchController()
 
+    private lazy var noDataFoundView: UIView = {
+        let noDataFoundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
+        return noDataFoundView
+    }()
+    
+    func configureTable() {
+        if chartRecords.isEmpty {
+            headerViewContainer.isHidden = true
+        }
+        else {
+            headerViewContainer.isHidden = false
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
@@ -52,6 +66,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
         tableView.keyboardDismissMode = .onDrag
+        configureTable()
     }
 
 
@@ -79,17 +94,6 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if chartRecords.isEmpty {
-            headerViewContainer.isHidden = true
-            tableView.backgroundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
-            tableView.backgroundView?.translatesAutoresizingMaskIntoConstraints = false
-            tableView.backgroundView!.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 50).isActive = true
-            tableView.backgroundView!.centerXAnchor.constraint(equalTo: tableView.centerXAnchor, constant: -100).isActive = true
-        }
-        else {
-            tableView.backgroundView = nil
-            headerViewContainer.isHidden = false
-        }
         return chartRecords.count
     }
 
@@ -120,9 +124,9 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         graphVc.title = chartRecords[indexPath.row].name
         navigationController?.pushViewController(graphVc, animated: true)
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
+    
+    func configureDataSource() {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
             }
         else {
@@ -137,11 +141,20 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         dataSource = chartRecords.reduce(into: [Double: UIColor]()) {
             result, chartRecord in result[chartRecord.percentage] = chartRecord.color
         }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        configureDataSource()
         if let hollowPieChartView = hollowPieChart as? HollowPieChart {
             hollowPieChartView.data = dataSource
             hollowPieChartView.setNeedsDisplay()
         }
+        configureTable()
         tableView.reloadData()
+    }
+    
+    func updateSearchResults(_ Text: String) {
+        
     }
     
 }

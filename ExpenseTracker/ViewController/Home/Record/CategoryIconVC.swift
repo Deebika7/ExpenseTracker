@@ -33,6 +33,11 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         return searchController
     }()
     
+    private lazy var noDataFoundView: UIView = {
+        let noDataFoundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
+        return noDataFoundView
+    }()
+    
     override init(style: UITableView.Style) {
         super.init(style: style)
     }
@@ -61,13 +66,6 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if searchResults.count == 0 {
-            tableView.backgroundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
-            tableView.translatesAutoresizingMaskIntoConstraints = false
-        }
-        else {
-            tableView.backgroundView = nil
-        }
         return searchResults.count
         
     }
@@ -119,6 +117,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
     
     // MARK: search
     func updateSearchResults(for searchController: UISearchController) {
+        tableView.backgroundView = nil
         guard let text = searchController.searchBar.text else {
             return
         }
@@ -135,12 +134,21 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         }
 
         searchResults.merge(searchedSection) {
-            (merge, _) in merge
+            ( merge, _ ) in merge
         }
         searchResults = searchResults.filter { !$0.value.isEmpty }
+        
         if text.isEmpty {
             searchResults = customCategory
         }
+        
+        if searchResults.isEmpty {
+            tableView.backgroundView = noDataFoundView
+        }
+        else {
+            tableView.backgroundView = nil
+        }
+        
         tableView.reloadData()
     }
     

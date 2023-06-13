@@ -338,7 +338,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         selectedMonth = month.number
         selectedYear = year
         monthLabel.text = month.name
-        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
+        UserDefaultManager.shared.addUserDefaultObject("selectedDateForRecord", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
         refreshTable()
         closeMonthView()
         tableView.reloadData()
@@ -538,7 +538,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }
     
     func refreshTable() {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForRecord", SelectedDate.self) {
             configureDatasource(with: savedYearAndMonth.selectedMonth, and: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
         }
@@ -652,11 +652,13 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     @objc func backwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
         monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
+        refreshTable()
     }
 
     @objc func forwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
         monthVc.yearLabel.text = "\(value + 1)"
+        refreshTable()
     }
 
     private func getYear() -> Int {

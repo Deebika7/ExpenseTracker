@@ -115,20 +115,16 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            totalAmountLabel.topAnchor.constraint(equalTo: graphContainerView.topAnchor, constant: 8),
+            totalAmountLabel.topAnchor.constraint(equalTo: graphContainerView.topAnchor, constant: 12),
             totalAmountLabel.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor, constant: 4),
             totalAmountLabel.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
             totalAmountLabel.heightAnchor.constraint(equalToConstant: 14),
             
             averageAmountLabel.topAnchor.constraint(equalTo: totalAmountLabel.bottomAnchor, constant: 8),
             averageAmountLabel.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor, constant: 4),
-            averageAmountLabel.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
+            averageAmountLabel.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor, constant: 12),
             averageAmountLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        graphData.first?.name
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

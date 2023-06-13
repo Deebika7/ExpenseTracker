@@ -16,6 +16,8 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
 
     private lazy var chartRecords = [ChartData]()
     
+    private lazy var searchResults = [ChartData]()
+    
     private lazy var colors = [UIColor]()
     
     private lazy var hollowPieChart: UIView = {
@@ -44,16 +46,32 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }()
     
     private lazy var searchController = SearchController()
-
+    
+    private lazy var noDataFoundView: UIView = {
+        let noDataFoundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
+        return noDataFoundView
+    }()
+    
+    func configureTable() {
+        if chartRecords.isEmpty {
+            headerViewContainer.isHidden = true
+        }
+        else {
+            headerViewContainer.isHidden = false
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
         headerViewContainer.addSubview(hollowPieChart)
+        view.addSubview(noDataFoundView)
         view.addSubview(tableView)
         view.addSubview(headerViewContainer)
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
         tableView.keyboardDismissMode = .onDrag
+        configureTable()
     }
     
     func setupContraints() {
@@ -71,7 +89,7 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: -20),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2)
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2),
         ])
     }
     
@@ -80,32 +98,21 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if chartRecords.isEmpty {
-            headerViewContainer.isHidden = true
-            tableView.backgroundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
-            tableView.backgroundView?.translatesAutoresizingMaskIntoConstraints = false
-            tableView.backgroundView!.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 50).isActive = true
-            tableView.backgroundView!.centerXAnchor.constraint(equalTo: tableView.centerXAnchor, constant: -100).isActive = true
-        }
-        else {
-            tableView.backgroundView = nil
-            headerViewContainer.isHidden = false
-        }
-        return  dataSource.count
+        return  searchResults.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        dataSource.isEmpty ? "" : "Expense List"
+        searchResults.isEmpty ? "" : "Expense List"
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
-        configuration.text = chartRecords[indexPath.row].name
-        configuration.secondaryText = String(format: "%.2f", chartRecords[indexPath.row].percentage) + "%"
+        configuration.text = searchResults[indexPath.row].name
+        configuration.secondaryText = String(format: "%.2f", searchResults[indexPath.row].percentage) + "%"
         configuration.prefersSideBySideTextAndSecondaryText = true
-        configuration.image = UIImage(systemName: chartRecords[indexPath.row].sfSymbol)
-        configuration.imageProperties.tintColor = chartRecords[indexPath.row].color
+        configuration.image = UIImage(systemName: searchResults[indexPath.row].sfSymbol)
+        configuration.imageProperties.tintColor = searchResults[indexPath.row].color
         cell.contentConfiguration = configuration
         return cell
     }
@@ -116,31 +123,49 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 1, color: Color(uiColor: chartRecords[indexPath.row].color))
+        let graphVc = GraphVC(records: records, categoryName: searchResults[indexPath.row].name, type: 1, color: Color(uiColor: searchResults[indexPath.row].color))
         graphVc.hidesBottomBarWhenPushed = true
-        graphVc.title = chartRecords[indexPath.row].name
+        graphVc.title = searchResults[indexPath.row].name
         navigationController?.pushViewController(graphVc, animated: true)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
+    func configureDataSource() {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
-            }
+        }
         else {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
         }
         chartRecords = Helper.getChartData(records, type: 1)
         
-        chartRecords = chartRecords.sorted (by: {
+        chartRecords = chartRecords.sorted(by: {
             $0.percentage > $1.percentage
         })
         
         dataSource = chartRecords.reduce(into: [Double: UIColor]()){
             result, chartRecord in result[chartRecord.percentage] = chartRecord.color
         }
+        searchResults = chartRecords
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        configureDataSource()
         if let hollowPieChartView = hollowPieChart as? HollowPieChart {
             hollowPieChartView.data = dataSource
             hollowPieChartView.setNeedsDisplay()
+        }
+        configureTable()
+        tableView.reloadData()
+    }
+    
+    func updateSearchResults(_ text: String) {
+        configureDataSource()
+        searchResults = searchResults.filter{ chartData in
+           return chartData.name.localizedCaseInsensitiveContains(text)
+        }
+        print(searchResults)
+        if text.isEmpty {
+            searchResults = chartRecords
         }
         tableView.reloadData()
     }

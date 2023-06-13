@@ -19,6 +19,11 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         return tableView
     }()
     
+    private lazy var noDataFoundView: UIView = {
+        let noDataFoundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
+        return noDataFoundView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(tableView)
