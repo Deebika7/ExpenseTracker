@@ -59,7 +59,7 @@ class SwitchTableViewCell: UITableViewCell {
             blurEffectSwitch.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             blurEffectSwitch.heightAnchor.constraint(equalToConstant: 30),
             
-            blurEffectLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            blurEffectLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 19),
             blurEffectLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
         ])

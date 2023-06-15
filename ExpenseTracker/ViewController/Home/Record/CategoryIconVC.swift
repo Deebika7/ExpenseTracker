@@ -111,17 +111,15 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         dismiss(animated: true, completion: nil)
     }
     
-    deinit {
-        print("destroyed")
-    }
-    
     // MARK: search
     func updateSearchResults(for searchController: UISearchController) {
         tableView.backgroundView = nil
         guard let text = searchController.searchBar.text else {
             return
         }
+        
         searchText = text
+        
         searchResults = searchResults.filter { key, value in
             key.localizedCaseInsensitiveContains(text) ||
             value.contains { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text) }
@@ -129,6 +127,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
             value.filter { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text)
             }
         }
+        
         let searchedSection = customCategory.filter { customCategory in
             return customCategory.key.localizedCaseInsensitiveContains(text)
         }
@@ -136,6 +135,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         searchResults.merge(searchedSection) {
             ( merge, _ ) in merge
         }
+        
         searchResults = searchResults.filter { !$0.value.isEmpty }
         
         if text.isEmpty {

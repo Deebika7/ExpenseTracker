@@ -11,11 +11,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     private lazy var recordSearchResultsController = RecordSearchResultsController()
     
-    struct SectionData {
-        let date: Date
-        var rows: [Record]
-    }
-    
     var datasource = [SectionData]()
     
     private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
@@ -24,16 +19,16 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         let searchController = UISearchController(searchResultsController: recordSearchResultsController)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchResultsUpdater = self
         return searchController
     }()
     
     private lazy var selectedMonth: Int! = nil
     
     private lazy var selectedYear: Int! = nil
-        
+    
     private lazy var isMonthViewExpanded: Bool = true
+    
+    private lazy var savedMonth = Int()
     
     private lazy var blueView: UIView = {
         let blueView = UIView()
@@ -146,12 +141,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }()
     
     private lazy var clickableView: UIView = {
-       let clickableView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+        let clickableView = UIView(frame: CGRect(x: 4, y: 15, width: 70, height: 50))
         clickableView.addGestureRecognizer(monthViewTapGestureRecognizer)
         clickableView.backgroundColor = .clear
         return clickableView
     }()
-
+    
     private lazy var monthView: UIView = {
         let monthView = UIView()
         monthView.translatesAutoresizingMaskIntoConstraints = false
@@ -162,12 +157,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         monthView.bringSubviewToFront(clickableView)
         return monthView
     }()
-
+    
     private lazy var monthViewTapGestureRecognizer: UITapGestureRecognizer = {
         let monthViewTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapMonthView))
         return monthViewTapGestureRecognizer
     }()
-
+    
     private lazy var monthVc: MonthCollectionVC = {
         let monthVc = MonthCollectionVC.init()
         monthVc.translatesAutoresizingMaskIntoConstraints = false
@@ -211,7 +206,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         
         let groupOptionMenuElement = UIDeferredMenuElement.uncached { completion in
             let sortByDate = self.getSectionSortOption()
-
+            
             let newestFirst = UIAction(title: "Newest First", state: sortByDate == .newestFirst ? .on : .off, handler: {
                 _ in
                 self.sectionSortOptionChanged(to: .newestFirst)
@@ -231,7 +226,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             var incomeState: UIMenuElement.State = .off
             var expenseState: UIMenuElement.State = .off
             let sortOption = self.getRowSortOption()
-
+            
             switch sortOption {
             case .income(_):
                 incomeState = .on
@@ -281,13 +276,13 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
                 completion([sortMenu])
             }
         }
-
+        
         let sortBy = UIMenu(title: "Group By Date", children: [groupOptionMenuElement, sortOptionMenuElement])
         return sortBy
     }
     
     private lazy var sortMenu: UIMenu = {
-        let sortMenu = UIMenu(title: "Sort By", image: UIImage(systemName: "arrow.up.arrow.down"), children: [])
+        let sortMenu = UIMenu(title: "Sort By", image: UIImage(systemName: "arrow.down.arrow.down"), children: [])
         return sortMenu
     }()
     
@@ -299,11 +294,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     @objc func didTapMonthView() {
         if isMonthViewExpanded {
-            UIView.transition(with: monthVc, duration: 0.4, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            UIView.transition(with: monthVc, duration: 0.4, options: .transitionFlipFromTop, animations: nil, completion: nil)
             view.addSubview(monthVc)
             setupContentViewConstraints()
             navigationItem.searchController = nil
-            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
+            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
             isMonthViewExpanded = false
         }
         else {
@@ -325,12 +320,13 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }
     
     func closeMonthView() {
-        monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
-        UIView.transition(with: monthVc, duration: 0.6, options: .transitionCrossDissolve, animations: {
+        monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
+        UIView.transition(with: monthVc, duration: 0.6, options: .curveEaseInOut, animations: {
         }) { [self] _  in
             monthVc.removeFromSuperview()
             navigationItem.searchController = searchController
             isMonthViewExpanded = true
+            refreshTable()
         }
     }
     
@@ -343,7 +339,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         closeMonthView()
         tableView.reloadData()
     }
-
+    
+    func changedYear(_ changedYear: Int, _ month: Int) {
+        UserDefaultManager.shared.addUserDefaultObject("selectedDateForRecord", SelectedDate(selectedYear: changedYear, selectedMonth: month))
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
@@ -411,7 +411,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
                     datasource[i].rows = expenseArr + incomeArr
                 }
             }
-        case.income(let sortByAmount):
+        case .income(let sortByAmount):
             if case .amountHighToLow = sortByAmount {
                 for i in 0..<datasource.count {
                     let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
@@ -464,7 +464,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             balanceView.trailingAnchor.constraint(equalTo: redView.trailingAnchor, constant: -135),
             balanceView.centerXAnchor.constraint(equalTo: redView.centerXAnchor),
             balanceView.centerYAnchor.constraint(equalTo: redView.centerYAnchor,constant: 10),
-
+            
             toolTipView.leadingAnchor.constraint(equalTo: balanceView.centerXAnchor, constant: -5),
             toolTipView.centerYAnchor.constraint(equalTo: balanceView.centerYAnchor, constant: -19),
             toolTipView.heightAnchor.constraint(equalToConstant: 6),
@@ -541,9 +541,13 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForRecord", SelectedDate.self) {
             configureDatasource(with: savedYearAndMonth.selectedMonth, and: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
+            savedMonth = savedYearAndMonth.selectedMonth
+            let savedYear = savedYearAndMonth.selectedYear
+            monthVc.yearLabel.text = "\(savedYear)"
         }
         else {
             configureDatasource()
+            monthVc.yearLabel.text = "\(Helper.getDateProperties(date: Date()).year)"
         }
         let recordForAMonth = datasource.flatMap({ $0.rows })
         let incomeAmountValue = Helper.getSimplifiedAmount(recordForAMonth, 0)
@@ -604,9 +608,16 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
                 recordByDate[record.date!]?.append(record)
             }
         }
-        recordSearchResultsController.updateSearchResults(recordByDate, searchText: text)
+        var searchResult = recordByDate.map({SectionData(date: $0.key, rows: $0.value) })
+        let savedDateSort = getSectionSortOption()
+        if savedDateSort == .newestFirst {
+            searchResult = searchResult.sorted(by: { $0.date > $1.date })
+        }
+        else {
+            searchResult = searchResult.sorted(by: { $0.date < $1.date })
+        }
+        recordSearchResultsController.updateSearchResults(searchResult, searchText: text)
     }
-
 }
 
 extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -617,7 +628,7 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         4
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
         if indexPath.section == 0 {
@@ -626,7 +637,7 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
         else if indexPath.section == 1 {
             cell.configure(collectionViewDatasource[indexPath.row + 4].0)
         }
-        else{
+        else {
             cell.configure(collectionViewDatasource[indexPath.row + 8].0)
         }
         cell.layer.shadowColor = UIColor.systemGray.cgColor
@@ -635,7 +646,7 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.layer.shadowRadius = 4
         return cell
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         if indexPath.section == 0 {
@@ -648,19 +659,21 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
             selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
         }
     }
-
+    
     @objc func backwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
         monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
-        refreshTable()
+        changedYear(value - 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
     }
-
+    
     @objc func forwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
-        monthVc.yearLabel.text = "\(value + 1)"
-        refreshTable()
+        if !(Helper.defaultYear == value) {
+            monthVc.yearLabel.text = "\(value + 1)"
+            changedYear(value + 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
+        }
     }
-
+    
     private func getYear() -> Int {
         Int(monthVc.yearLabel.text!) ?? 0
     }

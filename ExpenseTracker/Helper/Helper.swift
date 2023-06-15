@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class Helper {
-   
+    
     static let defaultMonth = getDateProperties(date: defaultDate).month
     static let defaultYear = getDateProperties(date: defaultDate).year
     static let defaultType = "Income"
@@ -17,7 +17,7 @@ class Helper {
     static let categoryType = (default: 0, custom: 1);
     static let defaultDate = Date()
     static let calendar = Calendar.current
-
+    
     static var dataSource: [(String, Int)] = [("Jan", 1), ("Feb", 2), ("Mar", 3), ("Apr", 4), ("May", 5), ("Jun", 6), ("Jul", 7), ("Aug", 8), ("Sep", 9), ("Oct", 10), ("Nov", 11), ("Dec", 12)]
     
     static var customCategory: [String:[Category]] = [
@@ -148,7 +148,7 @@ class Helper {
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         
         if let year = components.year, let month = components.month, let day = components.day {
-           return (year,month,day)
+            return (year,month,day)
         }
         return (0,0,0)
     }
@@ -168,86 +168,85 @@ class Helper {
         }
         return false
     }
-
-   static func simplifyNumbers(_ numbers: [String], _ precision: Int) -> String {
-       var sum: Double = 0.0
-       
-       for numberString in numbers {
-           if let number = Double(numberString) {
-               sum += number
-           }
-       }
-       
-       let numberFormatter = NumberFormatter()
-       numberFormatter.numberStyle = .decimal
-       numberFormatter.maximumFractionDigits = precision // Set the desired precision
-       numberFormatter.groupingSeparator = "."
-       if abs(sum) >= 100000 {
-           let power = min(Int(log10(abs(sum)) / 3.0), 4) // Restrict the power value to a maximum of 4
-           let suffix = ["", "K", "M", "B", "T"][power]
-           
-           let simplifiedNumber = sum / pow(1000.0, Double(power))
-           numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
-           
-           if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
-               let truncatedString = String(simplifiedString.prefix(5)) // Truncate the string to a maximum of 5 characters
-               return truncatedString + suffix
-           }
-       } else {
-           if let simplifiedString = numberFormatter.string(from: NSNumber(value: sum)) {
-               let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "") // Remove the decimal separator
-               return formattedString
-           }
-       }
-       
-       return "\(sum)"
-   }
     
-   static func simplifyDifferenceBetweenNumbers(_ numbers1: [String], _ numbers2: [String], _ precision: Int) -> String? {
-       let count = max(numbers1.count, numbers2.count) // Get the maximum count of the two arrays
-       
-       var differenceSum: Double = 0.0
-       
-       for index in 0..<count {
-           let numberString1 = index < numbers1.count ? numbers1[index] : "0" // Use "0" for missing values in numbers1
-           let numberString2 = index < numbers2.count ? numbers2[index] : "0" // Use "0" for missing values in numbers2
-           
-           guard let number1 = Double(numberString1),
-                 let number2 = Double(numberString2) else {
-               return nil // Return nil if any value is not a valid number
-           }
-           
-           let difference = number2 - number1 // Subtract numbers1 from numbers2
-           differenceSum += difference // Add the difference to the differenceSum
-       }
-       
-       let numberFormatter = NumberFormatter()
-       numberFormatter.numberStyle = .decimal
-       numberFormatter.maximumFractionDigits = precision // Set the desired precision
-       numberFormatter.groupingSeparator = "."
-       
-       if abs(differenceSum) >= 100000 {
-           let power = min(Int(log10(abs(differenceSum)) / 3.0), 4) // Restrict the power value to a maximum of 4
-           let suffix = ["", "K", "M", "B", "T"][power]
-           
-           let simplifiedNumber = differenceSum / pow(1000.0, Double(power))
-           numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
-           
-           if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
-               let truncatedString = String(simplifiedString.prefix(5)) // Truncate the string to a maximum of 5 characters
-               return truncatedString + suffix
-           }
-       } else {
-           if let simplifiedString = numberFormatter.string(from: NSNumber(value: differenceSum)) {
-               let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "") // Remove the decimal separator
-               return formattedString
-           }
-       }
-       
-       return "\(differenceSum)"
-   }
-
-
+    static func simplifyNumbers(_ numbers: [String], _ precision: Int) -> String {
+        var sum: Double = 0.0
+        
+        for numberString in numbers {
+            if let number = Double(numberString) {
+                sum += number
+            }
+        }
+        
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        numberFormatter.maximumFractionDigits = precision
+        numberFormatter.groupingSeparator = "."
+        if abs(sum) >= 1000 {
+            let power = min(Int(log10(abs(sum)) / 3.0), 4)
+            let suffix = ["", "K", "M", "B", "T"][power]
+            
+            let simplifiedNumber = sum / pow(1000.0, Double(power))
+            numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
+            
+            if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
+                let truncatedString = String(simplifiedString.prefix(5))
+                return truncatedString + suffix
+            }
+        } else {
+            if let simplifiedString = numberFormatter.string(from: NSNumber(value: sum)) {
+                let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "")
+                return formattedString
+            }
+        }
+        return "\(sum)"
+    }
+    
+    static func simplifyDifferenceBetweenNumbers(_ numbers1: [String], _ numbers2: [String], _ precision: Int) -> String? {
+        let count = max(numbers1.count, numbers2.count)
+        
+        var differenceSum: Double = 0.0
+        
+        for index in 0..<count {
+            let numberString1 = index < numbers1.count ? numbers1[index] : "0"
+            let numberString2 = index < numbers2.count ? numbers2[index] : "0"
+            
+            guard let number1 = Double(numberString1),
+                  let number2 = Double(numberString2) else {
+                return nil
+            }
+            
+            let difference = number2 - number1
+            differenceSum += difference
+        }
+        
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        numberFormatter.maximumFractionDigits = precision
+        numberFormatter.groupingSeparator = "."
+        
+        if abs(differenceSum) >= 1000 {
+            let power = min(Int(log10(abs(differenceSum)) / 3.0), 4)
+            let suffix = ["", "K", "M", "B", "T"][power]
+            
+            let simplifiedNumber = differenceSum / pow(1000.0, Double(power))
+            numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
+            
+            if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
+                let truncatedString = String(simplifiedString.prefix(5))
+                return truncatedString + suffix
+            }
+        } else {
+            if let simplifiedString = numberFormatter.string(from: NSNumber(value: differenceSum)) {
+                let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "")
+                return formattedString
+            }
+        }
+        
+        return "\(differenceSum)"
+    }
+    
+    
     static func getSimplifiedAmount(_ records: [Record], _ type: Int16) -> String {
         var amount: [String]  = []
         for record in records {
@@ -295,7 +294,7 @@ class Helper {
         }
         return String(convertedValue)
     }
-
+    
     static func calculatePercentage(value: Double, total: Double) -> Double {
         guard total != 0 else {
             return 0
@@ -304,14 +303,14 @@ class Helper {
         let percentage = (value / total) * 100
         return percentage
     }
-        
+    
     static func getGraphData(_ records: [Record], type: Int16, category: String) -> [GraphData] {
         lazy var graphData = [GraphData]()
         lazy var totalAmount = Double()
         for record in records {
             if record.type == type {
                 if category == record.category ?? "" , let amount = record.amount {
-                        totalAmount += (Double(amount) ?? 0)
+                    totalAmount += (Double(amount) ?? 0)
                 }
             }
         }
@@ -415,6 +414,38 @@ class Helper {
             colors.append(color)
         }
         return colors
+    }
+    
+    static func getMonthNumberForName(_ name: String) -> Int? {
+        switch name {
+        case "Jan":
+            return 1
+        case "Feb":
+            return 2
+        case "Mar":
+            return 3
+        case "Apr":
+            return 4
+        case "May":
+            return 5
+        case "Jun":
+            return 6
+        case "Jul":
+            return 7
+        case "Aug":
+            return 8
+        case "Sep":
+            return 9
+        case "Oct":
+            return 10
+        case "Nov":
+            return 11
+        case "Dec":
+            return 12
+        default:
+            return 1
+        }
+        
     }
     
 }

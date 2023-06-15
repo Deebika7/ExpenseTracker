@@ -19,6 +19,18 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     private lazy var selectedSegmentIndex = Int()
     
+    private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+
+    private lazy var chartRecords = [ChartData]()
+    
+    
+    
+    private lazy var pieChartSearchResultsController = PieChartSearchResultsController()
+    
+    private lazy var type = Int16()
+    
+    private lazy var savedMonth = Int()
+    
     private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.insertSegment(withTitle: "Expense", at: 0, animated: true)
@@ -30,11 +42,9 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     }()
     
     private lazy var searchController: UISearchController = {
-        let searchController = UISearchController()
+        let searchController = UISearchController(searchResultsController: pieChartSearchResultsController)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchResultsUpdater = self
         return searchController
     }()
     
@@ -64,7 +74,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     private lazy var monthAccessoryView: UIImageView = {
         let monthAccessoryView = UIImageView()
         monthAccessoryView.translatesAutoresizingMaskIntoConstraints = false
-        monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
+        monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
         monthAccessoryView.tintColor = .label
         return  monthAccessoryView
     }()
@@ -107,11 +117,11 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         if isMonthViewExpanded {
             navigationItem.title = nil
             navigationController?.navigationBar.prefersLargeTitles = false
-            UIView.transition(with: monthVc, duration: 0.4, options: .transitionCrossDissolve, animations: nil, completion: nil)
+            UIView.transition(with: monthVc, duration: 0.4, options: .transitionFlipFromTop, animations: nil, completion: nil)
             view.addSubview(monthVc)
             setupContentViewConstraints()
             navigationItem.searchController = nil
-            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
+            monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
             isMonthViewExpanded = false
         }
         else {
@@ -133,14 +143,16 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     }
     
     func closeMonthView() {
-        monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
-        UIView.transition(with: monthVc, duration: 0.6, options: .transitionCrossDissolve, animations: {
+        monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
+        UIView.transition(with: monthVc, duration: 0.6, options: .curveEaseInOut, animations: {
         }) { [self] _  in
             navigationController?.navigationBar.prefersLargeTitles = true
             navigationItem.title = "Chart"
             monthVc.removeFromSuperview()
             navigationItem.searchController = searchController
             isMonthViewExpanded = true
+            configureDataSource()
+            switchSegmentedControl()
         }
     }
     
@@ -151,6 +163,11 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         UserDefaultManager.shared.addUserDefaultObject("selectedDateForChart", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
         closeMonthView()
         switchSegmentedControl()
+        configureDataSource()
+    }
+    
+    func changedYear(_ changedYear: Int, _ month: Int) {
+        UserDefaultManager.shared.addUserDefaultObject("selectedDateForChart", SelectedDate(selectedYear: changedYear, selectedMonth: month))
     }
     
     override func viewDidLoad() {
@@ -164,7 +181,6 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         let swipeLeftGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture))
         swipeLeftGesture.direction = .left
         view.addGestureRecognizer(swipeLeftGesture)
-        
         let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture))
         swipeRightGesture.direction = .right
         view.addGestureRecognizer(swipeRightGesture)
@@ -247,18 +263,6 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         }
     }
     
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else {
-            return
-        }
-        if selectedSegmentIndex == 1 {
-            incomeChartVC.updateSearchResults(text)
-        }
-        else {
-            expenseChartVC.updateSearchResults(text)
-        }
-    }
-    
 }
 
 extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -304,15 +308,53 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
     @objc func backwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
         monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
+        changedYear(value - 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
     }
 
     @objc func forwardChevronTapped() {
         let value = Int(monthVc.yearLabel.text ?? "0")!
-        monthVc.yearLabel.text = "\(value + 1)"
+        if !(Helper.defaultYear == value) {
+            monthVc.yearLabel.text = "\(value + 1)"
+            changedYear(value + 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
+        }
     }
 
     private func getYear() -> Int {
         Int(monthVc.yearLabel.text!) ?? 0
     }
+}
+
+extension ChartVC {
+    func updateSearchResults(for searchController: UISearchController) {
+        configureDataSource()
+        guard let text = searchController.searchBar.text else {
+            return
+        }
+        let searchResults = chartRecords.filter{ chartData in
+            let percentage = String(format: "%.2f", chartData.percentage) + "%"
+            return chartData.name.localizedCaseInsensitiveContains(text) || percentage.localizedCaseInsensitiveContains(text)
+        }
+        pieChartSearchResultsController.updateSearchResults(searchResults: searchResults, text, type )
+    }
+    
+    func configureDataSource() {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
+            monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
+            savedMonth = savedYearAndMonth.selectedMonth
+            let savedYear = savedYearAndMonth.selectedYear
+            monthVc.yearLabel.text = "\(savedYear)"
+        }
+        else {
+            records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
+        }
+        type = (selectedSegmentIndex == 0) ? 1 : 0
+        chartRecords = Helper.getChartData(records, type: Int16(type))
+        
+        chartRecords = chartRecords.sorted (by: {
+            $0.percentage > $1.percentage
+        })
+    }
+    
 }
 

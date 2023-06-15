@@ -10,12 +10,12 @@ import UIKit
 
 class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    private lazy var searchResults = [Date:[Record]]()
+    private lazy var searchResults = [SectionData]()
+    
     private lazy var searchText = String()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.frame, style: .insetGrouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
@@ -33,15 +33,20 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         tableView.keyboardDismissMode = .onDrag
     }
     
-    func updateSearchResults(_ results: [Date:[Record]], searchText: String) {
+    func updateSearchResults(_ results: [SectionData], searchText: String) {
         searchResults = results
         self.searchText =  searchText
+        if searchResults.isEmpty {
+            tableView.backgroundView = noDataFoundView
+        }
+        else {
+            tableView.backgroundView = nil
+        }
         tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let recordItem = Array(searchResults.keys)[section]
-        return searchResults[recordItem]?.count ?? 0
+        return searchResults[section].rows.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -49,26 +54,25 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        Helper.convertDateToString(date: Array(searchResults.keys)[section])
+        Helper.convertDateToString(date: searchResults[section].date)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RecordSearchResults", for: indexPath)
-        let record = Array(searchResults.keys)[indexPath.section]
+        let record = searchResults[indexPath.section].rows[indexPath.row]
         var configuration = cell.defaultContentConfiguration()
-        if let recordItems = searchResults[record] {
-            let simplifiedAmount = Helper.simplifyNumbers([recordItems[indexPath.row].amount!], 3)
-            configuration.secondaryText = (recordItems[indexPath.row].type == 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
-            configuration.prefersSideBySideTextAndSecondaryText = true
-            configuration.image = UIImage(systemName: recordItems[indexPath.row].icon!)
-            let category = recordItems[indexPath.row].category ?? ""
-            let attributedString = NSMutableAttributedString(string: category)
-            if let range = category.range(of: searchText, options: .caseInsensitive) {
-                let nsRange = NSRange(range, in: category)
-                attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
-            }
-            configuration.attributedText = attributedString
+        let simplifiedAmount = Helper.simplifyNumbers([record.amount ?? "0"], 3)
+        configuration.secondaryText = (record.type == 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
+        configuration.prefersSideBySideTextAndSecondaryText = true
+        configuration.image = UIImage(systemName: record.icon ?? "")
+        let category = record.category ?? ""
+        let attributedString = NSMutableAttributedString(string: category)
+        if let range = category.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: category)
+            attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
         }
+            configuration.attributedText = attributedString
+        
         configuration.imageProperties.tintColor = .label
         cell.contentConfiguration = configuration
         return cell
@@ -76,14 +80,12 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let recordItem = Array(searchResults.keys)[indexPath.section]
-        if let recordItems = searchResults[recordItem]{
-            let decriptionVc = DescriptionVC(recordId: recordItems[indexPath.row].id!)
-            decriptionVc.title = "Details"
-            decriptionVc.hidesBottomBarWhenPushed = true
-            let navigationController = UINavigationController(rootViewController: decriptionVc)
-            present(navigationController, animated: true)
-        }
+        let recordItem = searchResults[indexPath.section].rows[indexPath.row]
+        let decriptionVc = DescriptionVC(recordId: recordItem.id!)
+        decriptionVc.title = "Details"
+        decriptionVc.hidesBottomBarWhenPushed = true
+        let navigationController = UINavigationController(rootViewController: decriptionVc)
+        present(navigationController, animated: true)
     }
                                                                         
 }

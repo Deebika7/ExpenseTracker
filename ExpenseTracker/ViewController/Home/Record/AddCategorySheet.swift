@@ -28,6 +28,14 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
         textField.autocorrectionType = .no
         return textField
     }()
+    
+    private lazy var countLabel: UILabel = {
+        let countLabel = UILabel()
+        countLabel.translatesAutoresizingMaskIntoConstraints = false
+        countLabel.textColor = .placeholderText
+        countLabel.text = "0/30"
+        return countLabel
+    }()
 
     convenience init(editCustomCategory: CustomCategory?) {
         self.init(style: .insetGrouped)
@@ -84,9 +92,16 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TextFieldCell", for: indexPath)
             cell.contentView.addSubview(textField)
+            cell.contentView.addSubview(countLabel)
             NSLayoutConstraint.activate([
                 textField.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 20),
-                textField.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                textField.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
+                textField.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor),
+                textField.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
+                countLabel.heightAnchor.constraint(equalToConstant: 20),
+                countLabel.widthAnchor.constraint(equalToConstant: 50),
+                countLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor),
+                countLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -8),
             ])
             if let editCustomCategoryName = editCustomCategory?.name {
                 textField.text = editCustomCategoryName
@@ -169,6 +184,8 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
         let text = textField.text ?? ""
         let limit = 30
         textField.text = String(text.prefix(limit))
+        countLabel.text = "\(textField.text!.count)/30"
+
     }
     
     func selectedCategory(_ category: Category?, categoryType: Int) {

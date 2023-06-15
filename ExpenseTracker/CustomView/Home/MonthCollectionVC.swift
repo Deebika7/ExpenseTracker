@@ -39,8 +39,8 @@ class MonthCollectionVC: UIView {
     lazy var yearLabel: UILabel = {
         let yearLabel = UILabel()
         yearLabel.translatesAutoresizingMaskIntoConstraints = false
-        yearLabel.font = UIFont.systemFont(ofSize: 22)
         yearLabel.text = "\(Helper.getDateProperties(date: Date()).year)"
+        yearLabel.font = UIFont.systemFont(ofSize: 22)
         return yearLabel
     }()
     

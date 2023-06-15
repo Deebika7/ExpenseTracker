@@ -64,10 +64,25 @@ class GraphCell: UITableViewCell {
         ])
     }
     
-    func configure(percentage: String, date: String, amount: String) {
-        percentageLabel.text = percentage + "%"
-        dateLabel.text = date
-        amountLabel.text = amount
+    func configure( percentage: String, date: String, amount: String, searchText: String) {
+        let percentageAttributedString = NSMutableAttributedString(string: percentage + "%")
+        if let range = percentage.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: percentage)
+            percentageAttributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        percentageLabel.attributedText = percentageAttributedString
+        let dateAttributedString = NSMutableAttributedString(string: date)
+        if let range = date.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: date)
+            dateAttributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        dateLabel.attributedText = dateAttributedString
+        let amountAttributedString = NSMutableAttributedString(string: amount)
+        if let range = amount.range(of: searchText, options: .caseInsensitive) {
+            let nsRange = NSRange(range, in: amount)
+            amountAttributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
+        }
+        amountLabel.attributedText = amountAttributedString
     }
 
 }

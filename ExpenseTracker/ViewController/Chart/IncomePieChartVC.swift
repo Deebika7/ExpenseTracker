@@ -16,10 +16,6 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
 
     private lazy var chartRecords = [ChartData]()
     
-    private lazy var searchResults = [ChartData]()
-    
-    private lazy var searchText = String()
-
     private lazy var hollowPieChart: UIView = {
         let hollowPieChartView = HollowPieChart()
         hollowPieChartView.data = dataSource
@@ -97,35 +93,23 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchResults.count
+        return chartRecords.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChartCell", for: indexPath)
         var configuration = cell.defaultContentConfiguration()
-        let category = searchResults[indexPath.row].name
-        let attributedText = NSMutableAttributedString(string: category)
-        if let range = category.range(of: searchText, options: .caseInsensitive) {
-            let nsRange = NSRange(range, in: category)
-            attributedText.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
-        }
-        configuration.attributedText = attributedText
-        let percentage = String(format: "%.2f", searchResults[indexPath.row].percentage) + "%"
-        let secondaryAttributedText = NSMutableAttributedString(string: percentage)
-        if let range = percentage.range(of: searchText, options: .caseInsensitive) {
-            let nsRange = NSRange(range, in: percentage)
-            secondaryAttributedText.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
-        }
-        configuration.secondaryAttributedText = secondaryAttributedText
+        configuration.text = chartRecords[indexPath.row].name
+        configuration.secondaryText = String(format: "%.2f", chartRecords[indexPath.row].percentage) + "%"
         configuration.prefersSideBySideTextAndSecondaryText = true
-        configuration.image = UIImage(systemName: searchResults[indexPath.row].sfSymbol)
-        configuration.imageProperties.tintColor = searchResults[indexPath.row].color
+        configuration.image = UIImage(systemName: chartRecords[indexPath.row].sfSymbol)
+        configuration.imageProperties.tintColor = chartRecords[indexPath.row].color
         cell.contentConfiguration = configuration
         return cell
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        searchResults.isEmpty ? "" : "Income List"
+        chartRecords.isEmpty ? "" : "Income List"
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -134,16 +118,16 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let graphVc = GraphVC(records: records, categoryName: searchResults[indexPath.row].name, type: 0, color: Color(uiColor: searchResults[indexPath.row].color))
+        let graphVc = GraphVC(records: records, categoryName: chartRecords[indexPath.row].name, type: 0, color: Color(uiColor: chartRecords[indexPath.row].color))
         graphVc.hidesBottomBarWhenPushed = true
-        graphVc.title = searchResults[indexPath.row].name
+        graphVc.title = chartRecords[indexPath.row].name
         navigationController?.pushViewController(graphVc, animated: true)
     }
     
     func configureDataSource() {
         if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
-            }
+        }
         else {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
         }
@@ -156,7 +140,6 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         dataSource = chartRecords.reduce(into: [Double: UIColor]()) {
             result, chartRecord in result[chartRecord.percentage] = chartRecord.color
         }
-        searchResults = chartRecords
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -166,19 +149,6 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
             hollowPieChartView.setNeedsDisplay()
         }
         configureTable()
-        tableView.reloadData()
-    }
-    
-    func updateSearchResults(_ text: String) {
-        configureDataSource()
-        searchText = text
-        searchResults = chartRecords.filter{ chartData in
-            let percentage = String(format: "%.2f", chartData.percentage) + "%"
-            return chartData.name.localizedCaseInsensitiveContains(text) || percentage.localizedCaseInsensitiveContains(text)
-        }
-        if text.isEmpty {
-            searchResults = chartRecords
-        }
         tableView.reloadData()
     }
     

@@ -27,7 +27,7 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
     
     private lazy var incomeSymbol: UIImageView = {
         let expenseSymbol = UIImageView()
-        expenseSymbol.image = UIImage(systemName: "arrow.up.square.fill")
+        expenseSymbol.image = UIImage(systemName: "arrow.down.square.fill")
         expenseSymbol.tintColor = UIColor(named: "blue")
         expenseSymbol.translatesAutoresizingMaskIntoConstraints = false
         return expenseSymbol
@@ -35,7 +35,7 @@ class MoneyTrackerSectionHeaderView: UITableViewHeaderFooterView {
     
     private lazy var expenseSymbol: UIImageView = {
         let incomeSymbol = UIImageView()
-        incomeSymbol.image = UIImage(systemName: "arrow.down.square.fill")
+        incomeSymbol.image = UIImage(systemName: "arrow.up.square.fill")
         incomeSymbol.tintColor = UIColor(named: "red")
         incomeSymbol.translatesAutoresizingMaskIntoConstraints = false
         return incomeSymbol

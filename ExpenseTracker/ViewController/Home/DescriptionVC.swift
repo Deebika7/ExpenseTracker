@@ -38,7 +38,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @objc func deleteRecord() {
         let alert = UIAlertController(title: "Delete", message: "Are you sure want to delete this record", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "No", style: .default))
-        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {_ in
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {_ in
             RecordDataManager.shared.deleteRecord(id: self.record!.id!)
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
                 self.dismiss(animated: true){ [weak self] in

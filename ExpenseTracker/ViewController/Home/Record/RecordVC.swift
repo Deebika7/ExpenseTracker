@@ -39,9 +39,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         super.viewDidLoad()
         tableView.backgroundColor = .systemGroupedBackground
         tableView.keyboardDismissMode = .onDrag
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 44
-        tableView.sectionHeaderHeight = 44
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(addRecord))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissAddRecord))
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -217,12 +214,13 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         UITableView.automaticDimension
     }
     
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         44
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        view.endEditing(true)
         let indexPathValue = RecordField.allCases[indexPath.section]
         switch indexPathValue {
         case .type:

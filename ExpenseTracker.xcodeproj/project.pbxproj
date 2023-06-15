@@ -66,6 +66,8 @@
 		1678A65B2A35BDD7000EE573 /* LowExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */; };
 		1678A6612A3726C6000EE573 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6602A3726C6000EE573 /* SortOption.swift */; };
 		1678A6642A378897000EE573 /* CustomMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6632A378897000EE573 /* CustomMonthView.swift */; };
+		1678A6662A386F3C000EE573 /* SectionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6652A386F3C000EE573 /* SectionData.swift */; };
+		1678A6682A3997B7000EE573 /* PieChartSearchResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6672A3997B7000EE573 /* PieChartSearchResultsController.swift */; };
 		16BE360D2A1B33C2004C6A7B /* TextFieldDataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */; };
 		16BE36102A1B4B95004C6A7B /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE360F2A1B4B95004C6A7B /* Helper.swift */; };
 		16BE36142A1B7CB5004C6A7B /* CategoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */; };
@@ -134,6 +136,8 @@
 		1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowExpenseView.swift; sourceTree = "<group>"; };
 		1678A6602A3726C6000EE573 /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
 		1678A6632A378897000EE573 /* CustomMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMonthView.swift; sourceTree = "<group>"; };
+		1678A6652A386F3C000EE573 /* SectionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionData.swift; sourceTree = "<group>"; };
+		1678A6672A3997B7000EE573 /* PieChartSearchResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartSearchResultsController.swift; sourceTree = "<group>"; };
 		16BE360C2A1B33C2004C6A7B /* TextFieldDataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldDataDelegate.swift; sourceTree = "<group>"; };
 		16BE360F2A1B4B95004C6A7B /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		16BE36132A1B7CB5004C6A7B /* CategoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDelegate.swift; sourceTree = "<group>"; };
@@ -192,7 +196,7 @@
 				1614029C2A0A1BEB0040E15E /* GraphVC.swift */,
 				1678A5FD2A235D60000EE573 /* IncomePieChartVC.swift */,
 				1678A5FF2A235DAF000EE573 /* ChartVC.swift */,
-				1678A6482A2DBD07000EE573 /* GraphView.swift */,
+				1678A6672A3997B7000EE573 /* PieChartSearchResultsController.swift */,
 			);
 			path = Chart;
 			sourceTree = "<group>";
@@ -242,7 +246,6 @@
 			children = (
 				163063262A0A18D9009E6428 /* HomeVC.swift */,
 				1678A5F72A23153E000EE573 /* DescriptionVC.swift */,
-				1678A6092A25D106000EE573 /* MonthCollectionVC.swift */,
 				1678A60D2A286D1D000EE573 /* RecordSearchResultsController.swift */,
 				161402B02A0A2D100040E15E /* Record */,
 			);
@@ -266,6 +269,7 @@
 				1678A6562A332967000EE573 /* NoDataFoundView.swift */,
 				1678A6582A35BDC2000EE573 /* HighExpenseView.swift */,
 				1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */,
+				1678A6092A25D106000EE573 /* MonthCollectionVC.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -298,6 +302,7 @@
 		1614034F2A180BA00040E15E /* Chart */ = {
 			isa = PBXGroup;
 			children = (
+				1678A6482A2DBD07000EE573 /* GraphView.swift */,
 				161403502A180BC20040E15E /* HollowPieChart.swift */,
 			);
 			path = Chart;
@@ -351,6 +356,7 @@
 		1678A65E2A372692000EE573 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				1678A6652A386F3C000EE573 /* SectionData.swift */,
 				1678A65F2A37269C000EE573 /* SortEnums */,
 			);
 			path = Home;
@@ -465,6 +471,7 @@
 				16BE36142A1B7CB5004C6A7B /* CategoryDelegate.swift in Sources */,
 				161402B82A0A42BA0040E15E /* MediocreExpenseView.swift in Sources */,
 				163063272A0A18D9009E6428 /* HomeVC.swift in Sources */,
+				1678A6662A386F3C000EE573 /* SectionData.swift in Sources */,
 				1678A65B2A35BDD7000EE573 /* LowExpenseView.swift in Sources */,
 				1678A5FC2A2342A5000EE573 /* DescriptionCell.swift in Sources */,
 				1678A5B92A1CDC60000EE573 /* SFSymbolForIncome.swift in Sources */,
@@ -480,6 +487,7 @@
 				163063232A0A18D9009E6428 /* AppDelegate.swift in Sources */,
 				163063252A0A18D9009E6428 /* SceneDelegate.swift in Sources */,
 				1678A6122A28C550000EE573 /* SwitchTableViewCell.swift in Sources */,
+				1678A6682A3997B7000EE573 /* PieChartSearchResultsController.swift in Sources */,
 				161402F12A1216530040E15E /* CustomDisclosureCellWithImage.swift in Sources */,
 				1678A6572A332967000EE573 /* NoDataFoundView.swift in Sources */,
 				161403232A161F810040E15E /* SelectedDate.swift in Sources */,
