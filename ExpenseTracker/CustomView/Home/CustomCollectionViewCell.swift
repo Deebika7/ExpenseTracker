@@ -20,7 +20,7 @@ class CustomCollectionViewCell: UICollectionViewCell {
         super.init(coder: aDecoder)
     }
     
-    private lazy var capsuleView: UIView = {
+    lazy var capsuleView: UIView = {
         let capsuleView = UIView()
         capsuleView.layer.cornerRadius = 20
         capsuleView.backgroundColor = .secondarySystemGroupedBackground

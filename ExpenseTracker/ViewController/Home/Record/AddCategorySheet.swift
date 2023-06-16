@@ -105,6 +105,9 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             ])
             if let editCustomCategoryName = editCustomCategory?.name {
                 textField.text = editCustomCategoryName
+                if let text = textField.text {
+                    countLabel.text = "\(text.count)/25"
+                }
             }
             return cell
         }
@@ -112,6 +115,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
             if selectedCategory != nil {
                 cell.configure(with: selectedCategory!.sfSymbolName, and: selectedCategory!.categoryName)
+                
             }
             else {
                 cell.configure(with: "", and: "Select Category Icon")
@@ -184,8 +188,9 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
         let text = textField.text ?? ""
         let limit = 30
         textField.text = String(text.prefix(limit))
-        countLabel.text = "\(textField.text!.count)/30"
-
+        if let text = textField.text {
+            countLabel.text = "\(text.count)/30"
+        }
     }
     
     func selectedCategory(_ category: Category?, categoryType: Int) {

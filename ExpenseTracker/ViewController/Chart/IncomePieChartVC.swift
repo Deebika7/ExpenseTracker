@@ -125,7 +125,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func configureDataSource() {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
         }
         else {

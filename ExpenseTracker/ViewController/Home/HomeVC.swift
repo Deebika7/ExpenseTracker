@@ -22,9 +22,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         return searchController
     }()
     
-    private lazy var selectedMonth: Int! = nil
+    private lazy var selectedMonth = Int()
     
-    private lazy var selectedYear: Int! = nil
+    private lazy var selectedYear =  Int()
     
     private lazy var isMonthViewExpanded: Bool = true
     
@@ -334,14 +334,14 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         selectedMonth = month.number
         selectedYear = year
         monthLabel.text = month.name
-        UserDefaultManager.shared.addUserDefaultObject("selectedDateForRecord", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
+        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
         refreshTable()
         closeMonthView()
         tableView.reloadData()
     }
     
     func changedYear(_ changedYear: Int, _ month: Int) {
-        UserDefaultManager.shared.addUserDefaultObject("selectedDateForRecord", SelectedDate(selectedYear: changedYear, selectedMonth: month))
+        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: changedYear, selectedMonth: month))
     }
     
     override func viewDidLoad() {
@@ -476,7 +476,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             balanceAmount.centerXAnchor.constraint(equalTo: balanceView.centerXAnchor),
             
             tableView.topAnchor.constraint(equalTo: redView.bottomAnchor, constant: 20),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2),
             
@@ -538,10 +538,10 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }
     
     func refreshTable() {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForRecord", SelectedDate.self) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
             configureDatasource(with: savedYearAndMonth.selectedMonth, and: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
-            savedMonth = savedYearAndMonth.selectedMonth
+            savedMonth = savedYearAndMonth.selectedMonth 
             let savedYear = savedYearAndMonth.selectedYear
             monthVc.yearLabel.text = "\(savedYear)"
         }
@@ -555,6 +555,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         incomeAmount.text = incomeAmountValue
         expenseAmount.text = expenseAmountValue
         balanceAmount.text = Helper.simplifyDifferenceBetweenNumbers(Helper.getRecordAmount(recordForAMonth, 1), Helper.getRecordAmount(recordForAMonth, 0), 3)
+        monthVc.collectionView.reloadData()
         tableView.reloadData()
     }
     
@@ -632,12 +633,15 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
         if indexPath.section == 0 {
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row].0)
         }
         else if indexPath.section == 1 {
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row + 4].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row + 4].0)
         }
         else {
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row + 8].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row + 8].0)
         }
         cell.layer.shadowColor = UIColor.systemGray.cgColor
@@ -658,16 +662,17 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
         else if indexPath.section == 2 {
             selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
         }
+        monthVc.collectionView.reloadData()
     }
     
     @objc func backwardChevronTapped() {
-        let value = Int(monthVc.yearLabel.text ?? "0")!
+        let value = Int(monthVc.yearLabel.text ?? "0") ?? 0
         monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
         changedYear(value - 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
     }
     
     @objc func forwardChevronTapped() {
-        let value = Int(monthVc.yearLabel.text ?? "0")!
+        let value = Int(monthVc.yearLabel.text ?? "0") ?? 0
         if !(Helper.defaultYear == value) {
             monthVc.yearLabel.text = "\(value + 1)"
             changedYear(value + 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)

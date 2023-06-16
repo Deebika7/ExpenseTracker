@@ -151,7 +151,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         case .amount:
             let cell = tableView.dequeueReusableCell(withIdentifier: CustomTextFieldCell.reuseIdentifier, for: indexPath) as! CustomTextFieldCell
             if let editRecord = editRecord {
-                cell.textField.text = editRecord.amount!
+                cell.textField.text = editRecord.amount ?? "0"
             }
             cell.configureNumberKeyBoard()
             return cell

@@ -130,14 +130,13 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func configureDataSource() {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
         }
         else {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
         }
         chartRecords = Helper.getChartData(records, type: 1)
-        
         chartRecords = chartRecords.sorted(by: {
             $0.percentage > $1.percentage
         })

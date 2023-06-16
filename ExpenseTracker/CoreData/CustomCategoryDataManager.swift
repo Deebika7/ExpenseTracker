@@ -35,19 +35,6 @@ class CustomCategoryDataManager {
         return false
     }
     
-//    func getCustomCategory(customCategory: Category) -> CustomCategory? {
-//        let customCategories = getAllCustomCategory()
-//        for category in customCategories {
-//            guard let name = category.name else {
-//                break
-//            }
-//            if customCategory.categoryName.caseInsensitiveCompare(name) == .orderedSame  {
-//                return category
-//            }
-//        }
-//        return nil
-//    }
-    
     func updateCustomCategory(oldCustomCategory: CustomCategory, newCustomCategory: Category) {
             DatabaseManager.shared.updateCustomCategory(oldCustomCategory: oldCustomCategory, newCustomCategory: newCustomCategory)
         

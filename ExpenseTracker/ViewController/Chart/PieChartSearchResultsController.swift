@@ -89,7 +89,6 @@ class PieChartSearchResultsController: UIViewController, UITableViewDataSource, 
         graphVc.title = searchResults[indexPath.row].name
         let navigationController = UINavigationController(rootViewController: graphVc)
         present(navigationController, animated: true)
-        
     }
     
 }

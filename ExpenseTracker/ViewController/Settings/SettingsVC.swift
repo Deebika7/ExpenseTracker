@@ -60,7 +60,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         else if indexPath.row == 2 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "Edit Custom Category", for: indexPath)
             var configuration = cell.defaultContentConfiguration()
-            configuration.text = "Edit Custom Category"
+            configuration.text = "Custom Category"
             cell.contentConfiguration = configuration
             cell.accessoryType = .disclosureIndicator
             return cell
@@ -76,7 +76,7 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.row == 2 {
             let editCustomCategoryVc = EditCustomCategory(style: .insetGrouped)
-            editCustomCategoryVc.title = "Custom Category List"
+            editCustomCategoryVc.title = "Custom Category"
             navigationController?.pushViewController(editCustomCategoryVc, animated: true)
         }
     }

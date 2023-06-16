@@ -52,6 +52,8 @@ class TabBar: UITabBarController {
     func setUpTabBar() -> UITabBarController {
         let tabBar = UITabBarController()
         tabBar.tabBar.unselectedItemTintColor = .label
+        tabBar.tabBar.barTintColor = UIColor.systemGroupedBackground
+        tabBar.tabBar.backgroundColor = .systemBackground.withAlphaComponent(0.8)
         tabBar.viewControllers = [homeVC, chartVC, settingsVC]
         return tabBar
     }

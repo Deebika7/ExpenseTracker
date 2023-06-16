@@ -21,7 +21,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         return textField
     }()
     
-    private lazy var countLabel: UILabel = {
+    lazy var countLabel: UILabel = {
         let countLabel = UILabel()
         countLabel.translatesAutoresizingMaskIntoConstraints = false
         countLabel.textColor = .placeholderText
@@ -73,6 +73,10 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         textField.keyboardType = .decimalPad
         textField.font = .preferredFont(forTextStyle: .body)
         textField.placeholder = "Enter Amount"
+        if let text = textField.text {
+            countLabel.text = "\(text.count)/8"
+        }
+        
     }
     
     func getEnteredData() -> String {
@@ -92,7 +96,9 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         let text = textField.text ?? ""
         let limit = 8
         textField.text = String(text.prefix(limit))
-        countLabel.text = "\(textField.text!.count)/8"
+        if let text = textField.text {
+            countLabel.text = "\(text.count)/8"
+        }
     }
 }
 

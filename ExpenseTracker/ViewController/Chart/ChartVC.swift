@@ -23,8 +23,6 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
 
     private lazy var chartRecords = [ChartData]()
     
-    
-    
     private lazy var pieChartSearchResultsController = PieChartSearchResultsController()
     
     private lazy var type = Int16()
@@ -160,14 +158,14 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         selectedMonth = month.number
         selectedYear = year
         monthLabel.text = month.name
-        UserDefaultManager.shared.addUserDefaultObject("selectedDateForChart", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
+        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
         closeMonthView()
         switchSegmentedControl()
         configureDataSource()
     }
     
     func changedYear(_ changedYear: Int, _ month: Int) {
-        UserDefaultManager.shared.addUserDefaultObject("selectedDateForChart", SelectedDate(selectedYear: changedYear, selectedMonth: month))
+        UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: changedYear, selectedMonth: month))
     }
     
     override func viewDidLoad() {
@@ -233,6 +231,11 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.title = "Chart"
         navigationController?.navigationBar.prefersLargeTitles = true
+        configureDataSource()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        closeMonthView()
     }
     
     @objc func switchSegmentedControl() {
@@ -262,7 +265,6 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
             selectedChildViewController.didMove(toParent: self)
         }
     }
-    
 }
 
 extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -277,12 +279,15 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
         if indexPath.section == 0 {
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row].0)
         }
         else if indexPath.section == 1 {
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row + 4].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row + 4].0)
         }
         else{
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row + 8].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row + 8].0)
         }
         cell.layer.shadowColor = UIColor.systemGray.cgColor
@@ -303,6 +308,8 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
         else if indexPath.section == 2 {
             selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
         }
+        monthVc.collectionView.reloadData()
+
     }
 
     @objc func backwardChevronTapped() {
@@ -338,7 +345,7 @@ extension ChartVC {
     }
     
     func configureDataSource() {
-        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDateForChart", SelectedDate.self) {
+        if let savedYearAndMonth = UserDefaultManager.shared.getUserDefaultObject(for: "selectedDate", SelectedDate.self) {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
             savedMonth = savedYearAndMonth.selectedMonth
@@ -354,6 +361,7 @@ extension ChartVC {
         chartRecords = chartRecords.sorted (by: {
             $0.percentage > $1.percentage
         })
+        monthVc.collectionView.reloadData()
     }
     
 }
