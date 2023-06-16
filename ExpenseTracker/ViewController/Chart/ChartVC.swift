@@ -29,6 +29,14 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     private lazy var savedMonth = Int()
     
+    private lazy var overlayBlurEffect: UIView = {
+        let overlayBlurEffect = UIView()
+        overlayBlurEffect.translatesAutoresizingMaskIntoConstraints = false
+        overlayBlurEffect.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        overlayBlurEffect.isUserInteractionEnabled = true
+        return overlayBlurEffect
+    }()
+    
     private lazy var segmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.insertSegment(withTitle: "Expense", at: 0, animated: true)
@@ -113,6 +121,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     @objc func didTapMonthView() {
         if isMonthViewExpanded {
+            view.addSubview(overlayBlurEffect)
             navigationItem.title = nil
             navigationController?.navigationBar.prefersLargeTitles = false
             UIView.transition(with: monthVc, duration: 0.4, options: .transitionFlipFromTop, animations: nil, completion: nil)
@@ -136,7 +145,12 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
             monthVc.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -5),
             monthVc.heightAnchor.constraint(equalToConstant: 300),
             monthVc.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            monthVc.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            monthVc.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            overlayBlurEffect.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            overlayBlurEffect.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            overlayBlurEffect.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayBlurEffect.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
     
@@ -144,6 +158,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
         UIView.transition(with: monthVc, duration: 0.6, options: .curveEaseInOut, animations: {
         }) { [self] _  in
+            overlayBlurEffect.removeFromSuperview()
             navigationController?.navigationBar.prefersLargeTitles = true
             navigationItem.title = "Chart"
             monthVc.removeFromSuperview()

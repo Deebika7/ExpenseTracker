@@ -15,13 +15,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     private lazy var collectionViewDatasource: [(String, Int)] = Helper.dataSource
     
-    private lazy var searchController: UISearchController = {
-        let searchController = UISearchController(searchResultsController: recordSearchResultsController)
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        return searchController
-    }()
-    
     private lazy var selectedMonth = Int()
     
     private lazy var selectedYear =  Int()
@@ -29,6 +22,21 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     private lazy var isMonthViewExpanded: Bool = true
     
     private lazy var savedMonth = Int()
+    
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: recordSearchResultsController)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        return searchController
+    }()
+    
+    private lazy var overlayBlurEffect: UIView = {
+        let overlayBlurEffect = UIView()
+        overlayBlurEffect.translatesAutoresizingMaskIntoConstraints = false
+        overlayBlurEffect.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        overlayBlurEffect.isUserInteractionEnabled = true
+        return overlayBlurEffect
+    }()
     
     private lazy var blueView: UIView = {
         let blueView = UIView()
@@ -294,6 +302,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     @objc func didTapMonthView() {
         if isMonthViewExpanded {
+            view.addSubview(overlayBlurEffect)
             UIView.transition(with: monthVc, duration: 0.4, options: .transitionFlipFromTop, animations: nil, completion: nil)
             view.addSubview(monthVc)
             setupContentViewConstraints()
@@ -315,7 +324,12 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             monthVc.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -5),
             monthVc.heightAnchor.constraint(equalToConstant: 300),
             monthVc.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            monthVc.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            monthVc.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            overlayBlurEffect.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            overlayBlurEffect.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            overlayBlurEffect.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayBlurEffect.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
     
@@ -323,6 +337,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
         UIView.transition(with: monthVc, duration: 0.6, options: .curveEaseInOut, animations: {
         }) { [self] _  in
+            overlayBlurEffect.removeFromSuperview()
             monthVc.removeFromSuperview()
             navigationItem.searchController = searchController
             isMonthViewExpanded = true
@@ -351,7 +366,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.titleView = monthView
-        
         redView.addSubview(mediocreExpenseView)
         mediocreExpenseView.addSubview(blueView)
         blueView.addSubview(incomeLabel)

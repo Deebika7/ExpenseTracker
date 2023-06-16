@@ -67,8 +67,8 @@ class MonthCollectionVC: UIView {
         collectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "cell")
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: yearView.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
-            collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
+            collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 200),
 
             yearView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
