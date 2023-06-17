@@ -578,7 +578,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         let record = datasource[indexPath.section].rows[indexPath.row]
         var configuration = UIListContentConfiguration.valueCell()
         configuration.text = record.category
-        let simplifiedAmount = Helper.simplifyNumbers([record.amount!], 3)
+        let simplifiedAmount = Helper.simplifyNumbers([record.amount ?? "0"])
         configuration.secondaryText = (record.type != 0) ? "-\(simplifiedAmount)" : "\(simplifiedAmount)"
         configuration.image = UIImage(systemName: record.icon!)
         configuration.imageProperties.tintColor = .label

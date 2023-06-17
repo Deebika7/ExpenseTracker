@@ -61,7 +61,7 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         let cell = tableView.dequeueReusableCell(withIdentifier: "RecordSearchResults", for: indexPath)
         let record = searchResults[indexPath.section].rows[indexPath.row]
         var configuration = cell.defaultContentConfiguration()
-        let simplifiedAmount = Helper.simplifyNumbers([record.amount ?? "0"], 3)
+        let simplifiedAmount = Helper.simplifyNumbers([record.amount ?? "0"])
         configuration.secondaryText = (record.type == 0) ? "\(simplifiedAmount)" : "-\(simplifiedAmount)"
         configuration.prefersSideBySideTextAndSecondaryText = true
         configuration.image = UIImage(systemName: record.icon ?? "")

@@ -14,33 +14,97 @@ struct GraphValue: Identifiable {
     let percentage: Double
     let date: String
 }
-
 struct GraphView: View {
-    
     var graphValues: [GraphValue]
     var color: Color
     
-    init(graphValues: [GraphValue], color: Color) {
-        self.graphValues = graphValues
-        self.color = color
-    }
+    @GestureState private var isDragging = false
+    @State private var dragOffset: CGSize = .zero
+    @State private var currentPercentage: Double = 0
+    @State private var currentDate: String = ""
+    @State private var labelPosition: CGPoint = .zero
     
     var body: some View {
-        Chart(graphValues) { expenseGraph in
-            AreaMark(
-                x: .value("Date", expenseGraph.date),
-                y: .value("amount", expenseGraph.percentage)
-            ).foregroundStyle(LinearGradient(colors: [color,.clear], startPoint: .top, endPoint: .bottom))
-            LineMark(
-                x: .value("Date", expenseGraph.date),
-                y: .value("amount", expenseGraph.percentage)
-            ).foregroundStyle(color)
-            PointMark(
-                x: .value("Date", expenseGraph.date),
-                y: .value("amount", expenseGraph.percentage)
-            ).foregroundStyle(color)
-        }.chartYAxis {
-            AxisMarks(position: .leading)
-        }.chartYScale(domain: 0...100)
+        let graphReader = GraphReader(graphValues: graphValues)
+        
+        return ZStack {
+            Chart(graphValues) { expenseGraph in
+                AreaMark(
+                    x: .value("Date", expenseGraph.date),
+                    y: .value("amount", expenseGraph.percentage)
+                ).foregroundStyle(LinearGradient(colors: [color, .clear], startPoint: .top, endPoint: .bottom))
+                LineMark(
+                    x: .value("Date", expenseGraph.date),
+                    y: .value("amount", expenseGraph.percentage)
+                ).foregroundStyle(color)
+                PointMark(
+                    x: .value("Date", expenseGraph.date),
+                    y: .value("amount", expenseGraph.percentage)
+                ).foregroundStyle(color)
+                    .symbolSize(30)
+            }.chartXAxis {
+            }.labelsHidden()
+            .chartYAxis {
+                AxisMarks(position: .leading)
+            }
+            .chartYScale(domain: 0...100)
+            .gesture(
+                DragGesture()
+                    .updating($isDragging) { value, state, _ in
+                        state = true
+                    }
+                    .onChanged { value in
+                        let x = value.location.x - dragOffset.width
+                        let y = value.location.y - dragOffset.height
+                        if let graphValue = graphReader.graphValue(atX: x, y: y) {
+                            currentPercentage = graphValue.percentage
+                            currentDate = graphValue.date
+                            labelPosition = CGPoint(x: value.location.x, y: value.startLocation.y)
+                        }
+                    }
+                    .onEnded { value in
+                        dragOffset = .zero
+                    }
+            )
+            .offset(dragOffset)
+            if currentPercentage >= 0 {
+                Path { path in
+                    path.move(to: CGPoint(x: labelPosition.x, y: labelPosition.y))
+                    path.addLine(to: CGPoint(x: labelPosition.x, y: labelPosition.y + 100))
+                }
+                .stroke(color, lineWidth: 2)
+            }
+            
+            VStack {
+                let percentage = String(format: "%.2f", currentPercentage)
+                Text("\(percentage)%")
+                    .foregroundColor(.white)
+                    .font(.system(size: 12, weight: .bold))
+                Text("Date: \(currentDate)")
+                    .foregroundColor(.white)
+                    .font(.system(size: 12, weight: .bold))
+            }
+            .padding(6)
+            .background(Color.black.opacity(0.6))
+            .cornerRadius(4)
+            .animation(.easeInOut)
+            .position(x: labelPosition.x, y: labelPosition.y - 60)         }
+    }
+}
+
+
+struct GraphReader {
+    var graphValues: [GraphValue]
+    
+    func graphValue(atX x: CGFloat, y: CGFloat) -> GraphValue? {
+        let chartWidth = UIScreen.main.bounds.width
+        let xRatio = x / chartWidth
+        let index = Int(xRatio * CGFloat(graphValues.count - 1))
+        
+        guard index >= 0 && index < graphValues.count else {
+            return nil
+        }
+        
+        return graphValues[index]
     }
 }

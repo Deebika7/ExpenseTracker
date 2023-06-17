@@ -44,6 +44,12 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         return searchController
     }()
     
+    private lazy var monthLabel: UILabel = {
+        let monthLabel = UILabel()
+        monthLabel.translatesAutoresizingMaskIntoConstraints = false
+        return monthLabel
+    }()
+    
     private lazy var noDataFoundView: UIView = {
         let noDataFoundView = NoDataFoundView(image: "magnifyingglass", message: "Search results not found")
         return noDataFoundView
@@ -102,13 +108,14 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         view.addSubview(tableView)
         graphContainerView.addSubview(totalAmountLabel)
         graphContainerView.addSubview(averageAmountLabel)
+        graphContainerView.addSubview(monthLabel)
         graphContainerView.addSubview(graphView)
         graphView.backgroundColor = .secondarySystemGroupedBackground
         graphView.translatesAutoresizingMaskIntoConstraints = false
         setupContraints()
         NSLayoutConstraint.activate([
             graphView.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor),
-            graphView.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor, constant: -4),
+            graphView.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor, constant: -8),
             graphView.bottomAnchor.constraint(equalTo: graphContainerView.bottomAnchor, constant: -4),
         ])
         tableView.register(GraphCell.self, forCellReuseIdentifier: GraphCell.reuseIdentifier)
@@ -117,6 +124,8 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
             result , data in
             return result + (Double(data.amount) ?? 0)
         }
+        let dateProperties = Helper.getDateProperties(date: graphData.first?.date ?? Date())
+        monthLabel.text = "\(Helper.getMonthName(dateProperties.month) ?? "") \(dateProperties.year)" 
         totalAmountLabel.text = "Total: \(totalAmount)"
         averageAmount = totalAmount / Double(generateGraphValues().count)
         averageAmountLabel.text = "Average daily: \(String(format: "%.2f", averageAmount))"
@@ -145,6 +154,10 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
             totalAmountLabel.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor, constant: 4),
             totalAmountLabel.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor),
             totalAmountLabel.heightAnchor.constraint(equalToConstant: 14),
+            
+            monthLabel.heightAnchor.constraint(equalToConstant: 14),
+            monthLabel.centerYAnchor.constraint(equalTo: graphContainerView.centerYAnchor, constant: -30),
+            monthLabel.centerXAnchor.constraint(equalTo: graphContainerView.centerXAnchor),
             
             averageAmountLabel.topAnchor.constraint(equalTo: totalAmountLabel.bottomAnchor, constant: 8),
             averageAmountLabel.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor, constant: 4),
@@ -217,7 +230,6 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         else {
             tableView.backgroundView = nil
         }
-        
         tableView.reloadData()
     }
     

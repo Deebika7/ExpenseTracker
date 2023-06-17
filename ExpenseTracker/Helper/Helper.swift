@@ -168,39 +168,33 @@ class Helper {
         }
         return false
     }
-    
-    static func simplifyNumbers(_ numbers: [String], _ precision: Int) -> String {
-        var sum: Double = 0.0
+    static func simplifyNumbers(_ arr: [String]) -> String? {
+        let suffixes = ["", "K", "M", "B", "T"] // Notation suffixes
         
-        for numberString in numbers {
-            if let number = Double(numberString) {
-                sum += number
+        // Helper function to convert a number to notation form
+        func formatNumber(_ num: Double) -> String {
+            var num = num
+            for suffix in suffixes {
+                if abs(num) < 1000.0 {
+                    return String(format: "%.2f", num) + suffix
+                }
+                num /= 1000.0
+            }
+            return String(format: "%.2f", num) + (suffixes.last ?? "")
+        }
+        
+        var sum: Double = 0
+        for stringNum in arr {
+            if let num = Double(stringNum.replacingOccurrences(of: ",", with: "")) {
+                sum += num
+            } else {
+                return nil // Return nil if conversion fails
             }
         }
         
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
-        numberFormatter.maximumFractionDigits = precision
-        numberFormatter.groupingSeparator = "."
-        if abs(sum) >= 1000 {
-            let power = min(Int(log10(abs(sum)) / 3.0), 4)
-            let suffix = ["", "K", "M", "B", "T"][power]
-            
-            let simplifiedNumber = sum / pow(1000.0, Double(power))
-            numberFormatter.maximumFractionDigits = power > 0 ? precision : 0
-            
-            if let simplifiedString = numberFormatter.string(from: NSNumber(value: simplifiedNumber)) {
-                let truncatedString = String(simplifiedString.prefix(5))
-                return truncatedString + suffix
-            }
-        } else {
-            if let simplifiedString = numberFormatter.string(from: NSNumber(value: sum)) {
-                let formattedString = simplifiedString.replacingOccurrences(of: ".", with: "")
-                return formattedString
-            }
-        }
-        return "\(sum)"
+        return formatNumber(sum)
     }
+
     
     static func simplifyDifferenceBetweenNumbers(_ numbers1: [String], _ numbers2: [String], _ precision: Int) -> String? {
         let count = max(numbers1.count, numbers2.count)
@@ -254,7 +248,7 @@ class Helper {
                 amount.append(record.amount!)
             }
         }
-        return simplifyNumbers(amount, 3)
+        return simplifyNumbers(amount) ?? "0"
     }
     
     static func getRecordAmount(_ records: [Record], _ type: Int16) -> [String] {
@@ -448,6 +442,37 @@ class Helper {
         
     }
     
+    
+    static func getMonthName(_ number: Int) -> String? {
+        switch number {
+        case 1:
+            return "January"
+        case 2:
+            return "February"
+        case 3:
+            return "March"
+        case 4:
+            return "April"
+        case 5:
+            return "May"
+        case 6:
+            return "June"
+        case 7:
+            return "July"
+        case 8:
+            return "August"
+        case 9:
+            return "September"
+        case 10:
+            return "October"
+        case 11:
+            return "November"
+        case 12:
+            return "December"
+        default:
+            return ""
+        }
+    }
 }
 
 
