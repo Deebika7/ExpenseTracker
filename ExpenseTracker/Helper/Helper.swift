@@ -266,7 +266,53 @@ class Helper {
                 amount.append(record.amount ?? "0")
             }
         }
-        return simplifyNumbers(amount) ?? "0"
+        return simplifyNumbers(amount)
+    }
+    
+    static func trimLeadingZeroes(inputStr: String) -> String {
+      var resultStr = inputStr
+        
+      while resultStr.hasPrefix("0") && resultStr.count > 1 {
+       resultStr.removeFirst()
+      }
+      return resultStr
+    }
+
+    
+    static func convertToValueName(_ sum: NSDecimalNumber) -> String {
+        var suffix = ""
+        let decimalFormatter = NumberFormatter()
+        decimalFormatter.numberStyle = .decimal
+        decimalFormatter.maximumFractionDigits = 2
+        
+        let billion = NSDecimalNumber(string: "1000000000")
+        let million = NSDecimalNumber(string: "1000000")
+        let thousand = NSDecimalNumber(string: "1000")
+        
+        var mutableSum = sum
+        
+        if mutableSum.compare(billion) == .orderedDescending {
+            mutableSum = mutableSum.dividing(by: billion)
+            suffix = "B"
+        } else if mutableSum.compare(million) == .orderedDescending {
+            mutableSum = mutableSum.dividing(by: million)
+            suffix = "M"
+        } else if mutableSum.compare(thousand) == .orderedDescending {
+            mutableSum = mutableSum.dividing(by: thousand)
+            suffix = "K"
+        }
+        
+        let formattedSum = decimalFormatter.string(from: mutableSum as NSNumber) ?? ""
+        return formattedSum + suffix
+    }
+    
+    static func sumStringArray(_ arr: [String]) -> NSDecimalNumber {
+        var sum = NSDecimalNumber.zero
+        for str in arr {
+            let number = NSDecimalNumber(string: str)
+            sum = sum.adding(number)
+        }
+        return sum
     }
     
     

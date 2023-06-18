@@ -72,7 +72,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         }
         if isEditingEnabled {
             RecordDataManager.shared.updateRecord(id: editRecordId!, type: currentType, amount: amount, date: changedDate!, category: changedCategory!)
-//            didEndEditing()
             view.endEditing(true)
             isEditingEnabled.toggle()
             let alert = UIAlertController(title: "Record updated", message: "", preferredStyle: .alert)
@@ -87,7 +86,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             self.present(alert, animated: true)
         }
         else if RecordDataManager.shared.createRecord(type: currentType, amount: amount, createdDate: changedDate ?? Helper.convertDateToString(date: Helper.defaultDate), category: changedCategory!) {
-//            didEndEditing()
             view.endEditing(true)
             let alert = UIAlertController(title: "Record added", message: "", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
@@ -110,14 +108,24 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     }
     
     @objc func dismissAddRecord() {
-        tableView.endEditing(true)
-        self.dismiss(animated: true)
-        self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
-//            self.dismiss(animated: true){ [weak self] in
-////                self?.didEndEditing()
-//            }
-//        })
+        let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as! CustomTextFieldCell
+        amount = (cell.getEnteredData())
+        print(amount)
+        if changedCategory != nil || amount != "" {
+            let alert = UIAlertController(title: "Discard Changes", message: "Are you sure want to discard changes?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: {_ in
+                self.tableView.endEditing(true)
+                self.dismiss(animated: true)
+                self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert, animated: true)
+        }
+        else {
+            tableView.endEditing(true)
+            self.dismiss(animated: true)
+            self.presentationModalSheetDelegate?.dismissedPresentationModalSheet(true)
+        }
     }
     
     // MARK: TableView Cells
@@ -321,10 +329,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
-    }
-    
-    deinit{
-        print("destroyed")
     }
     
     override func viewWillAppear(_ animated: Bool) {

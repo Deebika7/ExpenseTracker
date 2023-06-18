@@ -130,7 +130,12 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     
     @objc func addCustomCategory() {
         
-        guard textField.text ?? "" != "" && !textField.isEmptyAfterTrimmed else {
+        guard let text = textField.text else {
+            showAlert(text: "Please enter category name")
+            return
+        }
+        
+        guard  text != "" && textField.isEmptyAfterTrimmed else {
             showAlert(text: "Please enter category name")
             return
         }
@@ -144,7 +149,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             
             if editCustomCategory != nil {
                 tableView.performBatchUpdates {
-                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: editCustomCategory!, newIcon: selectedCategory?.sfSymbolName ?? "", newCategory: (textField.text ?? "").trimMoreThanOneSpaces())
+                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: editCustomCategory!, newIcon: selectedCategory?.sfSymbolName ?? "", newCategory: text.trimMoreThanOneSpaces())
                     CustomCategoryDataManager.shared.updateCustomCategory(oldCustomCategory: editCustomCategory!, newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "" , categoryName: (textField.text ?? "").trimMoreThanOneSpaces()))
                 }
                 let alert = UIAlertController(title: "Category updated", message: "", preferredStyle: .alert)
@@ -157,7 +162,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
                 }))
                 self.present(alert, animated: true)
             }
-            else if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text ?? "").trimMoreThanOneSpaces(), category: selectedCategory!) {
+            else if CustomCategoryDataManager.shared.addCustomCategory(name: text.trimMoreThanOneSpaces(), category: selectedCategory!) {
                 let alert = UIAlertController(title: "Custom Category added", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {

@@ -25,7 +25,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         let countLabel = UILabel()
         countLabel.translatesAutoresizingMaskIntoConstraints = false
         countLabel.textColor = .placeholderText
-        countLabel.text = "0/8"
+        countLabel.text = "0/10"
         return countLabel
     }()
     
@@ -47,9 +47,9 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
             textField.heightAnchor.constraint(equalToConstant: 44),
             
             countLabel.heightAnchor.constraint(equalToConstant: 20),
-            countLabel.widthAnchor.constraint(equalToConstant: 30),
+            countLabel.widthAnchor.constraint(equalToConstant: 50),
             countLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            countLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            countLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -14),
         ])
     }
     
@@ -74,7 +74,7 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
         textField.font = .preferredFont(forTextStyle: .body)
         textField.placeholder = "Enter Amount"
         if let text = textField.text {
-            countLabel.text = "\(text.count)/8"
+            countLabel.text = "\(text.count)/10"
         }
         
     }
@@ -94,10 +94,10 @@ class CustomTextFieldCell: UITableViewCell, UITextViewDelegate, UITextFieldDeleg
     
     @objc func handleOnEditing() {
         let text = textField.text ?? ""
-        let limit = 8
+        let limit = 10
         textField.text = String(text.prefix(limit))
         if let text = textField.text {
-            countLabel.text = "\(text.count)/8"
+            countLabel.text = "\(text.count)/10"
         }
     }
 }
