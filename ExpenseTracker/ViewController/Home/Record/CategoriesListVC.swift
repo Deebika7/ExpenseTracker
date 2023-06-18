@@ -89,6 +89,8 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     
     @objc func addNewCategory(){
+        searchController.searchBar.text = nil
+        searchController.searchBar.endEditing(true)
         let addCategoryVC = AddCategorySheet(editCustomCategory: nil)
         addCategoryVC.title = "Add Custom Category"
         addCategoryVC.presentationModalSheetDelegate = self
@@ -165,9 +167,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     func dismissedPresentationModalSheet(_ isDismissed: Bool) {
         if isDismissed {
-            searchedCustomCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
-            customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
-            tableView.reloadData()
+            refreshTable()
         }
     }
     
@@ -192,20 +192,22 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         }
         
         if text.isEmpty {
-            searchedCategory = category
-            searchedCustomCategory = customCategory
+            refreshTable()
         }
         
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        refreshTable()
+    }
+    func refreshTable() {
         searchedCategory = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
-        searchedCustomCategory = customCategory
+        searchedCustomCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
+        customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
         tableView.backgroundView = nil
         tableView.reloadData()
     }
-    
 }
 
 

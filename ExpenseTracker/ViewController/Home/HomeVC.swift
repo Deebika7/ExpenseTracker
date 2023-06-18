@@ -538,6 +538,49 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         return cell
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
+            self?.deleteRecord(recordId: self?.datasource[indexPath.section].rows[indexPath.row].id ?? UUID(), indexPath: indexPath)
+            completionHandler(true)
+        }
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.title = "delete"
+        
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
+            self?.editRecord(record: self?.datasource[indexPath.section].rows[indexPath.row])
+            completionHandler(true)
+        }
+        editAction.title = "edit"
+        editAction.backgroundColor = .systemBlue
+        editAction.image = UIImage(systemName: "pencil")
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        return configuration
+    }
+    
+    func editRecord(record: Record?) {
+        guard let record = record else {
+            return
+        }
+        let recordVC = RecordVC(editRecord: record)
+        recordVC.presentationModalSheetDelegate = self
+        let navigationController = UINavigationController(rootViewController: recordVC)
+        present(navigationController, animated: true)
+    }
+    
+    func deleteRecord(recordId: UUID,indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Delete", message: "Are you sure want to delete this record", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "No", style: .default))
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] _ in
+            self?.tableView.performBatchUpdates({
+                RecordDataManager.shared.deleteRecord(id: recordId)
+                self?.datasource[indexPath.section].rows.remove(at: indexPath.row)
+                self?.tableView.deleteRows(at: [indexPath], with: .automatic)
+            })
+        }))
+        self.present(alert, animated: true)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.navigationBar.prefersLargeTitles = false
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {

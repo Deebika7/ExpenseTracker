@@ -66,13 +66,14 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
             self?.deleteCustomCategory(indexPath)
+            completionHandler(true)
         }
-        
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.title = "delete"
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
             self?.editCustomCategory(indexPath)
+            completionHandler(true)
         }
         editAction.title = "edit"
         editAction.backgroundColor = .systemBlue
@@ -113,18 +114,18 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     private func deleteCustomCategory(_ indexPath: IndexPath) {
-        tableView.beginUpdates()
         let alert = UIAlertController(title: "Delete Custom Category", message: "Records saved in this custom category will be moved to others", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default))
-        alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { [self]  _ in
-            tableView.performBatchUpdates {
-                RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (searchedCustomCategory[indexPath.row]), newIcon: "square.grid.3x3", newCategory: "Others")
-                CustomCategoryDataManager.shared.deleteCustomCategory(id: (searchedCustomCategory[indexPath.row].id ?? UUID()))
-                searchedCustomCategory.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default) { [weak self]_ in
+            self?.refreshTable()
+        })
+        alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { [weak self]  _ in
+            self?.tableView.performBatchUpdates {
+                RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (self?.searchedCustomCategory[indexPath.row])!, newIcon: "square.grid.3x3", newCategory: "Others")
+                CustomCategoryDataManager.shared.deleteCustomCategory(id: (self?.searchedCustomCategory[indexPath.row].id ?? UUID()))
+                self?.searchedCustomCategory.remove(at: indexPath.row)
+                self?.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
-            tableView.endUpdates()
-            refreshTable()
+            self?.refreshTable()
         }))
         self.present(alert, animated: true)
     }

@@ -52,7 +52,6 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             })
         }))
         self.present(alert, animated: true)
-        
     }
     
     init(recordId: UUID?) {
