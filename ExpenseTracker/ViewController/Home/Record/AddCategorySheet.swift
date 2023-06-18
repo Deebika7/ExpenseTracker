@@ -135,7 +135,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             return
         }
         
-        guard  text != "" && textField.isEmptyAfterTrimmed else {
+        guard  text.trimMoreThanOneSpaces() != "" && textField.isEmptyAfterTrimmed else {
             showAlert(text: "Please enter category name")
             return
         }
