@@ -188,7 +188,21 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     
     @objc func dismissAddCategorySheet()
     {
-        dismiss(animated: true)
+        guard let text = textField.text else {
+            return
+        }
+        if selectedCategory != nil || text != "" {
+            
+            let alert = UIAlertController(title: "Discard Changes", message: "Are you sure want to discard changes?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: {_ in
+                self.dismiss(animated: true)
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self.present(alert, animated: true)
+        }
+        else {
+            dismiss(animated: true)
+        }
     }
     
     @objc func handleOnEditing() {
@@ -208,7 +222,6 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     }
     
     // MARK: Alert
-    
     func showAlert(text: String) {
         let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
