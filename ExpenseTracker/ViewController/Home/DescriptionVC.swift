@@ -10,7 +10,7 @@ import UIKit
 class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PresentationModalSheetDelegate {
     
     private var recordId: UUID?
-    
+        
     private lazy var record: Record = RecordDataManager.shared.getRecord(id: recordId ?? UUID())
     
     @objc func editRecord() {
@@ -42,7 +42,12 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             RecordDataManager.shared.deleteRecord(id: self.record.id ?? UUID())
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
                 self.dismiss(animated: true){ [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
+                    if (self?.presentingViewController?.presentedViewController) != nil {
+                        self?.dismiss(animated: true)
+                    }
+                    else {
+                        self?.navigationController?.popViewController(animated: true)
+                    }
                 }
             })
         }))

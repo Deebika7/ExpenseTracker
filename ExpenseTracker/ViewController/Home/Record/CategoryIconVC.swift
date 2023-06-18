@@ -122,9 +122,9 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         
         searchResults = searchResults.filter { key, value in
             key.localizedCaseInsensitiveContains(text) ||
-            value.contains { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text) }
+            value.contains { $0.categoryName.localizedCaseInsensitiveContains(text) }
         }.mapValues { value in
-            value.filter { $0.categoryName.localizedCaseInsensitiveContains(text) || $0.sfSymbolName.localizedCaseInsensitiveContains(text)
+            value.filter { $0.categoryName.localizedCaseInsensitiveContains(text)
             }
         }
         

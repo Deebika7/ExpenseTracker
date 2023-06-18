@@ -80,12 +80,6 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let recordItem = searchResults[indexPath.section].rows[indexPath.row]
-        let decriptionVc = DescriptionVC(recordId: recordItem.id ?? UUID())
-        decriptionVc.title = "Details"
-        decriptionVc.hidesBottomBarWhenPushed = true
-        let navigationController = UINavigationController(rootViewController: decriptionVc)
-        present(navigationController, animated: true)
     }
                                                                         
 }

@@ -35,6 +35,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     
     @objc func addNewCategory(){
         tableView.isEditing = false
+        view.endEditing(true)
         let addCategoryVC = AddCategorySheet(editCustomCategory: nil)
         addCategoryVC.title = "Add Custom Category"
         addCategoryVC.presentationModalSheetDelegate = self
@@ -206,7 +207,6 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        tableView.backgroundView = nil
         tableView.reloadData()
     }
     

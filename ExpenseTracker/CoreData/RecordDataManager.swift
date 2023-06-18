@@ -16,7 +16,7 @@ class RecordDataManager {
     func createRecord(type: String, amount: String, createdDate: String, category: Category) -> Bool {
         let recordType: Int16 = (type == "Income") ? 0 : 1
         let date: Date = Helper.convertStringToDate(value: createdDate)
-        let trimmedString = Helper.trimLeadingZeroes(inputStr: amount) 
+        let trimmedString = Helper.trimLeadingZeroes(inputStr: amount)
         DatabaseManager.shared.createRecord(id: UUID(), recordType: recordType, category: category.categoryName, amount: trimmedString, icon: category.sfSymbolName, date: date)
         return true
     }
@@ -73,7 +73,7 @@ class RecordDataManager {
     }
     
     func getRecord(id: UUID) -> Record {
-        DatabaseManager.shared.getRecord(id: id)!
+        DatabaseManager.shared.getRecord(id: id) ?? Record()
     }
     
     func getAllRecord() -> [Record] {
