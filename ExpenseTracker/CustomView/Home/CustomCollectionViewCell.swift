@@ -47,6 +47,12 @@ class CustomCollectionViewCell: UICollectionViewCell {
     
     func configure(_ text : String) {
         textLabel.text = text
+        textLabel.textColor = .label
+    }
+    
+    
+    func fadeLabel() {
+        textLabel.textColor = .placeholderText
     }
 }
 

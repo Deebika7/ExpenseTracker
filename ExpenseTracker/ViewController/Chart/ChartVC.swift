@@ -19,6 +19,10 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     private lazy var selectedSegmentIndex = Int()
     
+    private lazy var savedYear = Int()
+    
+    private lazy var unAvailableMonths = [(String, Int)]()
+    
     private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
 
     private lazy var chartRecords = [ChartData]()
@@ -181,6 +185,8 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     func changedYear(_ changedYear: Int, _ month: Int) {
         UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: changedYear, selectedMonth: month))
+        savedYear = changedYear
+        monthVc.collectionView.reloadData()
     }
     
     override func viewDidLoad() {
@@ -295,38 +301,66 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CustomCollectionViewCell else {
             return UICollectionViewCell()
         }
+        var isCurrentYear = false
+        if savedYear == Helper.defaultYear {
+            unAvailableMonths = Helper.getUnAvailableMonths(Helper.defaultMonth)
+            isCurrentYear = true
+        }
         if indexPath.section == 0 {
-            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
+            cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row ].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row].0)
+            if isCurrentYear && (unAvailableMonths[indexPath.row].1 == collectionViewDatasource[indexPath.row ].1) {
+                cell.capsuleView.backgroundColor = UIColor.gray.withAlphaComponent(0.1)
+                cell.fadeLabel()
+            }
         }
         else if indexPath.section == 1 {
             cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row + 4].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row + 4].0)
+            if isCurrentYear && (unAvailableMonths[indexPath.row + 4].1 == collectionViewDatasource[indexPath.row + 4].1) {
+                cell.capsuleView.backgroundColor = UIColor.gray.withAlphaComponent(0.1)
+                cell.fadeLabel()
+            }
         }
-        else{
+        else {
             cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row + 8].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row + 8].0)
+            if isCurrentYear && (unAvailableMonths[indexPath.row + 8].1 == collectionViewDatasource[indexPath.row + 8].1) {
+                cell.capsuleView.backgroundColor = UIColor.gray.withAlphaComponent(0.1)
+                cell.fadeLabel()
+            }
         }
+        isCurrentYear = false
         cell.layer.shadowColor = UIColor.systemGray.cgColor
         cell.layer.shadowOpacity = 0.5
         cell.layer.shadowOffset = CGSize(width: 0, height: 0)
         cell.layer.shadowRadius = 4
         return cell
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        var isCurrentYear = false
+        if savedYear == Helper.defaultYear {
+            unAvailableMonths = Helper.getUnAvailableMonths(Helper.defaultMonth)
+            isCurrentYear = true
+        }
         if indexPath.section == 0 {
-            selectedMonth((name: collectionViewDatasource[indexPath.row].0 , number: collectionViewDatasource[indexPath.row].1), year: getYear())
+            if !(isCurrentYear && (unAvailableMonths[indexPath.row].1 == collectionViewDatasource[indexPath.row].1)) {
+                selectedMonth((name: collectionViewDatasource[indexPath.row].0 , number: collectionViewDatasource[indexPath.row].1), year: getYear())
+            }
         }
         else if indexPath.section == 1 {
-            selectedMonth((name: collectionViewDatasource[indexPath.row + 4].0 , number: collectionViewDatasource[indexPath.row + 4].1), year: getYear())
+            if !(isCurrentYear && (unAvailableMonths[indexPath.row + 4].1 == collectionViewDatasource[indexPath.row + 4].1)) {
+                selectedMonth((name: collectionViewDatasource[indexPath.row + 4].0 , number: collectionViewDatasource[indexPath.row + 4].1), year: getYear())
+            }
         }
         else if indexPath.section == 2 {
-            selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
+            if !(isCurrentYear && (unAvailableMonths[indexPath.row + 8].1 == collectionViewDatasource[indexPath.row + 8].1)) {
+                selectedMonth((name: collectionViewDatasource[indexPath.row + 8].0 , number: collectionViewDatasource[indexPath.row + 8].1), year: getYear())
+            }
         }
         monthVc.collectionView.reloadData()
-
     }
 
     @objc func backwardChevronTapped() {
@@ -366,7 +400,7 @@ extension ChartVC {
             records = RecordDataManager.shared.getAllRecordForAMonth(month: savedYearAndMonth.selectedMonth, year: savedYearAndMonth.selectedYear)
             monthLabel.text = "\(Helper.dataSource[savedYearAndMonth.selectedMonth - 1].0)"
             savedMonth = savedYearAndMonth.selectedMonth
-            let savedYear = savedYearAndMonth.selectedYear
+            savedYear = savedYearAndMonth.selectedYear
             monthVc.yearLabel.text = "\(savedYear)"
         }
         else {
