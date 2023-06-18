@@ -41,7 +41,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     
     private var selectedCategory: Category?
     
-    private lazy var type: String! = nil
+    private lazy var type = String()
     
     private lazy var add: UIBarButtonItem = {
         UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewCategory))
@@ -135,7 +135,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
                 attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
             }
             configuration.attributedText = attributedString
-            configuration.image = UIImage(systemName: searchedCustomCategory[indexPath.row].icon!)
+            configuration.image = UIImage(systemName: searchedCustomCategory[indexPath.row].icon ?? "")
             if selectedCategory != nil {
                 cell.accessoryType = (searchedCustomCategory[indexPath.row].name  == selectedCategory!.categoryName) ? .checkmark: .none
             }
@@ -152,7 +152,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCategory[indexPath.row].sfSymbolName, categoryName: searchedCategory[indexPath.row].categoryName), categoryType: Helper.categoryType.default)
         }
         else {
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCustomCategory[indexPath.row].icon!, categoryName: searchedCustomCategory[indexPath.row].name!), categoryType: Helper.categoryType.custom)
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCustomCategory[indexPath.row].icon ?? "", categoryName: searchedCustomCategory[indexPath.row].name ?? ""), categoryType: Helper.categoryType.custom)
         }
         DispatchQueue.main.async {
             self.tableView.reloadData()

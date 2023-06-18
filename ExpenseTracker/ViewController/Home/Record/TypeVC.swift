@@ -11,7 +11,7 @@ class TypeVC: UITableViewController {
     
     weak var selectionDelegate: SelectionDelegate?
     
-    private lazy var selectedType: String! = nil
+    private lazy var selectedType = String()
     
     convenience init(selectedType: String) {
         self.init(style: .insetGrouped)
@@ -29,7 +29,6 @@ class TypeVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissTypeVC))
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissTypeVC))
         tableView.backgroundColor = .systemGroupedBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "type")
         tableView.estimatedSectionHeaderHeight = 10

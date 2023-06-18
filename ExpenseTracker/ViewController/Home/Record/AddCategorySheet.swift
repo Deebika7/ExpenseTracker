@@ -112,7 +112,9 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             return cell
         }
         else  if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as? CustomDisClosureCellWithImage else {
+                return UITableViewCell()
+            }
             if selectedCategory != nil {
                 cell.configure(with: selectedCategory!.sfSymbolName, and: selectedCategory!.categoryName)
                 
@@ -128,7 +130,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     
     @objc func addCustomCategory() {
         
-        guard textField.text! != "" && !textField.isEmptyAfterTrimmed else {
+        guard textField.text ?? "" != "" && !textField.isEmptyAfterTrimmed else {
             showAlert(text: "Please enter category name")
             return
         }
@@ -138,12 +140,12 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             return
         }
         
-        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: textField.text!)) && !Helper.isCategoryPresent(textField.text!) {
+        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: textField.text!)) && !Helper.isCategoryPresent(textField.text ?? "") {
             
             if editCustomCategory != nil {
                 tableView.performBatchUpdates {
-                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: editCustomCategory!, newIcon: selectedCategory?.sfSymbolName ?? "", newCategory: (textField.text!).trimMoreThanOneSpaces())
-                    CustomCategoryDataManager.shared.updateCustomCategory(oldCustomCategory: editCustomCategory!, newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "" , categoryName: (textField.text!).trimMoreThanOneSpaces()))
+                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: editCustomCategory!, newIcon: selectedCategory?.sfSymbolName ?? "", newCategory: (textField.text ?? "").trimMoreThanOneSpaces())
+                    CustomCategoryDataManager.shared.updateCustomCategory(oldCustomCategory: editCustomCategory!, newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "" , categoryName: (textField.text ?? "").trimMoreThanOneSpaces()))
                 }
                 let alert = UIAlertController(title: "Category updated", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
@@ -155,7 +157,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
                 }))
                 self.present(alert, animated: true)
             }
-            else if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text!).trimMoreThanOneSpaces(), category: selectedCategory!) {
+            else if CustomCategoryDataManager.shared.addCustomCategory(name: (textField.text ?? "").trimMoreThanOneSpaces(), category: selectedCategory!) {
                 let alert = UIAlertController(title: "Custom Category added", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
@@ -212,7 +214,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
 
 extension UITextField {
     var isEmptyAfterTrimmed: Bool {
-        return ((text!.trimmingCharacters(in: .whitespaces).isEmpty))
+        return ((text?.trimmingCharacters(in: .whitespaces).isEmpty) != nil)
     }
 }
 

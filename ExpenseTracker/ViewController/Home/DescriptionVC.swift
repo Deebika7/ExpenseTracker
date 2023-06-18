@@ -11,7 +11,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     private var recordId: UUID?
     
-    private lazy var record: Record = RecordDataManager.shared.getRecord(id: recordId!)
+    private lazy var record: Record = RecordDataManager.shared.getRecord(id: recordId ?? UUID())
     
     @objc func editRecord() {
         let recordVC = RecordVC(editRecord: record)
@@ -39,7 +39,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         let alert = UIAlertController(title: "Delete", message: "Are you sure want to delete this record", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "No", style: .default))
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {_ in
-            RecordDataManager.shared.deleteRecord(id: self.record.id!)
+            RecordDataManager.shared.deleteRecord(id: self.record.id ?? UUID())
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now(), execute: {
                 self.dismiss(animated: true){ [weak self] in
                     self?.navigationController?.popViewController(animated: true)
@@ -61,7 +61,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        record = RecordDataManager.shared.getRecord(id: recordId!)
+        record = RecordDataManager.shared.getRecord(id: recordId ?? UUID())
         view.addSubview(tableView)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DescriptionCell")
         navigationItem.rightBarButtonItems = [delete, edit]
@@ -96,7 +96,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DescriptionCell", for: indexPath)
             var configuration = cell.defaultContentConfiguration()
-            configuration.image = UIImage(systemName: record.icon!)
+            configuration.image = UIImage(systemName: record.icon ?? "")
             configuration.imageToTextPadding = 70
             configuration.imageProperties.tintColor = .label
             configuration.text = record.category
@@ -105,18 +105,20 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             cell.selectionStyle = .none
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.reuseIdentifier, for: indexPath) as! DescriptionCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: DescriptionCell.reuseIdentifier, for: indexPath) as? DescriptionCell else {
+                return UITableViewCell()
+            }
             if indexPath.row == 1 {
                 cell.configureCell(title: "Type", text: RecordType.allCases[Int(record.type)].rawValue)
             }
             else if indexPath.row == 2 {
-                cell.configureCell(title: "Category", text: record.category!)
+                cell.configureCell(title: "Category", text: record.category ?? "")
             }
             else if indexPath.row == 3 {
-                cell.configureCell(title: "Amount", text: record.amount!)
+                cell.configureCell(title: "Amount", text: record.amount ?? "")
             }
             else if indexPath.row == 4 {
-                cell.configureCell(title: "Date", text: Helper.convertDateToString(date: record.date!))
+                cell.configureCell(title: "Date", text: Helper.convertDateToString(date: record.date ?? Date()))
             }
             cell.selectionStyle = .none
             return cell
@@ -137,7 +139,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     func dismissedPresentationModalSheet(_ isDismissed: Bool) {
         if isDismissed {
-            record = RecordDataManager.shared.getRecord(id: recordId!)
+            record = RecordDataManager.shared.getRecord(id: recordId ?? UUID())
             tableView.reloadData()
         }
     }

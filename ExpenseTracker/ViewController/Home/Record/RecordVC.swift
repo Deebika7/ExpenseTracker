@@ -162,8 +162,8 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 var configuration  = cell.defaultContentConfiguration()
                 
                 if let editRecord = editRecord {
-                    configuration.text = Helper.convertDateToString(date: editRecord.date!)
-                    changedDate = Helper.convertDateToString(date: editRecord.date!)
+                    configuration.text = Helper.convertDateToString(date: editRecord.date ?? Date())
+                    changedDate = Helper.convertDateToString(date: editRecord.date ?? Date())
                 }
                 else if changedDate != nil && changedDate != date {
                     configuration.text = changedDate!
@@ -191,10 +191,12 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 return cell
             }
         case .category:
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as! CustomDisClosureCellWithImage
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CustomDisClosureCellWithImage.reuseIdentifier, for: indexPath) as? CustomDisClosureCellWithImage else {
+                return UITableViewCell()
+            }
             if let editRecord = editRecord {
-                cell.configure(with: editRecord.icon!, and: editRecord.category!)
-                changedCategory = Category(sfSymbolName: editRecord.icon!, categoryName: editRecord.category!)
+                cell.configure(with: editRecord.icon ?? "", and: editRecord.category ?? "")
+                changedCategory = Category(sfSymbolName: editRecord.icon ?? "", categoryName: editRecord.category ?? "")
             }
             else if changedCategory != nil {
                 cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
@@ -245,7 +247,9 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomHeaderFooterView.reuseIdentifier) as! CustomHeaderFooterView
+        guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomHeaderFooterView.reuseIdentifier) as? CustomHeaderFooterView else {
+            return UITableViewCell()
+        }
         headerView.configureView(with: RecordField.allCases[section].rawValue)
         return headerView
     }
@@ -292,7 +296,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     // MARK: Calendar View Delegate
     
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        changedDate = Helper.convertDateToString(date: dateComponents!.date!)
+        changedDate = Helper.convertDateToString(date: dateComponents!.date ?? Date())
         tableView.reloadRows(at: [IndexPath(row: 0, section: 2)], with: .none)
     }
     

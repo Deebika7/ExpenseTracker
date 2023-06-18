@@ -412,16 +412,16 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             if case .amountHighToLow = sortByAmount {
                 for i in 0..<datasource.count {
                     let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
-                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
-                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount ?? "") ?? 0 > Double($1.amount ?? "") ?? 0 }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount ?? "") ?? 0 > Double($1.amount ?? "") ?? 0 }) ?? []
                     datasource[i].rows = expenseArr + incomeArr
                 }
             }
             else {
                 for i in 0..<datasource.count {
                     let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
-                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
-                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount ?? "") ?? 0 < Double($1.amount ?? "") ?? 0 }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! < Double($1.amount ?? "") ?? 0 }) ?? []
                     datasource[i].rows = expenseArr + incomeArr
                 }
             }
@@ -429,16 +429,16 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             if case .amountHighToLow = sortByAmount {
                 for i in 0..<datasource.count {
                     let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
-                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
-                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! > Double($1.amount!)! }) ?? []
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount ?? "" ) ?? 0 > Double($1.amount ?? "") ?? 0 }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount ?? "") ?? 0 > Double($1.amount ?? "") ?? 0 }) ?? []
                     datasource[i].rows = incomeArr + expenseArr
                 }
             }
             else {
                 for i in 0..<datasource.count {
                     let splitDict = Dictionary(grouping: datasource[i].rows, by: { $0.recordType })
-                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
-                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount!)! < Double($1.amount!)! }) ?? []
+                    let expenseArr = splitDict[.expense]?.sorted(by: { Double($0.amount ?? "") ?? 0 < Double($1.amount ?? "") ?? 0 }) ?? []
+                    let incomeArr = splitDict[.income]?.sorted(by: { Double($0.amount ?? "") ?? 0 < Double($1.amount ?? "") ?? 0 }) ?? []
                     datasource[i].rows = incomeArr + expenseArr
                 }
             }
@@ -522,7 +522,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as! MoneyTrackerSectionHeaderView
+        guard let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier) as? MoneyTrackerSectionHeaderView else {
+            return UITableViewCell()
+        }
         let sectionData = datasource[section]
         let incomeAmount = Helper.getSimplifiedAmount(sectionData.rows, 0)
         let expenseAmount = Helper.getSimplifiedAmount(sectionData.rows, 1)
@@ -580,7 +582,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         configuration.text = record.category
         let simplifiedAmount = Helper.simplifyNumbers([record.amount ?? "0"])
         configuration.secondaryText = (record.type != 0) ? "-\(simplifiedAmount)" : "\(simplifiedAmount)"
-        configuration.image = UIImage(systemName: record.icon!)
+        configuration.image = UIImage(systemName: record.icon ?? "")
         configuration.imageProperties.tintColor = .label
         cell.contentConfiguration = configuration
         return cell
@@ -589,7 +591,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let record = datasource[indexPath.section].rows[indexPath.row]
-        let decriptionVc = DescriptionVC(recordId: record.id!)
+        let decriptionVc = DescriptionVC(recordId: record.id ?? UUID())
         decriptionVc.title = "Details"
         decriptionVc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(decriptionVc, animated: true)
@@ -610,17 +612,20 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         }
         let allRecords = RecordDataManager.shared.getAllRecord()
         let filteredRecord = allRecords.filter { record in
-            let datePropeties = Helper.getDateProperties(date: record.date!)
-            return record.category!.localizedCaseInsensitiveContains(text) || String(datePropeties.day).localizedCaseInsensitiveContains(text) || String(datePropeties.month).localizedCaseInsensitiveContains(text) || String(datePropeties.year).localizedCaseInsensitiveContains(text)
+            let datePropeties = Helper.getDateProperties(date: record.date ?? Date())
+            if let category = record.category {
+                return category.localizedCaseInsensitiveContains(text) || String(datePropeties.day).localizedCaseInsensitiveContains(text) || String(datePropeties.month).localizedCaseInsensitiveContains(text) || String(datePropeties.year).localizedCaseInsensitiveContains(text)
+            }
+            return false
         }
         var recordByDate: [Date: [Record]] = [:]
         for record in filteredRecord {
-            if recordByDate[record.date!] != nil {
-                recordByDate[record.date!]?.append(record)
+            if recordByDate[record.date ?? Date()] != nil {
+                recordByDate[record.date ?? Date()]?.append(record)
             }
             else {
-                recordByDate[record.date!] = []
-                recordByDate[record.date!]?.append(record)
+                recordByDate[record.date ?? Date()] = []
+                recordByDate[record.date ?? Date()]?.append(record)
             }
         }
         var searchResult = recordByDate.map({SectionData(date: $0.key, rows: $0.value) })
@@ -645,7 +650,9 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CustomCollectionViewCell else {
+            return UICollectionViewCell()
+        }
         if indexPath.section == 0 {
             cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row].0)
@@ -694,6 +701,6 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     private func getYear() -> Int {
-        Int(monthVc.yearLabel.text!) ?? 0
+        Int(monthVc.yearLabel.text ?? "") ?? 0
     }
 }

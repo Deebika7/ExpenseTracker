@@ -62,8 +62,6 @@
 		1678A6532A31AA6A000EE573 /* EditCustomCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6522A31AA6A000EE573 /* EditCustomCategory.swift */; };
 		1678A6552A32FAF8000EE573 /* GraphCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6542A32FAF8000EE573 /* GraphCell.swift */; };
 		1678A6572A332967000EE573 /* NoDataFoundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6562A332967000EE573 /* NoDataFoundView.swift */; };
-		1678A6592A35BDC2000EE573 /* HighExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6582A35BDC2000EE573 /* HighExpenseView.swift */; };
-		1678A65B2A35BDD7000EE573 /* LowExpenseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */; };
 		1678A6612A3726C6000EE573 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6602A3726C6000EE573 /* SortOption.swift */; };
 		1678A6642A378897000EE573 /* CustomMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6632A378897000EE573 /* CustomMonthView.swift */; };
 		1678A6662A386F3C000EE573 /* SectionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1678A6652A386F3C000EE573 /* SectionData.swift */; };
@@ -132,8 +130,6 @@
 		1678A6522A31AA6A000EE573 /* EditCustomCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomCategory.swift; sourceTree = "<group>"; };
 		1678A6542A32FAF8000EE573 /* GraphCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphCell.swift; sourceTree = "<group>"; };
 		1678A6562A332967000EE573 /* NoDataFoundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoDataFoundView.swift; sourceTree = "<group>"; };
-		1678A6582A35BDC2000EE573 /* HighExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighExpenseView.swift; sourceTree = "<group>"; };
-		1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowExpenseView.swift; sourceTree = "<group>"; };
 		1678A6602A3726C6000EE573 /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
 		1678A6632A378897000EE573 /* CustomMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMonthView.swift; sourceTree = "<group>"; };
 		1678A6652A386F3C000EE573 /* SectionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionData.swift; sourceTree = "<group>"; };
@@ -267,8 +263,6 @@
 				1678A6112A28C550000EE573 /* SwitchTableViewCell.swift */,
 				1678A6542A32FAF8000EE573 /* GraphCell.swift */,
 				1678A6562A332967000EE573 /* NoDataFoundView.swift */,
-				1678A6582A35BDC2000EE573 /* HighExpenseView.swift */,
-				1678A65A2A35BDD7000EE573 /* LowExpenseView.swift */,
 				1678A6092A25D106000EE573 /* MonthCollectionVC.swift */,
 			);
 			path = Home;
@@ -472,7 +466,6 @@
 				161402B82A0A42BA0040E15E /* MediocreExpenseView.swift in Sources */,
 				163063272A0A18D9009E6428 /* HomeVC.swift in Sources */,
 				1678A6662A386F3C000EE573 /* SectionData.swift in Sources */,
-				1678A65B2A35BDD7000EE573 /* LowExpenseView.swift in Sources */,
 				1678A5FC2A2342A5000EE573 /* DescriptionCell.swift in Sources */,
 				1678A5B92A1CDC60000EE573 /* SFSymbolForIncome.swift in Sources */,
 				1678A5BB2A1CDC8E000EE573 /* SFSymbolForExpense.swift in Sources */,
@@ -512,7 +505,6 @@
 				161402E32A0E5B2A0040E15E /* CustomTextFieldCell.swift in Sources */,
 				161402EF2A11557A0040E15E /* Category.swift in Sources */,
 				161402A32A0A1C570040E15E /* SettingsVC.swift in Sources */,
-				1678A6592A35BDC2000EE573 /* HighExpenseView.swift in Sources */,
 				161402AA2A0A297E0040E15E /* RecordType.swift in Sources */,
 				1678A60A2A25D106000EE573 /* MonthCollectionVC.swift in Sources */,
 				1678A5BD2A1E788D000EE573 /* PresentationModalSheetDelegate.swift in Sources */,

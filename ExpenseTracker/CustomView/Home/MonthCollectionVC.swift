@@ -90,7 +90,7 @@ class MonthCollectionVC: UIView {
     }
     
     private func getYear() -> Int {
-        Int(yearLabel.text!) ?? 0
+        Int(yearLabel.text ?? "") ?? 0
     }
 }
 

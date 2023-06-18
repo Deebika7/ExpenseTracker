@@ -292,7 +292,9 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? CustomCollectionViewCell else {
+            return UICollectionViewCell()
+        }
         if indexPath.section == 0 {
             cell.capsuleView.backgroundColor = (savedMonth == collectionViewDatasource[indexPath.row].1) ? UIColor.systemBlue.withAlphaComponent(0.2) : .secondarySystemGroupedBackground
             cell.configure(collectionViewDatasource[indexPath.row].0)
@@ -328,13 +330,13 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
 
     @objc func backwardChevronTapped() {
-        let value = Int(monthVc.yearLabel.text ?? "0")!
+        let value = Int(monthVc.yearLabel.text ?? "0") ?? 0
         monthVc.yearLabel.text = (value > 0) ? "\(value - 1)" : "0"
         changedYear(value - 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
     }
 
     @objc func forwardChevronTapped() {
-        let value = Int(monthVc.yearLabel.text ?? "0")!
+        let value = Int(monthVc.yearLabel.text ?? "0") ?? 0
         if !(Helper.defaultYear == value) {
             monthVc.yearLabel.text = "\(value + 1)"
             changedYear(value + 1, Helper.getMonthNumberForName(monthLabel.text ?? "") ?? 1)
@@ -342,7 +344,7 @@ extension ChartVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
 
     private func getYear() -> Int {
-        Int(monthVc.yearLabel.text!) ?? 0
+        Int(monthVc.yearLabel.text ?? "") ?? 0
     }
 }
 

@@ -119,7 +119,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { [self]  _ in
             tableView.performBatchUpdates {
                 RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (searchedCustomCategory[indexPath.row]), newIcon: "square.grid.3x3", newCategory: "Others")
-                CustomCategoryDataManager.shared.deleteCustomCategory(id: (searchedCustomCategory[indexPath.row].id!))
+                CustomCategoryDataManager.shared.deleteCustomCategory(id: (searchedCustomCategory[indexPath.row].id ?? UUID()))
                 searchedCustomCategory.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }

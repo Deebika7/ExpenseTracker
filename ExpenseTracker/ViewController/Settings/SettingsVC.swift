@@ -48,12 +48,16 @@ class SettingsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomAppearanceCell.reuseIdentifier, for: indexPath) as! CustomAppearanceCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CustomAppearanceCell.reuseIdentifier, for: indexPath) as? CustomAppearanceCell else {
+                return UITableViewCell()
+            }
             cell.selectionStyle = .none
             return cell
         }
         else if indexPath.row == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.reuseIdentifier, for: indexPath) as! SwitchTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: SwitchTableViewCell.reuseIdentifier, for: indexPath) as? SwitchTableViewCell else {
+                return UITableViewCell()
+            }
             cell.selectionStyle = .none
             return cell
         }

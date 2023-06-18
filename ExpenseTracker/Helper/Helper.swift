@@ -125,7 +125,7 @@ class Helper {
     static func convertStringToDate(value: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
-        return dateFormatter.date(from: value)!
+        return dateFormatter.date(from: value) ?? Date()
     }
     
     static func expenseCategory() -> [Category] {
@@ -168,31 +168,36 @@ class Helper {
         }
         return false
     }
-    static func simplifyNumbers(_ arr: [String]) -> String? {
-        let suffixes = ["", "K", "M", "B", "T"] // Notation suffixes
-        
-        // Helper function to convert a number to notation form
-        func formatNumber(_ num: Double) -> String {
-            var num = num
-            for suffix in suffixes {
-                if abs(num) < 1000.0 {
-                    return String(format: "%.2f", num) + suffix
-                }
-                num /= 1000.0
-            }
-            return String(format: "%.2f", num) + (suffixes.last ?? "")
+     static func simplifyNumbers(_ arr: [String]) -> String {
+        var sum: NSDecimalNumber = NSDecimalNumber.zero
+        for str in arr {
+            let number = NSDecimalNumber(string: str)
+                sum = sum.adding(number)
         }
         
-        var sum: Double = 0
-        for stringNum in arr {
-            if let num = Double(stringNum.replacingOccurrences(of: ",", with: "")) {
-                sum += num
-            } else {
-                return nil // Return nil if conversion fails
-            }
+        var suffix = ""
+        var formattedSum = sum
+        if sum.doubleValue >= 1_000_000_000_000 {
+            formattedSum = sum.dividing(by: NSDecimalNumber(value: 1_000_000_000_000))
+            suffix = "T"
+        } else if sum.doubleValue >= 1_000_000_000 {
+            formattedSum = sum.dividing(by: NSDecimalNumber(value: 1_000_000_000))
+            suffix = "B"
+        } else if sum.doubleValue >= 1_000_000 {
+            formattedSum = sum.dividing(by: NSDecimalNumber(value: 1_000_000))
+            suffix = "M"
+        } else if sum.doubleValue >= 1_000 {
+            formattedSum = sum.dividing(by: NSDecimalNumber(value: 1_000))
+            suffix = "K"
         }
         
-        return formatNumber(sum)
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        numberFormatter.maximumFractionDigits = 2
+        guard let formattedString = numberFormatter.string(from: formattedSum as NSNumber) else {
+            return ""
+        }
+        return formattedString + suffix
     }
 
     
@@ -245,17 +250,18 @@ class Helper {
         var amount: [String]  = []
         for record in records {
             if record.type == type {
-                amount.append(record.amount!)
+                amount.append(record.amount ?? "0")
             }
         }
         return simplifyNumbers(amount) ?? "0"
     }
     
+    
     static func getRecordAmount(_ records: [Record], _ type: Int16) -> [String] {
         var amount: [String]  = []
         for record in records {
             if record.type == type {
-                amount.append(record.amount!)
+                amount.append(record.amount ?? "0")
             }
         }
         return amount

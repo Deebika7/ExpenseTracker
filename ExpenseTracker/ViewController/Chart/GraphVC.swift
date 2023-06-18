@@ -125,7 +125,7 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
             return result + (Double(data.amount) ?? 0)
         }
         let dateProperties = Helper.getDateProperties(date: graphData.first?.date ?? Date())
-        monthLabel.text = "\(Helper.getMonthName(dateProperties.month) ?? "") \(dateProperties.year)" 
+        monthLabel.text = "\(Helper.getMonthName(dateProperties.month) ?? "") \(dateProperties.year)"
         totalAmountLabel.text = "Total: \(totalAmount)"
         averageAmount = totalAmount / Double(generateGraphValues().count)
         averageAmountLabel.text = "Average daily: \(String(format: "%.2f", averageAmount))"
@@ -167,7 +167,9 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: GraphCell.reuseIdentifier, for: indexPath) as! GraphCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: GraphCell.reuseIdentifier, for: indexPath) as? GraphCell else {
+           return UITableViewCell()
+        }
         cell.configure(percentage: String(format: "%.2f", searchResult[indexPath.row].percentage), date: Helper.convertDateToString(date: searchResult[indexPath.row].date), amount: String(searchResult[indexPath.row].amount), searchText: searchText)
         return cell
     }
