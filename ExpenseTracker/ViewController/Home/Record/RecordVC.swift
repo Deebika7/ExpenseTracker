@@ -61,6 +61,11 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
             return
         }
         
+        guard Double(amount) != nil else {
+            showAlert(text: "Enter Valid amount")
+            return
+        }
+        
         guard Double(amount) ?? 0 > 0 else {
             showAlert(text: "Amount should be greater than 0")
             return
