@@ -90,7 +90,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     }()
     
     private lazy var clickableView: UIView = {
-       let clickableView = UIView(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
+       let clickableView = UIView(frame: CGRect(x: 4, y: 15, width: 150, height: 50))
         clickableView.addGestureRecognizer(monthViewTapGestureRecognizer)
         clickableView.backgroundColor = .clear
         return clickableView

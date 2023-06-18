@@ -153,7 +153,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }()
     
     private lazy var clickableView: UIView = {
-        let clickableView = UIView(frame: CGRect(x: 4, y: 15, width: 70, height: 50))
+        let clickableView = UIView(frame: CGRect(x: 4, y: 15, width: 150, height: 50))
         clickableView.addGestureRecognizer(monthViewTapGestureRecognizer)
         clickableView.backgroundColor = .clear
         return clickableView

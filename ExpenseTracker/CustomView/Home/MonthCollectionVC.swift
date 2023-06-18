@@ -78,9 +78,13 @@ class MonthCollectionVC: UIView {
                                     
             forwardChevron.centerYAnchor.constraint(equalTo: yearView.centerYAnchor),
             forwardChevron.trailingAnchor.constraint(equalTo: yearView.trailingAnchor, constant: -25),
+            forwardChevron.heightAnchor.constraint(equalToConstant: 30),
+            forwardChevron.widthAnchor.constraint(equalToConstant: 30),
             
             backwardChevron.centerYAnchor.constraint(equalTo: yearView.centerYAnchor),
             backwardChevron.leadingAnchor.constraint(equalTo: yearView.leadingAnchor, constant: 25),
+            backwardChevron.heightAnchor.constraint(equalToConstant: 30),
+            backwardChevron.widthAnchor.constraint(equalToConstant: 30),
             
             yearLabel.centerYAnchor.constraint(equalTo: yearView.centerYAnchor),
             yearLabel.centerXAnchor.constraint(equalTo: yearView.centerXAnchor, constant: -4),
