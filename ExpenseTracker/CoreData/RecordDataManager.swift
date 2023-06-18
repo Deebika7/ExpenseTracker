@@ -30,8 +30,8 @@ class RecordDataManager {
     func updateRecordForCustomCategory(customCategory: CustomCategory, newIcon: String, newCategory: String) {
         let allRecords = DatabaseManager.shared.getAllRecord()
         for record in allRecords {
-            if record.category! == customCategory.name && record.icon! == customCategory.icon! {
-                DatabaseManager.shared.updateRecord(id: record.id!, newType: record.type, newAmount: record.amount!, newIcon: newIcon, newCategory: newCategory, newDate: record.date!)
+            if record.category! == customCategory.name && record.icon ?? "" == customCategory.icon ?? "" {
+                DatabaseManager.shared.updateRecord(id: record.id ?? UUID(), newType: record.type, newAmount: record.amount ?? "0", newIcon: newIcon, newCategory: newCategory, newDate: record.date ?? Date())
             }
         }
     }
@@ -43,12 +43,12 @@ class RecordDataManager {
             let recordMonth = Helper.getDateProperties(date: record.date!).month
             let recordYear = Helper.getDateProperties(date: record.date!).year
             if recordYear == year && recordMonth == month {
-                if records[record.date!] != nil {
-                    records[record.date!]?.append(record)
+                if records[record.date ?? Date()] != nil {
+                    records[record.date ?? Date()]?.append(record)
                 }
                 else {
-                    records[record.date!] = []
-                    records[record.date!]?.append(record)
+                    records[record.date ?? Date()] = []
+                    records[record.date ?? Date()]?.append(record)
                 }
             }
         }

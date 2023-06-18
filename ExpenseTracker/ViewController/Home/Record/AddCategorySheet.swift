@@ -145,7 +145,7 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             return
         }
         
-        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: textField.text!)) && !Helper.isCategoryPresent(textField.text ?? "") {
+        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: text.trimMoreThanOneSpaces())) && !Helper.isCategoryPresent(textField.text ?? "") {
             
             if editCustomCategory != nil {
                 tableView.performBatchUpdates {

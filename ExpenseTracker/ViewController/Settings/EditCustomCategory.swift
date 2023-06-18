@@ -22,7 +22,6 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController()
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
         return searchController
@@ -125,7 +124,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             tableView.endUpdates()
-            tableView.reloadData()
+            refreshTable()
         }))
         self.present(alert, animated: true)
     }
@@ -171,33 +170,25 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     
     func refreshTable() {
         searchedCustomCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
+        customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
         tableView.reloadData()
     }
     
     func updateSearchResults(for searchController: UISearchController) {
+        refreshTable()
         guard let text = searchController.searchBar.text else {
             return
         }
         searchText = text
         
         searchedCustomCategory = customCategory.filter{ customCategory in
-            return customCategory.name!.localizedCaseInsensitiveContains(text) || customCategory.icon!.localizedCaseInsensitiveContains(text)
+            return customCategory.name!.localizedCaseInsensitiveContains(text)
         }
         
         if text.isEmpty {
             searchedCustomCategory = customCategory
         }
         
-        if searchedCustomCategory.isEmpty {
-            tableView.backgroundView = noDataFoundView
-        }
-        else {
-            tableView.backgroundView = nil
-        }
-        
-        if customCategory.isEmpty {
-            tableView.backgroundView = nil
-        }
         tableView.reloadData()
     }
     
@@ -207,7 +198,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        tableView.reloadData()
+        refreshTable()
     }
     
     override func viewDidDisappear(_ animated: Bool) {

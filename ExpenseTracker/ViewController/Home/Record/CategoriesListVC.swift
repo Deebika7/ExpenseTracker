@@ -33,7 +33,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         let searchController = UISearchController()
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
         return searchController
@@ -124,7 +123,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             configuration.attributedText = attributedString
             configuration.image = UIImage(systemName: searchedCategory[indexPath.row].sfSymbolName)
             if selectedCategory != nil {
-                cell.accessoryType = (searchedCategory[indexPath.row].categoryName  == selectedCategory!.categoryName) ? .checkmark: .none
+                cell.accessoryType = (searchedCategory[indexPath.row].categoryName  == selectedCategory!.categoryName && searchedCategory[indexPath.row].sfSymbolName  == selectedCategory!.sfSymbolName) ? .checkmark: .none
             }
         }
         else if indexPath.section == 1 {
@@ -137,7 +136,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             configuration.attributedText = attributedString
             configuration.image = UIImage(systemName: searchedCustomCategory[indexPath.row].icon ?? "")
             if selectedCategory != nil {
-                cell.accessoryType = (searchedCustomCategory[indexPath.row].name  == selectedCategory!.categoryName) ? .checkmark: .none
+                cell.accessoryType = (searchedCustomCategory[indexPath.row].name  == selectedCategory!.categoryName && searchedCustomCategory[indexPath.row].icon == selectedCategory!.sfSymbolName) ? .checkmark: .none
             }
         }
         configuration.imageProperties.tintColor = .label
@@ -167,6 +166,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     func dismissedPresentationModalSheet(_ isDismissed: Bool) {
         if isDismissed {
             searchedCustomCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
+            customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
             tableView.reloadData()
         }
     }
