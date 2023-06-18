@@ -33,7 +33,6 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
         let searchController = UISearchController()
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
         return searchController
     }()

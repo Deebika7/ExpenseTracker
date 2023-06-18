@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
+class CategoryIconVC: UITableViewController, UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
     
     weak var categoryDelegate: CategoryDelegate?
     
@@ -29,7 +29,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
         return searchController
     }()
     
@@ -109,6 +109,11 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating {
     
     @objc func dismissCategoryIconVC() {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = nil
+        searchResults = customCategory
     }
     
     // MARK: search
