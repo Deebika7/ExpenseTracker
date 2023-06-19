@@ -339,7 +339,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     func closeMonthView() {
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
-        UIView.transition(with: monthVc, duration: 0.6, options: .curveEaseInOut, animations: {
+        UIView.transition(with: monthVc, duration: 0.6, options: .transitionFlipFromBottom, animations: {
         }) { [self] _  in
             overlayBlurEffect.removeFromSuperview()
             monthVc.removeFromSuperview()
@@ -576,6 +576,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
                 RecordDataManager.shared.deleteRecord(id: recordId)
                 self?.datasource[indexPath.section].rows.remove(at: indexPath.row)
                 self?.tableView.deleteRows(at: [indexPath], with: .automatic)
+                self?.refreshTable()
             })
         }))
         self.present(alert, animated: true)

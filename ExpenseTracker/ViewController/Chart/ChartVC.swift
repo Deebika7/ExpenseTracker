@@ -160,7 +160,7 @@ class ChartVC: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDel
     
     func closeMonthView() {
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
-        UIView.transition(with: monthVc, duration: 0.6, options: .curveEaseInOut, animations: {
+        UIView.transition(with: monthVc, duration: 0.6, options: .transitionFlipFromBottom, animations: {
         }) { [self] _  in
             overlayBlurEffect.removeFromSuperview()
             navigationController?.navigationBar.prefersLargeTitles = true

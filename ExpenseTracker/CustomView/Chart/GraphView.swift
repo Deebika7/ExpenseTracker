@@ -18,6 +18,7 @@ struct GraphView: View {
     var graphValues: [GraphValue]
     var color: Color
     
+    @State private var isHidden = true
     @GestureState private var isDragging = false
     @State private var dragOffset: CGSize = .zero
     @State private var currentPercentage: Double = 0
@@ -60,36 +61,64 @@ struct GraphView: View {
                             currentPercentage = graphValue.percentage
                             currentDate = graphValue.date
                             labelPosition = CGPoint(x: value.location.x, y: value.startLocation.y)
+                            isHidden = false
                         }
                     }
                     .onEnded { value in
                         dragOffset = .zero
+                        Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
+                            isHidden.toggle()
+                        }
                     }
             )
             .offset(dragOffset)
             if currentPercentage >= 0 {
-                Path { path in
-                    path.move(to: CGPoint(x: labelPosition.x, y: labelPosition.y))
-                    path.addLine(to: CGPoint(x: labelPosition.x, y: labelPosition.y + 100))
+                if isHidden {
+                    Path { path in
+                        path.move(to: CGPoint(x: labelPosition.x, y: labelPosition.y))
+                        path.addLine(to: CGPoint(x: labelPosition.x, y: labelPosition.y + 100))
+                    }
+                    .stroke(color, lineWidth: 2)
+                    .hidden()
                 }
-                .stroke(color, lineWidth: 2)
+                else {
+                    Path { path in
+                        path.move(to: CGPoint(x: labelPosition.x, y: labelPosition.y))
+                        path.addLine(to: CGPoint(x: labelPosition.x, y: labelPosition.y + 100))
+                    }
+                    .stroke(color, lineWidth: 2)
+                }
             }
             
             VStack {
-                let percentage = String(format: "%.2f", currentPercentage)
-                Text("\(percentage)%")
-                    .foregroundColor(.white)
-                    .font(.system(size: 12, weight: .bold))
-                Text("Date: \(currentDate)")
-                    .foregroundColor(.white)
-                    .font(.system(size: 12, weight: .bold))
+                if isHidden {
+                    let percentage = String(format: "%.2f", currentPercentage)
+                    Text("\(percentage)%")
+                        .foregroundColor(.white)
+                        .font(.system(size: 12, weight: .bold))
+                        .hidden()
+                    Text("Date: \(currentDate)")
+                        .foregroundColor(.white)
+                        .font(.system(size: 12, weight: .bold))
+                        .hidden()
+                }
+                else {
+                    let percentage = String(format: "%.2f", currentPercentage)
+                    Text("\(percentage)%")
+                        .foregroundColor(.white)
+                        .font(.system(size: 12, weight: .bold))
+                    Text("Date: \(currentDate)")
+                        .foregroundColor(.white)
+                        .font(.system(size: 12, weight: .bold))
+                }
             }
+            .background(isHidden ? .clear : Color.black.opacity(0.6))
             .padding(6)
-            .background(Color.black.opacity(0.6))
             .cornerRadius(4)
             .animation(.easeInOut)
             .position(x: labelPosition.x, y: labelPosition.y - 60)         }
     }
+
 }
 
 

@@ -155,5 +155,4 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         }
         tableView.reloadData()
     }
-    
 }
