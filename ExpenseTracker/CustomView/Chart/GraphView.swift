@@ -43,7 +43,8 @@ struct GraphView: View {
                     y: .value("amount", expenseGraph.percentage)
                 ).foregroundStyle(color)
                     .symbolSize(30)
-            }.chartXAxis{}
+            }
+            .chartXAxis{}
             .labelsHidden()
             .chartYAxis {
                 AxisMarks(position: .leading)

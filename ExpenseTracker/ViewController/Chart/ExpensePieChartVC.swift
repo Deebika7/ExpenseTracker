@@ -49,14 +49,17 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     private lazy var noDataFoundView: UIView = {
         let noDataFoundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
+        noDataFoundView.translatesAutoresizingMaskIntoConstraints = false
         return noDataFoundView
     }()
     
     func configureTable() {
         if chartRecords.isEmpty {
             headerViewContainer.isHidden = true
+            noDataFoundView.isHidden = false
         }
         else {
+            noDataFoundView.isHidden = true
             headerViewContainer.isHidden = false
         }
     }
@@ -65,9 +68,10 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         super.viewDidLoad()
         view.backgroundColor = .systemGroupedBackground
         headerViewContainer.addSubview(hollowPieChart)
-        view.addSubview(noDataFoundView)
         view.addSubview(tableView)
         view.addSubview(headerViewContainer)
+        view.addSubview(noDataFoundView)
+        noDataFoundView.isUserInteractionEnabled = true
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
         tableView.keyboardDismissMode = .onDrag
@@ -90,6 +94,11 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2),
+            
+            noDataFoundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            noDataFoundView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -150),
+            noDataFoundView.heightAnchor.constraint(equalToConstant: 120),
+            noDataFoundView.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
     }
     

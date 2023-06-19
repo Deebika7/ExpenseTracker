@@ -35,6 +35,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     @objc func addNewCategory(){
         tableView.isEditing = false
         view.endEditing(true)
+        searchController.searchBar.text = nil
         let addCategoryVC = AddCategorySheet(editCustomCategory: nil)
         addCategoryVC.title = "Add Custom Category"
         addCategoryVC.presentationModalSheetDelegate = self
@@ -131,6 +132,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     func editCustomCategory(_ indexPath: IndexPath) {
+        searchController.searchBar.text = nil
         let editCustomCategoryVC = AddCategorySheet(editCustomCategory: searchedCustomCategory[indexPath.row])
         editCustomCategoryVC.title = "Custom Category"
         editCustomCategoryVC.presentationModalSheetDelegate = self
@@ -178,14 +180,16 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        refreshTable()
         guard let text = searchController.searchBar.text else {
             return
         }
         searchText = text
         
         searchedCustomCategory = customCategory.filter{ customCategory in
-            return customCategory.name!.localizedCaseInsensitiveContains(text)
+            guard let name =  customCategory.name else {
+                return false
+            }
+            return name.localizedCaseInsensitiveContains(text)
         }
         
         if text.isEmpty {

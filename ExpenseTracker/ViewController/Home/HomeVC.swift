@@ -320,7 +320,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
                 self.navigationItem.searchController = nil
                 self.monthVc.frame.origin.y = originY
             })
-            
         }
         else {
             closeMonthView()
