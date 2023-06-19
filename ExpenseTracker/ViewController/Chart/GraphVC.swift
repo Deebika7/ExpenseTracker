@@ -116,7 +116,7 @@ class GraphVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIS
         NSLayoutConstraint.activate([
             graphView.leadingAnchor.constraint(equalTo: graphContainerView.leadingAnchor),
             graphView.trailingAnchor.constraint(equalTo: graphContainerView.trailingAnchor, constant: -8),
-            graphView.bottomAnchor.constraint(equalTo: graphContainerView.bottomAnchor, constant: -4),
+            graphView.bottomAnchor.constraint(equalTo: graphContainerView.bottomAnchor, constant: -12),
         ])
         tableView.register(GraphCell.self, forCellReuseIdentifier: GraphCell.reuseIdentifier)
         tableView.allowsSelection = false

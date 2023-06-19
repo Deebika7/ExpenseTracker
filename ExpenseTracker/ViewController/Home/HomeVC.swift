@@ -21,7 +21,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     private lazy var selectedYear =  Int()
     
-    private lazy var isMonthViewExpanded: Bool = true
+    private lazy var isMonthViewCollapsed: Bool = true
     
     private lazy var savedMonth = Int()
     
@@ -305,14 +305,22 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     }
     
     @objc func didTapMonthView() {
-        if isMonthViewExpanded {
+        if isMonthViewCollapsed {
             view.addSubview(overlayBlurEffect)
-            UIView.transition(with: monthVc, duration: 0.4, options: .transitionFlipFromTop, animations: nil, completion: nil)
             view.addSubview(monthVc)
             setupContentViewConstraints()
-            navigationItem.searchController = nil
+            
             monthAccessoryView.image = UIImage(systemName: "arrowtriangle.up.fill")
-            isMonthViewExpanded = false
+            
+            let originY = monthVc.frame.origin.y
+            monthVc.frame.origin.y = originY - monthVc.frame.height
+            isMonthViewCollapsed = false
+            
+            UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseInOut, .preferredFramesPerSecond60], animations: {
+                self.navigationItem.searchController = nil
+                self.monthVc.frame.origin.y = originY
+            })
+            
         }
         else {
             closeMonthView()
@@ -339,14 +347,15 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     func closeMonthView() {
         monthAccessoryView.image = UIImage(systemName: "arrowtriangle.down.fill")
-        UIView.transition(with: monthVc, duration: 0.6, options: .transitionFlipFromBottom, animations: {
-        }) { [self] _  in
-            overlayBlurEffect.removeFromSuperview()
-            monthVc.removeFromSuperview()
-            navigationItem.searchController = searchController
-            isMonthViewExpanded = true
-            refreshTable()
-        }
+        isMonthViewCollapsed = true
+        UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseInOut, .preferredFramesPerSecond60], animations: {
+            self.monthVc.frame.origin.y = self.monthVc.frame.origin.y - self.monthVc.frame.height
+        }, completion: { _ in
+            self.navigationItem.searchController = self.searchController
+            self.monthVc.removeFromSuperview()
+            self.overlayBlurEffect.removeFromSuperview()
+            self.refreshTable()
+        })
     }
     
     func selectedMonth(_ month: (name: String, number: Int), year: Int) {
@@ -354,9 +363,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         selectedYear = year
         monthLabel.text = month.name
         UserDefaultManager.shared.addUserDefaultObject("selectedDate", SelectedDate(selectedYear: selectedYear, selectedMonth: selectedMonth))
-        refreshTable()
         closeMonthView()
-        tableView.reloadData()
     }
     
     func changedYear(_ changedYear: Int, _ month: Int) {
@@ -540,8 +547,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
-            self?.deleteRecord(recordId: self?.datasource[indexPath.section].rows[indexPath.row].id ?? UUID(), indexPath: indexPath)
-            completionHandler(true)
+            self?.deleteRecord(recordId: self?.datasource[indexPath.section].rows[indexPath.row].id ?? UUID(), indexPath: indexPath, completionHandler: completionHandler)
         }
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.title = "delete"
@@ -568,16 +574,24 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         present(navigationController, animated: true)
     }
     
-    func deleteRecord(recordId: UUID,indexPath: IndexPath) {
+    func deleteRecord(recordId: UUID,indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) {
         let alert = UIAlertController(title: "Delete", message: "Are you sure want to delete this record", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "No", style: .default))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { _ in
+            completionHandler(false)
+        }))
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] _ in
-            self?.tableView.performBatchUpdates({
-                RecordDataManager.shared.deleteRecord(id: recordId)
+            RecordDataManager.shared.deleteRecord(id: recordId)
+            if self!.tableView.numberOfRows(inSection: indexPath.section) <= 1 {
+                self?.datasource.remove(at: indexPath.section)
+                self?.tableView.deleteSections(IndexSet(integer: indexPath.section), with: .left)
+            } else {
                 self?.datasource[indexPath.section].rows.remove(at: indexPath.row)
                 self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-                self?.refreshTable()
-            })
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                    self?.tableView.reloadSections(IndexSet(integer: indexPath.section), with: .none)
+                })
+            }
+            completionHandler(true)
         }))
         self.present(alert, animated: true)
     }

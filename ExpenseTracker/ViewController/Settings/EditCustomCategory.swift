@@ -65,8 +65,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (_, _, completionHandler) in
-            self?.deleteCustomCategory(indexPath)
-            completionHandler(true)
+            self?.deleteCustomCategory(indexPath, completionHandler: completionHandler)
         }
         deleteAction.image = UIImage(systemName: "trash")
         deleteAction.title = "delete"
@@ -109,14 +108,14 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            deleteCustomCategory(indexPath)
+            deleteCustomCategory(indexPath, completionHandler: {_ in })
         }
     }
     
-    private func deleteCustomCategory(_ indexPath: IndexPath) {
+    private func deleteCustomCategory(_ indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void ) {
         let alert = UIAlertController(title: "Delete Custom Category", message: "Records saved in this custom category will be moved to others", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default) { [weak self]_ in
-            self?.refreshTable()
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) {_ in
+            completionHandler(false)
         })
         alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { [weak self]  _ in
             self?.tableView.performBatchUpdates {
@@ -126,6 +125,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
                 self?.tableView.deleteRows(at: [indexPath], with: .automatic)
             }
             self?.refreshTable()
+            completionHandler(true)
         }))
         self.present(alert, animated: true)
     }
@@ -153,7 +153,9 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         })
         
         let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: [.destructive], handler: { [weak self] _ in
-            self?.deleteCustomCategory(indexPath)
+            self?.deleteCustomCategory(indexPath, completionHandler: {_ in
+                
+            })
         })
         
         let menu = UIMenu(children: [editAction, deleteAction])

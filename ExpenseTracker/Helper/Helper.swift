@@ -457,6 +457,20 @@ class Helper {
         return ""
     }
     
+    static func formatNumber(input: String) -> String {
+        if let number = Double(input) {
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .decimal
+            if let formattedNumber = numberFormatter.string(from: NSNumber(value: number)) {
+                return String(formattedNumber)
+            }
+        }
+        
+            return "0"
+        
+        
+    }
+    
     static func generateThemeColors(count: Int) -> [UIColor] {
         var colors: [UIColor] = []
         

@@ -119,7 +119,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.configureCell(title: "Category", text: record.category ?? "")
             }
             else if indexPath.row == 3 {
-                cell.configureCell(title: "Amount", text: record.amount ?? "")
+                cell.configureCell(title: "Amount", text: Helper.formatNumber(input: record.amount ?? ""))
             }
             else if indexPath.row == 4 {
                 cell.configureCell(title: "Date", text: Helper.convertDateToString(date: record.date ?? Date()))
