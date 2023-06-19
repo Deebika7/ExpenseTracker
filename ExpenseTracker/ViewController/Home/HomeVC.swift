@@ -152,9 +152,9 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         return  monthAccessoryView
     }()
     
-    private lazy var clickableView: UIView = {
-        let clickableView = UIView(frame: CGRect(x: 4, y: 15, width: 150, height: 50))
-        clickableView.addGestureRecognizer(monthViewTapGestureRecognizer)
+    private lazy var clickableView: UIButton = {
+        let clickableView = UIButton(frame: CGRect(x: 4, y: 15, width: 150, height: 50))
+        clickableView.addTarget(self, action: #selector(didTapMonthView), for: .touchUpInside)
         clickableView.backgroundColor = .clear
         return clickableView
     }()

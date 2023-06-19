@@ -118,7 +118,6 @@ struct GraphView: View {
             .animation(.easeInOut)
             .position(x: labelPosition.x, y: labelPosition.y - 60)         }
     }
-
 }
 
 
