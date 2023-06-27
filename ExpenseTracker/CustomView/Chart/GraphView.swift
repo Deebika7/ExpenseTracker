@@ -26,70 +26,71 @@ struct GraphView: View {
     @State private var labelPosition: CGPoint = .zero
     
     var body: some View {
-        let graphReader = GraphReader(graphValues: graphValues)
-        
         return ZStack {
-            Chart(graphValues) { expenseGraph in
-                AreaMark(
-                    x: .value("Date", expenseGraph.date),
-                    y: .value("amount", expenseGraph.percentage)
-                ).foregroundStyle(LinearGradient(colors: [color, .clear], startPoint: .top, endPoint: .bottom))
-                LineMark(
-                    x: .value("Date", expenseGraph.date),
-                    y: .value("amount", expenseGraph.percentage)
-                ).foregroundStyle(color)
-                PointMark(
-                    x: .value("Date", expenseGraph.date),
-                    y: .value("amount", expenseGraph.percentage)
-                ).foregroundStyle(color)
-                    .symbolSize(30)
-            }
-            .chartXAxis{}
-            .labelsHidden()
-            .chartYAxis {
-                AxisMarks(position: .leading)
-            }
-            .chartYScale(domain: 0...100)
-            .gesture(
-                DragGesture()
-                    .updating($isDragging) { value, state, _ in
-                        state = true
+            GeometryReader { geometry in
+                Chart(graphValues) { expenseGraph in
+                    AreaMark(
+                        x: .value("Date", expenseGraph.date),
+                        y: .value("amount", expenseGraph.percentage)
+                    ).foregroundStyle(LinearGradient(colors: [color, .clear], startPoint: .top, endPoint: .bottom))
+                        LineMark(
+                            x: .value("Date", expenseGraph.date),
+                            y: .value("amount", expenseGraph.percentage)
+                        ).foregroundStyle(color)
+                    
+                    PointMark(
+                        x: .value("Date", expenseGraph.date),
+                        y: .value("amount", expenseGraph.percentage)
+                    ).foregroundStyle(color)
+                        .symbolSize(30)
+                }.padding(.leading, -29).padding(.trailing, -8)
+                    .chartXAxis {
+                    }.labelsHidden()
+                    .chartYAxis {
+                        AxisMarks(position: .leading)
                     }
-                    .onChanged { value in
-                        let x = value.location.x - dragOffset.width
-                        let y = value.location.y - dragOffset.height
-                        if let graphValue = graphReader.graphValue(atX: x, y: y) {
-                            currentPercentage = graphValue.percentage
-                            currentDate = graphValue.date
-                            labelPosition = CGPoint(x: value.location.x, y: value.startLocation.y)
-                            isHidden = false
+                    .chartYScale(domain: 0...100)
+                    .gesture(
+                        DragGesture()
+                            .updating($isDragging) { value, state, _ in
+                                state = true
+                            }
+                            .onChanged { value in
+                                let x = value.location.x - dragOffset.width
+                                let y = value.location.y - dragOffset.height
+                                if let graphValue = graphValue(atX: x, y: y, in: geometry) {
+                                    currentPercentage = graphValue.percentage
+                                    currentDate = graphValue.date
+                                    labelPosition = CGPoint(x: value.location.x, y: value.startLocation.y)
+                                    isHidden = false
+                                }
+                            }
+                            .onEnded { value in
+                                dragOffset = .zero
+                                Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
+                                    isHidden.toggle()
+                                }
+                            }
+                    )
+                    .offset(dragOffset)
+                if currentPercentage >= 0 {
+                    if isHidden {
+                        Path { path in
+                            path.move(to: CGPoint(x: labelPosition.x , y: 0))
+                            path.addLine(to: CGPoint(x: labelPosition.x, y: 100))
                         }
-                    }
-                    .onEnded { value in
-                        dragOffset = .zero
-                        Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
-                            isHidden.toggle()
+                        .stroke(color, lineWidth: 2)
+                        .animation(.easeIn(duration: 3))
+                        .hidden()
+                    } else {
+                        Path { path in
+                            path.move(to: CGPoint(x: labelPosition.x, y: 0))
+                            path.addLine(to: CGPoint(x: labelPosition.x, y: 100))
                         }
+                        .stroke(color, lineWidth: 2)
                     }
-            )
-            .offset(dragOffset)
-            if currentPercentage >= 0 {
-                if isHidden {
-                    Path { path in
-                        path.move(to: CGPoint(x: labelPosition.x, y: labelPosition.y))
-                        path.addLine(to: CGPoint(x: labelPosition.x, y: labelPosition.y + 100))
-                    }
-                    .stroke(color, lineWidth: 2)
-                    .hidden()
                 }
-                else {
-                    Path { path in
-                        path.move(to: CGPoint(x: labelPosition.x, y: labelPosition.y))
-                        path.addLine(to: CGPoint(x: labelPosition.x, y: labelPosition.y + 100))
-                    }
-                    .stroke(color, lineWidth: 2)
-                }
-            }
+            }.padding(.leading, 8)
             
             VStack {
                 if isHidden {
@@ -102,8 +103,7 @@ struct GraphView: View {
                         .foregroundColor(.white)
                         .font(.system(size: 12, weight: .bold))
                         .hidden()
-                }
-                else {
+                } else {
                     let percentage = String(format: "%.2f", currentPercentage)
                     Text("\(percentage)%")
                         .foregroundColor(.white)
@@ -113,27 +113,21 @@ struct GraphView: View {
                         .font(.system(size: 12, weight: .bold))
                 }
             }
-            .background(isHidden ? .clear : Color.black.opacity(0.6))
-            .padding(6)
+            .background(isHidden ? .clear : color)
+            .padding(8)
             .cornerRadius(4)
-            .animation(.easeInOut)
-            .position(x: labelPosition.x, y: labelPosition.y - 60)         }
+            .position(x: labelPosition.x, y: -16)
+        }
     }
-}
-
-
-struct GraphReader {
-    var graphValues: [GraphValue]
     
-    func graphValue(atX x: CGFloat, y: CGFloat) -> GraphValue? {
-        let chartWidth = UIScreen.main.bounds.width
+    private func graphValue(atX x: CGFloat, y: CGFloat, in geometry: GeometryProxy) -> GraphValue? {
+        let chartWidth = geometry.size.width
         let xRatio = x / chartWidth
         let index = Int(xRatio * CGFloat(graphValues.count - 1))
         
         guard index >= 0 && index < graphValues.count else {
             return nil
         }
-        
         return graphValues[index]
     }
 }

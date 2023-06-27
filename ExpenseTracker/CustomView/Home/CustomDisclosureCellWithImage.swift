@@ -59,13 +59,13 @@ class CustomDisClosureCellWithImage: UITableViewCell {
         return contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
     
-    func configure(with name: String, and text: String)  {
-        categoryIcon.image = UIImage(systemName: name)
-        categoryIcon.tintColor = .label
-        label.text = text
+    func configure(icon: String, name: String, color: String)  {
+        categoryIcon.image = UIImage(systemName: icon)
+        categoryIcon.tintColor = UIColor(hex: color)
+        label.text = name
         label.font = .preferredFont(forTextStyle: .body)
         label.isUserInteractionEnabled = true
-        label.textColor = (text == "Select a Category" || text == "Select Category Icon" ) ? .placeholderText : .label
+        label.textColor = (name == "Select a Category" || name == "Select Category Icon" ) ? .placeholderText : .label
         label.adjustsFontForContentSizeCategory = true
     }
     

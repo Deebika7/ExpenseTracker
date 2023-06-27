@@ -14,12 +14,22 @@ class CustomCategoryDataManager {
     static let shared = CustomCategoryDataManager()
     
     func addCustomCategory(name: String, category: Category) -> Bool {
-        DatabaseManager.shared.addCustomCategory(id: UUID(), name: name, iconName: category.sfSymbolName)
+        DatabaseManager.shared.addCustomCategory(id: UUID(), name: name, iconName: category.sfSymbolName, color: category.color)
         return true
     }
     
     func getAllCustomCategory() -> [CustomCategory] {
         DatabaseManager.shared.getAllCustomCategory()
+    }
+    
+    func isColorAvailable(color: String) -> Bool {
+        let Customcategory = getAllCustomCategory()
+        for category in Customcategory {
+            if category.color == color {
+                return true
+            }
+        }
+        return false
     }
     
     func isCustomCategoryPresent(newCustomCategory: Category) -> Bool {

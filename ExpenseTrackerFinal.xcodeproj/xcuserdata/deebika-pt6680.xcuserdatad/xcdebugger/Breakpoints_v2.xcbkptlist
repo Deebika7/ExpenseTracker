@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9442444D-51BF-4383-AEFE-E87D050E9D3A"
-            shouldBeEnabled = "No"
+            uuid = "E64332BB-713B-4E13-9F55-D4554B817F33"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ExpenseTracker/CustomView/Home/CustomTextFieldCell.swift"
+            filePath = "ExpenseTracker/ViewController/Settings/EditCustomCategory.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "setupConstraints()"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "searchBarCancelButtonClicked(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

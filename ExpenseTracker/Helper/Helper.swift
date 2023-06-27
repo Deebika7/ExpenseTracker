@@ -35,98 +35,136 @@ class Helper {
     
     static var customCategory: [String:[Category]] = [
         "Food" : [
-            Category(sfSymbolName: "birthday.cake", categoryName: "Cake"),
-            Category(sfSymbolName: "wineglass", categoryName: "Wine" ),
-            Category(sfSymbolName: "takeoutbag.and.cup.and.straw", categoryName: "Beverages"),
-            Category(sfSymbolName: "carrot", categoryName: "Carrot"),
-            Category(sfSymbolName: "fork.knife", categoryName: "restaurant")
+            Category(sfSymbolName: "birthday.cake", categoryName: "Cake", color: "#657a00"),
+            Category(sfSymbolName: "wineglass", categoryName: "Wine", color: "#1400c6"),
+            Category(sfSymbolName: "takeoutbag.and.cup.and.straw", categoryName: "Beverages", color: "#fceed1"),
+            Category(sfSymbolName: "carrot", categoryName: "Carrot", color: "#FFD480"),
+            Category(sfSymbolName: "fork.knife", categoryName: "restaurant", color: "#f2d53c")
         ],
         "Transportation" : [
-            Category(sfSymbolName: "fuelpump", categoryName: "Fuel"),
-            Category(sfSymbolName: "bicycle", categoryName: "Bicycle"),
-            Category(sfSymbolName: "sailboat", categoryName: "Boat"),
-            Category(sfSymbolName: "ferry", categoryName: "Ship"),
-            Category(sfSymbolName: "car", categoryName: "Car"),
-            Category(sfSymbolName: "bus", categoryName: "Bus"),
-            Category(sfSymbolName: "box.truck", categoryName: "truck"),
-            Category(sfSymbolName: "airplane", categoryName: "Airplane"),
-            Category(sfSymbolName: "train.side.front.car", categoryName: "Train"),
-            Category(sfSymbolName: "scooter", categoryName: "Scooter"),
-            Category(sfSymbolName: "road.lanes", categoryName: "Road"),
+            Category(sfSymbolName: "fuelpump", categoryName: "Fuel", color: "#c80e13"),
+            Category(sfSymbolName: "bicycle", categoryName: "Bicycle", color: "#8bf0ba"),
+            Category(sfSymbolName: "sailboat", categoryName: "Boat", color: "#0e0fed"),
+            Category(sfSymbolName: "ferry", categoryName: "Ship", color: "#94f0f1"),
+            Category(sfSymbolName: "car", categoryName: "Car", color: "#f2b1d8"),
+            Category(sfSymbolName: "bus", categoryName: "Bus", color: "#ffdc6a"),
+            Category(sfSymbolName: "box.truck", categoryName: "truck", color: "#AADEA7"),
+            Category(sfSymbolName: "airplane", categoryName: "Airplane",color: "#E6F69D"),
+            Category(sfSymbolName: "train.side.front.car", categoryName: "Train",color: "#FF2E7E"),
+            Category(sfSymbolName: "scooter", categoryName: "Scooter",color: "#57167E"),
+            Category(sfSymbolName: "road.lanes", categoryName: "Road",color: "#FFEC00"),
         ],
         "Shopping" : [
-            Category(sfSymbolName: "cart", categoryName: "Cart"),
-            Category(sfSymbolName: "tshirt", categoryName: "Clothing"),
-            Category(sfSymbolName: "teddybear", categoryName: "Doll"),
-            Category(sfSymbolName: "beach.umbrella", categoryName: "Umbrella"),
-            Category(sfSymbolName: "eyeglasses", categoryName: "Eyeglass"),
-            Category(sfSymbolName: "comb", categoryName: "Comb"),
-            Category(sfSymbolName: "eyebrow", categoryName: "Aesthetics"),
+            Category(sfSymbolName: "cart", categoryName: "Cart",color: "#8F6A7D"),
+            Category(sfSymbolName: "tshirt", categoryName: "Clothing",color: "#6A8E6F"),
+            Category(sfSymbolName: "teddybear", categoryName: "Doll",color: "#B36D8A"),
+            Category(sfSymbolName: "beach.umbrella", categoryName: "Umbrella",color: ""),
+            Category(sfSymbolName: "eyeglasses", categoryName: "Eyeglass",color: "#86795D"),
+            Category(sfSymbolName: "comb", categoryName: "Comb",color: "#5C8C9A"),
+            Category(sfSymbolName: "eyebrow", categoryName: "Aesthetics",color: "#A9734D"),
         ],
         "Sports" : [
-            Category(sfSymbolName: "figure.pool.swim", categoryName: "Swimming"),
-            Category(sfSymbolName: "cricket.ball", categoryName: "Cricket"),
-            Category(sfSymbolName: "figure.baseball", categoryName: "Baseball"),
-            Category(sfSymbolName: "figure.basketball", categoryName: "Basketball"),
-            Category(sfSymbolName: "figure.volleyball", categoryName: "Volleyball"),
-            Category(sfSymbolName: "soccerball", categoryName: "Scoccerball"),
-            Category(sfSymbolName: "figure.handball", categoryName: "Handball"),
-            Category(sfSymbolName: "tennisball", categoryName: "Tennisball"),
-            Category(sfSymbolName: "figure.wrestling", categoryName: "Wrestling"),
-            Category(sfSymbolName: "tennis.racket", categoryName: "Badminton"),
-            Category(sfSymbolName: "gamecontroller", categoryName: "Video Games")
+            Category(sfSymbolName: "figure.pool.swim", categoryName: "Swimming",color: "#A85E4C"),
+            Category(sfSymbolName: "cricket.ball", categoryName: "Cricket",color: "#637F6A"),
+            Category(sfSymbolName: "figure.baseball", categoryName: "Baseball",color: "#9C546D"),
+            Category(sfSymbolName: "figure.basketball", categoryName: "Basketball",color: "#4D8F86"),
+            Category(sfSymbolName: "figure.volleyball", categoryName: "Volleyball",color: "#9E6C57"),
+            Category(sfSymbolName: "soccerball", categoryName: "Scoccerball",color: "#5E7E99"),
+            Category(sfSymbolName: "figure.handball", categoryName: "Handball",color: "#C85D67"),
+            Category(sfSymbolName: "tennisball", categoryName: "Tennisball",color: "#6F945A"),
+            Category(sfSymbolName: "figure.wrestling", categoryName: "Wrestling",color: "#A75C7B"),
+            Category(sfSymbolName: "tennis.racket", categoryName: "Badminton",color: "#53638C"),
+            Category(sfSymbolName: "gamecontroller", categoryName: "Video Games",color: "#9A8F5D")
         ],
+
         "Fitness" : [
-            Category(sfSymbolName: "dumbbell", categoryName: "Gym"),
-            Category(sfSymbolName: "figure.yoga", categoryName: "Yoga"),
-            Category(sfSymbolName: "figure.stairs", categoryName: "Stairs"),
-            Category(sfSymbolName: "figure.run", categoryName: "Running"),
-            Category(sfSymbolName: "figure.walk", categoryName: "Walking"),
+            Category(sfSymbolName: "dumbbell", categoryName: "Gym", color: "#AC4F67"),
+            Category(sfSymbolName: "figure.yoga", categoryName: "Yoga", color: "#5E95A1"),
+            Category(sfSymbolName: "figure.stairs", categoryName: "Stairs", color: "#8B6F4E"),
+            Category(sfSymbolName: "figure.run", categoryName: "Running", color: "#C35D85"),
+            Category(sfSymbolName: "figure.walk", categoryName: "Walking", color: "#7E5A81"),
         ],
         "Education" : [
-            Category(sfSymbolName: "paintpalette", categoryName: "Paint"),
-            Category(sfSymbolName: "book.circle.fill", categoryName: "Books"),
-            Category(sfSymbolName: "music.note.house", categoryName: "Music"),
-            Category(sfSymbolName: "figure.socialdance", categoryName: "Dance"),
+            Category(sfSymbolName: "paintpalette", categoryName: "Paint", color: "#596BA5"),
+            Category(sfSymbolName: "book.circle.fill", categoryName: "Books", color: "#8F816C"),
+            Category(sfSymbolName: "music.note.house", categoryName: "Music", color: "#D0656E"),
+            Category(sfSymbolName: "figure.socialdance", categoryName: "Dance", color: "#7D8A55"),
             
         ],
         "Health" : [
-            Category(sfSymbolName: "waveform.path.ecg.rectangle", categoryName: "ECG"),
-            Category(sfSymbolName: "pills", categoryName: "Pills"),
-            Category(sfSymbolName: "syringe", categoryName: "Syringe"),
-            Category(sfSymbolName: "facemask", categoryName: "Facemask"),
-            Category(sfSymbolName: "bandage", categoryName: "Bandage"),
-            Category(sfSymbolName: "lungs", categoryName: "Lungs"),
-            Category(sfSymbolName: "medical.thermometer", categoryName: "Thermometer"),
-            Category(sfSymbolName: "cross.vial", categoryName: "Tonic"),
+            Category(sfSymbolName: "waveform.path.ecg.rectangle", categoryName: "ECG", color: "#A54F7C"),
+            Category(sfSymbolName: "pills", categoryName: "Pills", color: "#648E8A"),
+            Category(sfSymbolName: "syringe", categoryName: "Syringe", color: "#9C564A"),
+            Category(sfSymbolName: "facemask", categoryName: "Facemask", color: "#507C96"),
+            Category(sfSymbolName: "bandage", categoryName: "Bandage", color: "#BB8A65"),
+            Category(sfSymbolName: "lungs", categoryName: "Lungs", color: "#6E9D8C"),
+            Category(sfSymbolName: "medical.thermometer", categoryName: "Thermometer", color: "#976F6B"),
+            Category(sfSymbolName: "cross.vial", categoryName: "Tonic", color: "#B26D54"),
         ],
         "Furniture" : [
-            Category(sfSymbolName: "lamp.floor", categoryName: "Lamp"),
-            Category(sfSymbolName: "fan.floor", categoryName: "Fan"),
-            Category(sfSymbolName: "lightbulb", categoryName: "Light Bulb"),
-            Category(sfSymbolName: "toilet", categoryName: "Lavatory"),
-            Category(sfSymbolName: "microwave", categoryName: "Microwave"),
-            Category(sfSymbolName: "refrigerator", categoryName: "Refrigerator"),
-            Category(sfSymbolName: "chair.lounge", categoryName: "Chair")
+            Category(sfSymbolName: "lamp.floor", categoryName: "Lamp", color: "#7A5A82"),
+            Category(sfSymbolName: "fan.floor", categoryName: "Fan", color: "#AB7B3B"),
+            Category(sfSymbolName: "lightbulb", categoryName: "Light Bulb", color: "#5E8DA0"),
+            Category(sfSymbolName: "toilet", categoryName: "Lavatory", color: "#857D4C"),
+            Category(sfSymbolName: "microwave", categoryName: "Microwave", color: "#D04F49"),
+            Category(sfSymbolName: "refrigerator", categoryName: "Refrigerator", color: "#57928F"),
+            Category(sfSymbolName: "chair.lounge", categoryName: "Chair", color: "#806B3A")
         ],
         "Electronics": [
-            Category(sfSymbolName: "applewatch", categoryName: "Watch"),
-            Category(sfSymbolName: "camera", categoryName: "Camera"),
-            Category(sfSymbolName: "headphones", categoryName: "Headphones"),
-            Category(sfSymbolName: "laptopcomputer", categoryName: "Laptop"),
-            Category(sfSymbolName: "printer", categoryName: "Printer"),
-            Category(sfSymbolName: "tv", categoryName: "Television"),
+            Category(sfSymbolName: "applewatch", categoryName: "Watch", color: "#B9507E"),
+            Category(sfSymbolName: "camera", categoryName: "Camera", color: "#496D7F"),
+            Category(sfSymbolName: "headphones", categoryName: "Headphones", color: "#A73E4A"),
+            Category(sfSymbolName: "laptopcomputer", categoryName: "Laptop", color: " #50897C"),
+            Category(sfSymbolName: "printer", categoryName: "Printer", color: "#9062A9"),
+            Category(sfSymbolName: "tv", categoryName: "Television", color: "#638D9D"),
         ],
         "Personal" : [
-            Category(sfSymbolName: "figure.2.and.child.holdinghands", categoryName: "Family"),
-            Category(sfSymbolName: "figure.and.child.holdinghands", categoryName: "Child"),
-            Category(sfSymbolName: "heart.text.square", categoryName: "Grants"),
-            Category(sfSymbolName: "globe.europe.africa.fill", categoryName: "Travel"),
+            Category(sfSymbolName: "figure.2.and.child.holdinghands", categoryName: "Family", color: "#9C534C"),
+            Category(sfSymbolName: "figure.and.child.holdinghands", categoryName: "Child", color: "#437E80"),
+            Category(sfSymbolName: "heart.text.square", categoryName: "Grants", color: "#A56884"),
+            Category(sfSymbolName: "globe.europe.africa.fill", categoryName: "Travel", color: "#5B80A4"),
         ],
         "Income": [
-            Category(sfSymbolName: "creditcard", categoryName: "Credit Card"),
-            Category(sfSymbolName: "banknote", categoryName: "Current"),
+            Category(sfSymbolName: "creditcard", categoryName: "Card", color: "#964E50"),
+            Category(sfSymbolName: "banknote", categoryName: "Currency", color: "#7DCEA0"),
+        ],
+        "Others": [
+            Category(sfSymbolName: "square.grid.3x3", categoryName: "Others", color: "#63b863"),
         ]
+    ]
+    
+    static var expenseCategory: [Category] = [
+        Category(sfSymbolName: "fork.knife", categoryName: "Food", color: "#5e43f3"),
+        Category(sfSymbolName: "dumbbell", categoryName: "Gym", color: "#ff6d3b"),
+        Category(sfSymbolName: "house", categoryName: "Rent", color: "#EE82EE"),
+        Category(sfSymbolName: "figure.and.child.holdinghands", categoryName: "Child", color: "#87CEEB"),
+        Category(sfSymbolName: "doc.plaintext", categoryName: "Bills", color: "#beef00"),
+        Category(sfSymbolName: "bus.fill", categoryName: "Transportation", color: "#ff0028"),
+        Category(sfSymbolName: "carrot", categoryName: "Vegetables", color: "#FFB347"),
+        Category(sfSymbolName: "cross.case", categoryName: "Health", color: "#5cbdb9"),
+        Category(sfSymbolName: "phone", categoryName: "Telephone", color: "#D8B2D1"),
+        Category(sfSymbolName: "film.stack", categoryName: "Entertainment", color: "#0049B7"),
+        Category(sfSymbolName: "cart", categoryName: "Shopping", color: "#00DDFF"),
+        Category(sfSymbolName: "sportscourt", categoryName: "Sports", color: "#fff685"),
+        Category(sfSymbolName: "pawprint", categoryName: "Pet", color: "#f75990"),
+        Category(sfSymbolName: "popcorn", categoryName: "Snacks", color: "#ff1d58"),
+        Category(sfSymbolName: "graduationcap", categoryName: "Education", color: "#BDFCC9"),
+        Category(sfSymbolName: "tshirt", categoryName: "Clothes", color: "#FFD1A3"),
+        Category(sfSymbolName: "checkmark.shield", categoryName: "Insurance", color: "#FFD8C0"),
+        Category(sfSymbolName: "square.grid.3x3", categoryName: "Others", color: "#63b863"),
+    ]
+    
+    static var incomeCategory: [Category] = [
+        Category(sfSymbolName: "dollarsign.square" , categoryName: "Salary", color: "#006400"),
+        Category(sfSymbolName: "house.lodge", categoryName: "Rental", color: "#800000"),
+        Category(sfSymbolName: "trophy", categoryName: "Awards", color: "#ffc83b"),
+        Category(sfSymbolName: "repeat", categoryName: "Refunds", color: "#4ab2f5"),
+        Category(sfSymbolName: "gift", categoryName: "Grants", color: "#a945b9"),
+        Category(sfSymbolName: "tag", categoryName: "Sale", color: "#ef4873"),
+        Category(sfSymbolName: "ticket", categoryName: "Lottery", color: "#f95e4a"),
+        Category(sfSymbolName: "chart.xyaxis.line", categoryName: "Dividends", color: "#47c4d9"),
+        Category(sfSymbolName: "briefcase", categoryName: "Investments", color: "#FFDAB9"),
+        Category(sfSymbolName: "square.grid.3x3", categoryName: "Others", color: "#63b863"),
     ]
     
     static func convertDateToString(date: Date) -> String {
@@ -141,22 +179,6 @@ class Helper {
         return dateFormatter.date(from: value) ?? Date()
     }
     
-    static func expenseCategory() -> [Category] {
-        var category: [Category] = []
-        for expense in SFSymbolForExpense.allCases {
-            category.append(Category(sfSymbolName: expense.rawValue, categoryName: String(describing: expense)))
-        }
-        return category
-    }
-    
-    static func incomeCategory() -> [Category] {
-        var category: [Category] = []
-        for income in SFSymbolForIncome.allCases {
-            category.append(Category(sfSymbolName: income.rawValue, categoryName: String(describing: income)))
-        }
-        return category
-    }
-    
     static func getDateProperties(date: Date) -> (year: Int, month: Int, day: Int){
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         
@@ -167,8 +189,8 @@ class Helper {
     }
     
     static func isCategoryPresent(_ text: String) -> Bool {
-        let incomeCategories = Helper.incomeCategory()
-        let expenseCategories = Helper.expenseCategory()
+        let incomeCategories = Helper.incomeCategory
+        let expenseCategories = Helper.expenseCategory
         for category in incomeCategories {
             if category.categoryName.caseInsensitiveCompare(text)  == .orderedSame {
                 return true
@@ -376,7 +398,7 @@ class Helper {
         for record in records {
             if record.type == type {
                 if category == record.category {
-                    graphData.append(GraphData(percentage: calculatePercentage(value: Double(record.amount ?? "") ?? 0, total: totalAmount), name: record.category ?? "", date: record.date ?? Date(), icon: record.icon ?? "" , amount: record.amount ?? "0"))
+                    graphData.append(GraphData(percentage: calculatePercentage(value: Double(record.amount ?? "") ?? 0, total: totalAmount), name: record.category ?? "", date: record.date ?? Date(), icon: record.icon ?? "" , amount: record.amount ?? "0", color: record.color ?? "#808080"))
                 }
             }
         }
@@ -403,17 +425,18 @@ class Helper {
                 }
             }
         }
-        let colors = Helper.generateThemeColors(count: recordByCategory.count)
-        for (index, (key, value)) in recordByCategory.enumerated() {
+        for (_, (key, value)) in recordByCategory.enumerated() {
             lazy var icon = String()
             lazy var categoryAmount = Double()
+            lazy var categoryColor = UIColor()
             for record in value {
-                if let recordIcon = record.icon, let amount = record.amount {
+                if let recordIcon = record.icon, let amount = record.amount, let color = record.color  {
                     icon =  recordIcon
                     categoryAmount += Double(amount) ?? 0
+                    categoryColor = UIColor(hex: color) ?? .label
                 }
             }
-            chartData.append(ChartData(percentage: calculatePercentage(value: categoryAmount, total: totalAmount), sfSymbol: icon, name: key, color: colors[index % colors.count]))
+            chartData.append(ChartData(percentage: calculatePercentage(value: categoryAmount, total: totalAmount), sfSymbol: icon, name: key, color: categoryColor))
         }
         return chartData
     }
@@ -461,14 +484,13 @@ class Helper {
         if let number = Double(input) {
             let numberFormatter = NumberFormatter()
             numberFormatter.numberStyle = .decimal
-            if let formattedNumber = numberFormatter.string(from: NSNumber(value: number)) {
-                return String(formattedNumber)
+            numberFormatter.groupingSeparator = ","
+            
+            if let formattedString = numberFormatter.string(from: NSNumber(value: number)) {
+                return String(formattedString)
             }
         }
-        
-            return "0"
-        
-        
+        return "0"
     }
     
     static func generateThemeColors(count: Int) -> [UIColor] {

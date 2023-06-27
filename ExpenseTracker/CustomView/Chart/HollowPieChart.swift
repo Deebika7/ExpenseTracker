@@ -9,7 +9,7 @@ import UIKit
 
 class HollowPieChart: UIView {
     
-    var data: [Double: UIColor] = [:] {
+    lazy var data =  [(percentage:Double, color: UIColor)]()  {
         didSet {
             setNeedsDisplay()
         }
@@ -23,9 +23,12 @@ class HollowPieChart: UIView {
         
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
         let radius = min(bounds.width, bounds.height) * 0.4
-        let innerRadius = radius * 0.6 // Adjust the inner radius as desired
+        let innerRadius = radius * 0.6
         
-        let totalValue = data.keys.reduce(0, +)
+        let totalValue = data.reduce(0) {
+            result, value in
+            result + value.percentage
+        }
         var startAngle: CGFloat = 0
         
         for (key, value) in data {
@@ -46,7 +49,6 @@ class HollowPieChart: UIView {
                         
             startAngle = endAngle
         }
-        
     }
     
 }

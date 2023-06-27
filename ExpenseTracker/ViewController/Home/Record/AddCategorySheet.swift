@@ -14,12 +14,17 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     weak var presentationModalSheetDelegate: PresentationModalSheetDelegate?
     
     private lazy var editCustomCategory: CustomCategory? = nil
+    
+    private lazy var changedColor: UIColor? = nil
+    
+    private lazy var isTextEntered: Bool = false
+    
+    private lazy var pickedColor: UIColor? = nil
         
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
         textField.becomeFirstResponder()
-        textField.text = String(textField.text?.prefix(12) ?? "")
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.layer.cornerRadius = 10
         textField.placeholder = "Category Name"
@@ -52,19 +57,21 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        isModalInPresentation = true
         tableView.backgroundColor = .systemGroupedBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(addCustomCategory))
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissAddCategorySheet))
         tableView.register(CustomDisClosureCellWithImage.self, forCellReuseIdentifier: CustomDisClosureCellWithImage.reuseIdentifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TextFieldCell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "colorSelectorCell")
         tableView.keyboardDismissMode = .onDrag
         if editCustomCategory != nil {
-            selectedCategory = Category(sfSymbolName: editCustomCategory?.icon ?? "", categoryName: Helper.getCategoryName(for: editCustomCategory?.icon ?? ""))
+            selectedCategory = Category(sfSymbolName: editCustomCategory?.icon ?? "", categoryName: Helper.getCategoryName(for: editCustomCategory?.icon ?? ""), color: editCustomCategory?.color ?? "#808080")
         }
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        2
+        3
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -81,6 +88,12 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             let navigationController = UINavigationController(rootViewController: categoryIconVC)
             navigationController.preferredContentSize = .init(width: view.frame.width, height: view.frame.height)
             present(navigationController, animated: true)
+        }
+        else if indexPath.section == 2 {
+            let colorPickerVC = UIColorPickerViewController()
+            colorPickerVC.delegate = self
+            colorPickerVC.isModalInPresentation = true
+            present(colorPickerVC, animated: true)
         }
     }
     
@@ -104,9 +117,12 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
                 countLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -8),
             ])
             if let editCustomCategoryName = editCustomCategory?.name {
-                textField.text = editCustomCategoryName
-                if let text = textField.text {
-                    countLabel.text = "\(text.count)/25"
+                if !isTextEntered {
+                    textField.text = editCustomCategoryName
+                    if let text = textField.text {
+                        countLabel.text = "\(text.count)/25"
+                    }
+                    isTextEntered = true
                 }
             }
             return cell
@@ -116,12 +132,22 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
                 return UITableViewCell()
             }
             if selectedCategory != nil {
-                cell.configure(with: selectedCategory!.sfSymbolName, and: selectedCategory!.categoryName)
-                
+                cell.configure(icon: selectedCategory?.sfSymbolName ?? "", name: selectedCategory?.categoryName ?? "", color: selectedCategory?.color ?? "")
             }
             else {
-                cell.configure(with: "", and: "Select Category Icon")
+                cell.configure(icon: "", name: "Select Category Icon",color: "")
             }
+            cell.accessoryType = .disclosureIndicator
+            return cell
+        }
+        else if indexPath.section == 2 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "colorSelectorCell", for: indexPath)
+            var configuration = cell.defaultContentConfiguration()
+            configuration.text = "Icon Color"
+            configuration.textProperties.color = .label
+            configuration.image = UIImage(systemName: "square.fill")
+            configuration.imageProperties.tintColor = changedColor ?? UIColor(hex: selectedCategory?.color ?? "#808080")
+            cell.contentConfiguration = configuration
             cell.accessoryType = .disclosureIndicator
             return cell
         }
@@ -145,12 +171,20 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
             return
         }
         
-        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: text.trimMoreThanOneSpaces())) && !Helper.isCategoryPresent(textField.text ?? "") {
+        var color: String = ""
+        if let changedColor = changedColor {
+            color = changedColor.toHexString() ?? "#808080"
+        }
+        else {
+            color = selectedCategory?.color ?? "#808080"
+        }
+        
+        if !CustomCategoryDataManager.shared.isCustomCategoryPresent(newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "", categoryName: text.trimMoreThanOneSpaces(), color: color)) && !Helper.isCategoryPresent(textField.text ?? "") {
             
             if editCustomCategory != nil {
                 tableView.performBatchUpdates {
-                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: editCustomCategory!, newIcon: selectedCategory?.sfSymbolName ?? "", newCategory: text.trimMoreThanOneSpaces())
-                    CustomCategoryDataManager.shared.updateCustomCategory(oldCustomCategory: editCustomCategory!, newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "" , categoryName: (textField.text ?? "").trimMoreThanOneSpaces()))
+                    RecordDataManager.shared.updateRecordForCustomCategory(customCategory: editCustomCategory!, newIcon: selectedCategory?.sfSymbolName ?? "", newCategory: text.trimMoreThanOneSpaces(),newColor: color)
+                    CustomCategoryDataManager.shared.updateCustomCategory(oldCustomCategory: editCustomCategory!, newCustomCategory: Category(sfSymbolName: selectedCategory?.sfSymbolName ?? "" , categoryName: (textField.text ?? "").trimMoreThanOneSpaces(), color: color))
                 }
                 let alert = UIAlertController(title: "Category updated", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {_ in
@@ -217,30 +251,34 @@ class AddCategorySheet: UITableViewController, CategoryDelegate, UITextFieldDele
     func selectedCategory(_ category: Category?, categoryType: Int) {
         if let category = category {
             selectedCategory = category
+            changedColor = UIColor(hex: selectedCategory?.color ?? "808080")
         }
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .none)
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 1), IndexPath(row: 0, section: 2)], with: .none)
     }
     
     // MARK: Alert
     func showAlert(text: String) {
-        let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
+        let alert = UIAlertController(title: text, message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
     }
     
 }
 
-extension UITextField {
-    var isEmptyAfterTrimmed: Bool {
-        return ((text?.trimmingCharacters(in: .whitespaces).isEmpty) != nil)
+extension AddCategorySheet: UIColorPickerViewControllerDelegate {
+    func colorPickerViewController(_ viewController: UIColorPickerViewController, didSelect color: UIColor, continuously: Bool) {
+        pickedColor = color
+        if !CustomCategoryDataManager.shared.isColorAvailable(color: color.toHexString() ?? "") {
+            changedColor = color
+            selectedCategory?.color = changedColor?.toHexString() ?? "#808080"
+            tableView.reloadData()
+        }
     }
-}
-
-extension String {
-    func trimMoreThanOneSpaces() -> String {
-        let components = self.components(separatedBy: .whitespaces)
-        let filteredComponents = components.filter { !$0.isEmpty }
-        return filteredComponents.joined(separator: " ")
+    
+    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
+        if CustomCategoryDataManager.shared.isColorAvailable(color: self.pickedColor?.toHexString() ?? "") {
+            showAlert(text: "The selected color is already in use")
+        }
     }
 }
 

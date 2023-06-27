@@ -39,6 +39,10 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         overlayBlurEffect.translatesAutoresizingMaskIntoConstraints = false
         overlayBlurEffect.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         overlayBlurEffect.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissChildVC))
+        tapGesture.delegate = self
+        tapGesture.cancelsTouchesInView = false
+        overlayBlurEffect.addGestureRecognizer(tapGesture)
         return overlayBlurEffect
     }()
     
@@ -395,10 +399,10 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         configureDatasource()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "HomeCell")
         tableView.register(MoneyTrackerSectionHeaderView.self, forHeaderFooterViewReuseIdentifier: MoneyTrackerSectionHeaderView.reuseIdentifier)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissChildVC))
-        tapGesture.delegate = self
-        tapGesture.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapGesture)
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissChildVC))
+//        tapGesture.delegate = self
+//        tapGesture.cancelsTouchesInView = false
+//        view.addGestureRecognizer(tapGesture)
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
@@ -549,13 +553,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
             self?.deleteRecord(recordId: self?.datasource[indexPath.section].rows[indexPath.row].id ?? UUID(), indexPath: indexPath, completionHandler: completionHandler)
         }
         deleteAction.image = UIImage(systemName: "trash")
-        deleteAction.title = "delete"
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (_, _, completionHandler) in
             self?.editRecord(record: self?.datasource[indexPath.section].rows[indexPath.row])
             completionHandler(true)
         }
-        editAction.title = "edit"
         editAction.backgroundColor = .systemBlue
         editAction.image = UIImage(systemName: "pencil")
         
@@ -576,6 +578,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
     func deleteRecord(recordId: UUID,indexPath: IndexPath, completionHandler: @escaping (Bool) -> Void) {
         let alert = UIAlertController(title: "Delete", message: "Are you sure want to delete this record", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { _ in
+            
             completionHandler(false)
         }))
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { [weak self] _ in
@@ -585,11 +588,11 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
                 self?.tableView.deleteSections(IndexSet(integer: indexPath.section), with: .left)
             } else {
                 self?.datasource[indexPath.section].rows.remove(at: indexPath.row)
-                self?.tableView.deleteRows(at: [indexPath], with: .automatic)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                    self?.tableView.reloadSections(IndexSet(integer: indexPath.section), with: .none)
-                })
+                self?.tableView.deleteRows(at: [indexPath], with: .left)
             }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                self?.refreshTable()
+            })
             completionHandler(true)
         }))
         self.present(alert, animated: true)
@@ -646,7 +649,7 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource, Pres
         let simplifiedAmount = Helper.simplifyNumbers([record.amount ?? "0"])
         configuration.secondaryText = (record.type != 0) ? "-\(simplifiedAmount)" : "\(simplifiedAmount)"
         configuration.image = UIImage(systemName: record.icon ?? "")
-        configuration.imageProperties.tintColor = .label
+        configuration.imageProperties.tintColor = UIColor(hex: record.color ?? "")
         cell.contentConfiguration = configuration
         return cell
     }

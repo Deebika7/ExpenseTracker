@@ -10,7 +10,7 @@ import SwiftUI
 
 class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    var dataSource = [Double: UIColor]()
+    lazy var dataSource = [(percentage:Double, color: UIColor)]()
 
     private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
 
@@ -43,18 +43,28 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
 
     private lazy var searchController = SearchController()
 
+    
     private lazy var noDataFoundView: UIView = {
         let noDataFoundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
         noDataFoundView.translatesAutoresizingMaskIntoConstraints = false
         return noDataFoundView
     }()
     
+    private lazy var separatorView: UIView = {
+        let separatorView = UIView()
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.backgroundColor = .systemGroupedBackground
+        return separatorView
+    }()
+    
     func configureTable() {
         if chartRecords.isEmpty {
             headerViewContainer.isHidden = true
             noDataFoundView.isHidden = false
+            separatorView.isHidden = true
         }
         else {
+            separatorView.isHidden = false
             noDataFoundView.isHidden = true
             headerViewContainer.isHidden = false
         }
@@ -67,6 +77,7 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
         view.addSubview(tableView)
         view.addSubview(headerViewContainer)
         view.addSubview(noDataFoundView)
+        view.addSubview(separatorView)
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
         tableView.keyboardDismissMode = .onDrag
@@ -82,10 +93,15 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
 
             headerViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             headerViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -16),
-            headerViewContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            headerViewContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             headerViewContainer.heightAnchor.constraint(equalToConstant: 160),
+            
+            separatorView.heightAnchor.constraint(equalToConstant: 5),
+            separatorView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: 1),
+            separatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: -20),
+            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: 1),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2),
@@ -146,9 +162,10 @@ class IncomePieChartVC:UIViewController, UITableViewDelegate, UITableViewDataSou
             $0.percentage > $1.percentage
         })
         
-        dataSource = chartRecords.reduce(into: [Double: UIColor]()) {
-            result, chartRecord in result[chartRecord.percentage] = chartRecord.color
+        dataSource = chartRecords.map { value in
+            return (value.percentage, value.color)
         }
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {

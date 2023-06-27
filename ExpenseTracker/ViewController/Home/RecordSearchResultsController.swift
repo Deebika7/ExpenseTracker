@@ -31,6 +31,7 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
         tableView.delegate = self
         tableView.dataSource = self
         tableView.keyboardDismissMode = .onDrag
+        tableView.allowsSelection = false
     }
     
     func updateSearchResults(_ results: [SectionData], searchText: String) {
@@ -71,9 +72,8 @@ class RecordSearchResultsController: UIViewController, UITableViewDelegate, UITa
             let nsRange = NSRange(range, in: category)
             attributedString.addAttributes([.foregroundColor: UIColor.systemBlue], range: nsRange)
         }
-            configuration.attributedText = attributedString
-        
-        configuration.imageProperties.tintColor = .label
+        configuration.attributedText = attributedString
+        configuration.imageProperties.tintColor = UIColor(hex: record.color ?? "808080")
         cell.contentConfiguration = configuration
         return cell
     }

@@ -21,7 +21,6 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController()
-        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
         return searchController
@@ -35,13 +34,12 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     @objc func addNewCategory(){
         tableView.isEditing = false
         view.endEditing(true)
-        searchController.searchBar.text = nil
+        searchController.searchBar.text = ""
         let addCategoryVC = AddCategorySheet(editCustomCategory: nil)
         addCategoryVC.title = "Add Custom Category"
         addCategoryVC.presentationModalSheetDelegate = self
         let navigationController = UINavigationController(rootViewController: addCategoryVC)
         navigationController.modalPresentationStyle = .formSheet
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         present(navigationController, animated: true)
     }
     
@@ -98,7 +96,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         }
         configuration.attributedText = attributedString
         configuration.image = UIImage(systemName: searchedCustomCategory[indexPath.row].icon ?? "")
-        configuration.imageProperties.tintColor = .label
+        configuration.imageProperties.tintColor = UIColor(hex: searchedCustomCategory[indexPath.row].color ?? "#808080")
         cell.contentConfiguration = configuration
         return cell
     }
@@ -120,7 +118,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         })
         alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { [weak self]  _ in
             self?.tableView.performBatchUpdates {
-                RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (self?.searchedCustomCategory[indexPath.row])!, newIcon: "square.grid.3x3", newCategory: "Others")
+                RecordDataManager.shared.updateRecordForCustomCategory(customCategory: (self?.searchedCustomCategory[indexPath.row])!, newIcon: "square.grid.3x3", newCategory: "Others", newColor: "#63b863")
                 CustomCategoryDataManager.shared.deleteCustomCategory(id: (self?.searchedCustomCategory[indexPath.row].id ?? UUID()))
                 self?.searchedCustomCategory.remove(at: indexPath.row)
                 self?.tableView.deleteRows(at: [indexPath], with: .automatic)
@@ -132,7 +130,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     func editCustomCategory(_ indexPath: IndexPath) {
-        searchController.searchBar.text = nil
+        searchController.searchBar.text = ""
         let editCustomCategoryVC = AddCategorySheet(editCustomCategory: searchedCustomCategory[indexPath.row])
         editCustomCategoryVC.title = "Custom Category"
         editCustomCategoryVC.presentationModalSheetDelegate = self
@@ -144,10 +142,6 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        searchedCustomCategory.isEmpty ? "" : "Custom Category"
-    }
-    
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         let editAction = UIAction(title: "Edit", image: UIImage(systemName: "pencil"), handler: { [weak self] _ in
@@ -155,7 +149,7 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
         })
         
         let deleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: [.destructive], handler: { [weak self] _ in
-            self?.deleteCustomCategory(indexPath, completionHandler: {_ in
+            self?.deleteCustomCategory(indexPath, completionHandler: { _ in
                 
             })
         })
@@ -174,8 +168,9 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
     }
     
     func refreshTable() {
-        searchedCustomCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
         customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
+        searchedCustomCategory = customCategory
+        tableView.backgroundView = nil
         tableView.reloadData()
     }
     
@@ -184,16 +179,19 @@ class EditCustomCategory: UITableViewController, PresentationModalSheetDelegate,
             return
         }
         searchText = text
-        
         searchedCustomCategory = customCategory.filter{ customCategory in
-            guard let name =  customCategory.name else {
-                return false
-            }
-            return name.localizedCaseInsensitiveContains(text)
+            return customCategory.name!.localizedCaseInsensitiveContains(text)
+        }
+        
+        if searchedCustomCategory.count == 0 {
+            tableView.backgroundView = noDataFoundView
+        }
+        else {
+            tableView.backgroundView = nil
         }
         
         if text.isEmpty {
-            searchedCustomCategory = customCategory
+            refreshTable()
         }
         
         tableView.reloadData()

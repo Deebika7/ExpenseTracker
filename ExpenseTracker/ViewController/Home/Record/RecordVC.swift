@@ -37,6 +37,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        isModalInPresentation = true
         tableView.backgroundColor = .systemGroupedBackground
         tableView.keyboardDismissMode = .onDrag
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(addRecord))
@@ -208,14 +209,14 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
                 return UITableViewCell()
             }
             if let editRecord = editRecord {
-                cell.configure(with: editRecord.icon ?? "", and: editRecord.category ?? "")
-                changedCategory = Category(sfSymbolName: editRecord.icon ?? "", categoryName: editRecord.category ?? "")
+                cell.configure(icon: editRecord.icon ?? "", name: editRecord.category ?? "", color: editRecord.color ?? "")
+                changedCategory = Category(sfSymbolName: editRecord.icon ?? "", categoryName: editRecord.category ?? "", color: editRecord.color ?? "")
             }
             else if changedCategory != nil {
-                cell.configure(with: changedCategory!.sfSymbolName, and: changedCategory!.categoryName)
+                cell.configure(icon: changedCategory!.sfSymbolName, name: changedCategory!.categoryName, color: changedCategory!.color)
             }
             else {
-                cell.configure(with: "", and: "Select a Category")
+                cell.configure(icon: "", name: "Select a Category", color: "")
             }
             
             cell.accessoryType = .disclosureIndicator
@@ -263,7 +264,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomHeaderFooterView.reuseIdentifier) as? CustomHeaderFooterView else {
             return UITableViewCell()
         }
-        headerView.configureView(with: RecordField.allCases[section].rawValue)
+        headerView.configureView(with: RecordField.allCases[section].rawValue, bold: true)
         return headerView
     }
     
@@ -285,7 +286,6 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
         currentType = text
         print(Helper.categoryType.default)
         if previousType != currentType && categoryType == Helper.categoryType.default {
-            print(categoryType)
                 tableView.reloadData()
                 changedCategory = nil
         } 
@@ -331,7 +331,7 @@ class RecordVC: UITableViewController, SelectionDelegate, UICalendarSelectionSin
     // MARK: Alert
     
     func showAlert(text: String) {
-        let alert = UIAlertController(title: "", message: text, preferredStyle: .alert)
+        let alert = UIAlertController(title: text, message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true)
     }

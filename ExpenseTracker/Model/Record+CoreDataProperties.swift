@@ -18,11 +18,12 @@ extension Record {
 
     @NSManaged public var amount: String?
     @NSManaged public var category: String?
+    @NSManaged public var color: String?
     @NSManaged public var date: Date?
     @NSManaged public var icon: String?
     @NSManaged public var id: UUID?
     @NSManaged public var type: Int16
-
+    
 }
 
 extension Record : Identifiable {

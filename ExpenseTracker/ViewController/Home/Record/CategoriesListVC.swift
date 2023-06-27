@@ -16,12 +16,12 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     private lazy var searchText = String()
     
     private lazy var searchedCategory: [Category] = {
-        let category = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
+        let category = (type == "Income") ? Helper.incomeCategory : Helper.expenseCategory
         return category
     }()
     
     private lazy var category: [Category] = {
-        let category = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
+        let category = (type == "Income") ? Helper.incomeCategory : Helper.expenseCategory
         return category
     }()
     
@@ -123,6 +123,7 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             }
             configuration.attributedText = attributedString
             configuration.image = UIImage(systemName: searchedCategory[indexPath.row].sfSymbolName)
+            configuration.imageProperties.tintColor = UIColor(hex: searchedCategory[indexPath.row].color)
             if selectedCategory != nil {
                 cell.accessoryType = (searchedCategory[indexPath.row].categoryName  == selectedCategory!.categoryName && searchedCategory[indexPath.row].sfSymbolName  == selectedCategory!.sfSymbolName) ? .checkmark: .none
             }
@@ -139,8 +140,8 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
             if selectedCategory != nil {
                 cell.accessoryType = (searchedCustomCategory[indexPath.row].name  == selectedCategory!.categoryName && searchedCustomCategory[indexPath.row].icon == selectedCategory!.sfSymbolName) ? .checkmark: .none
             }
+            configuration.imageProperties.tintColor = UIColor(hex: searchedCustomCategory[indexPath.row].color ?? "#808080")
         }
-        configuration.imageProperties.tintColor = .label
         configuration.textProperties.color = .label
         cell.contentConfiguration = configuration
         return cell
@@ -149,10 +150,10 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if indexPath.section == 0 {
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCategory[indexPath.row].sfSymbolName, categoryName: searchedCategory[indexPath.row].categoryName), categoryType: Helper.categoryType.default)
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCategory[indexPath.row].sfSymbolName, categoryName: searchedCategory[indexPath.row].categoryName, color: searchedCategory[indexPath.row].color), categoryType: Helper.categoryType.default)
         }
         else {
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCustomCategory[indexPath.row].icon ?? "", categoryName: searchedCustomCategory[indexPath.row].name ?? ""), categoryType: Helper.categoryType.custom)
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: searchedCustomCategory[indexPath.row].icon ?? "", categoryName: searchedCustomCategory[indexPath.row].name ?? "", color: searchedCustomCategory[indexPath.row].color ?? ""), categoryType: Helper.categoryType.custom)
         }
         DispatchQueue.main.async {
             self.tableView.reloadData()
@@ -200,8 +201,9 @@ class CategoriesListVC: UITableViewController, PresentationModalSheetDelegate, U
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         refreshTable()
     }
+    
     func refreshTable() {
-        searchedCategory = (type == "Income") ? Helper.incomeCategory() : Helper.expenseCategory()
+        searchedCategory = (type == "Income") ? Helper.incomeCategory : Helper.expenseCategory
         searchedCustomCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
         customCategory = CustomCategoryDataManager.shared.getAllCustomCategory()
         tableView.backgroundView = nil

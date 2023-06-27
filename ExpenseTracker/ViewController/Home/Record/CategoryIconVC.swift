@@ -67,7 +67,6 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating, UISearchCo
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         return searchResults.count
-        
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -88,7 +87,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating, UISearchCo
             configuration.attributedText = attributedString
             configuration.textProperties.color = .label
             configuration.image = UIImage(systemName: category.sfSymbolName)
-            configuration.imageProperties.tintColor = .label
+            configuration.imageProperties.tintColor = UIColor(hex: category.color)
             if selectedCategory != nil {
                 cell.accessoryType = (selectedCategory.categoryName  == category.categoryName) ? .checkmark : .none
             }
@@ -102,7 +101,7 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating, UISearchCo
         let sectionItem = Array(searchResults.keys)[indexPath.section]
         if let categoryItems = searchResults[sectionItem] {
             let category = categoryItems[indexPath.row]
-            categoryDelegate?.selectedCategory(Category(sfSymbolName: category.sfSymbolName, categoryName: category.categoryName), categoryType: -1)
+            categoryDelegate?.selectedCategory(Category(sfSymbolName: category.sfSymbolName, categoryName: category.categoryName, color: category.color), categoryType: -1)
         }
         self.dismiss(animated: true, completion: nil)
     }
@@ -153,7 +152,6 @@ class CategoryIconVC: UITableViewController, UISearchResultsUpdating, UISearchCo
         else {
             tableView.backgroundView = nil
         }
-        
         tableView.reloadData()
     }
     

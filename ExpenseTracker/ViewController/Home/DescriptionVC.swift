@@ -92,7 +92,6 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
         ])
     }
     
@@ -102,7 +101,7 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             var configuration = cell.defaultContentConfiguration()
             configuration.image = UIImage(systemName: record.icon ?? "")
             configuration.imageToTextPadding = 70
-            configuration.imageProperties.tintColor = .label
+            configuration.imageProperties.tintColor = UIColor(hex: record.color ?? "#808080")
             configuration.text = record.category
             configuration.textProperties.font = UIFont.boldSystemFont(ofSize: 20)
             cell.contentConfiguration = configuration
@@ -119,7 +118,14 @@ class DescriptionVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.configureCell(title: "Category", text: record.category ?? "")
             }
             else if indexPath.row == 3 {
-                cell.configureCell(title: "Amount", text: Helper.formatNumber(input: record.amount ?? ""))
+                var amount = record.amount ?? ""
+                if Double(amount) ?? 0 > 1 {
+                    amount = Helper.formatNumber(input: record.amount ?? "")
+                }
+                else if amount.first == "." {
+                    amount = "0"+amount
+                }
+                cell.configureCell(title: "Amount", text: amount)
             }
             else if indexPath.row == 4 {
                 cell.configureCell(title: "Date", text: Helper.convertDateToString(date: record.date ?? Date()))

@@ -15,7 +15,7 @@ extension CustomCategory {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CustomCategory> {
         return NSFetchRequest<CustomCategory>(entityName: "CustomCategory")
     }
-
+    @NSManaged public var color: String?
     @NSManaged public var icon: String?
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?

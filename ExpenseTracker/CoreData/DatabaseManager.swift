@@ -49,7 +49,7 @@ class DatabaseManager {
         return nil
     }
     
-    func createRecord(id: UUID, recordType: Int16, category: String, amount: String, icon: String, date: Date) {
+    func createRecord(id: UUID, recordType: Int16, category: String, amount: String, icon: String, date: Date, color: String) {
         let record = Record(context: context)
         record.id = id
         record.type = recordType
@@ -57,6 +57,7 @@ class DatabaseManager {
         record.amount = amount
         record.icon = icon
         record.date = date
+        record.color = color
         saveContext()
     }
     
@@ -70,13 +71,14 @@ class DatabaseManager {
         saveContext()
     }
     
-    func updateRecord(id: UUID, newType: Int16, newAmount: String, newIcon: String, newCategory: String, newDate: Date) {
+    func updateRecord(id: UUID, newType: Int16, newAmount: String, newIcon: String, newCategory: String, newDate: Date, newColor: String) {
         let record = getRecord(id: id)
         record?.type = newType
         record?.amount = newAmount
         record?.icon = newIcon
         record?.category = newCategory
         record?.date = newDate
+        record?.color = newColor
         saveContext()
     }
     
@@ -90,17 +92,19 @@ class DatabaseManager {
         return (try? context.fetch(fetchCustomCategory)) ?? []
     }
 
-    func addCustomCategory(id: UUID, name: String, iconName: String) {
+    func addCustomCategory(id: UUID, name: String, iconName: String, color: String) {
         let customCategory = CustomCategory(context: context)
         customCategory.id = id
         customCategory.name = name
         customCategory.icon = iconName
+        customCategory.color = color
         saveContext()
     }
     
     func updateCustomCategory(oldCustomCategory: CustomCategory, newCustomCategory: Category) {
         oldCustomCategory.name = newCustomCategory.categoryName
         oldCustomCategory.icon = newCustomCategory.sfSymbolName
+        oldCustomCategory.color = newCustomCategory.color
         saveContext()
     }
     

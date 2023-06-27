@@ -17,21 +17,21 @@ class RecordDataManager {
         let recordType: Int16 = (type == "Income") ? 0 : 1
         let date: Date = Helper.convertStringToDate(value: createdDate)
         let trimmedString = Helper.trimLeadingZeroes(inputStr: amount)
-        DatabaseManager.shared.createRecord(id: UUID(), recordType: recordType, category: category.categoryName, amount: trimmedString, icon: category.sfSymbolName, date: date)
+        DatabaseManager.shared.createRecord(id: UUID(), recordType: recordType, category: category.categoryName, amount: trimmedString, icon: category.sfSymbolName, date: date, color: category.color)
         return true
     }
     
     func updateRecord(id: UUID, type: String, amount: String, date: String, category: Category) {
         let recordType: Int16 = (type == "Income") ? 0 : 1
         let date: Date = Helper.convertStringToDate(value: date)
-        DatabaseManager.shared.updateRecord(id: id, newType: recordType, newAmount: amount, newIcon: category.sfSymbolName, newCategory: category.categoryName, newDate: date)
+        DatabaseManager.shared.updateRecord(id: id, newType: recordType, newAmount: amount, newIcon: category.sfSymbolName, newCategory: category.categoryName, newDate: date, newColor: category.color)
     }
 
-    func updateRecordForCustomCategory(customCategory: CustomCategory, newIcon: String, newCategory: String) {
+    func updateRecordForCustomCategory(customCategory: CustomCategory, newIcon: String, newCategory: String, newColor: String) {
         let allRecords = DatabaseManager.shared.getAllRecord()
         for record in allRecords {
             if record.category! == customCategory.name && record.icon ?? "" == customCategory.icon ?? "" {
-                DatabaseManager.shared.updateRecord(id: record.id ?? UUID(), newType: record.type, newAmount: record.amount ?? "0", newIcon: newIcon, newCategory: newCategory, newDate: record.date ?? Date())
+                DatabaseManager.shared.updateRecord(id: record.id ?? UUID(), newType: record.type, newAmount: record.amount ?? "0", newIcon: newIcon, newCategory: newCategory, newDate: record.date ?? Date(), newColor: newColor)
             }
         }
     }

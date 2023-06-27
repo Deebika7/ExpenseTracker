@@ -59,7 +59,7 @@ class PieChartSearchResultsController: UIViewController, UITableViewDataSource, 
         configuration.secondaryAttributedText = secondaryAttributedText
         configuration.prefersSideBySideTextAndSecondaryText = true
         configuration.image = UIImage(systemName: searchResults[indexPath.row].sfSymbol)
-        configuration.imageProperties.tintColor = .label
+        configuration.imageProperties.tintColor = searchResults[indexPath.row].color
         cell.contentConfiguration = configuration
         return cell
     }

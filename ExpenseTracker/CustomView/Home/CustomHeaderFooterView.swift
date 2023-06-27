@@ -31,11 +31,10 @@ class CustomHeaderFooterView: UITableViewHeaderFooterView {
         super.prepareForReuse()
     }
     
-    func configureView(with title: String) {
+    func configureView(with title: String, bold: Bool) {
         headerLabel.text = title
         headerLabel.textColor = .label
-        headerLabel.adjustsFontForContentSizeCategory = true
-        headerLabel.font = .boldSystemFont(ofSize: 18)
+        headerLabel.font = bold ? .boldSystemFont(ofSize: 18) : .systemFont(ofSize: 16)
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             headerLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 3),

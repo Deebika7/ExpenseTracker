@@ -10,8 +10,8 @@ import SwiftUI
 
 class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var dataSource = [Double: UIColor]()
-    
+    lazy var dataSource = [(percentage:Double, color: UIColor)]()
+
     private lazy var records: [Record] = RecordDataManager.shared.getAllRecordForAMonth(month: Helper.defaultMonth, year: Helper.defaultYear)
 
     private lazy var chartRecords = [ChartData]()
@@ -47,6 +47,13 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     private lazy var searchController = SearchController()
     
+    private lazy var separatorView: UIView = {
+        let separatorView = UIView()
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.backgroundColor = .systemGroupedBackground
+        return separatorView
+    }()
+    
     private lazy var noDataFoundView: UIView = {
         let noDataFoundView = NoDataFoundView(image: "menubar.dock.rectangle.badge.record", message: "No records found")
         noDataFoundView.translatesAutoresizingMaskIntoConstraints = false
@@ -57,8 +64,11 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         if chartRecords.isEmpty {
             headerViewContainer.isHidden = true
             noDataFoundView.isHidden = false
+            separatorView.isHidden = true
+
         }
         else {
+            separatorView.isHidden = false
             noDataFoundView.isHidden = true
             headerViewContainer.isHidden = false
         }
@@ -71,6 +81,7 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
         view.addSubview(tableView)
         view.addSubview(headerViewContainer)
         view.addSubview(noDataFoundView)
+        view.addSubview(separatorView)
         noDataFoundView.isUserInteractionEnabled = true
         setupContraints()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChartCell")
@@ -87,10 +98,16 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             
             headerViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             headerViewContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant:  -16),
-            headerViewContainer.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
+            headerViewContainer.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             headerViewContainer.heightAnchor.constraint(equalToConstant: 160),
+            headerViewContainer.bottomAnchor.constraint(equalTo: view.topAnchor, constant: 176),
             
-            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: -20),
+            separatorView.heightAnchor.constraint(equalToConstant: 5),
+            separatorView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: 1),
+            separatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            tableView.topAnchor.constraint(equalTo: headerViewContainer.bottomAnchor, constant: 1),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: -4),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2),
@@ -99,6 +116,7 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             noDataFoundView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -150),
             noDataFoundView.heightAnchor.constraint(equalToConstant: 120),
             noDataFoundView.widthAnchor.constraint(equalTo: view.widthAnchor),
+                        
         ])
     }
     
@@ -150,8 +168,8 @@ class ExpensePieChartVC: UIViewController, UITableViewDelegate, UITableViewDataS
             $0.percentage > $1.percentage
         })
         
-        dataSource = chartRecords.reduce(into: [Double: UIColor]()){
-            result, chartRecord in result[chartRecord.percentage] = chartRecord.color
+        dataSource = chartRecords.map { value in
+            return (value.percentage, value.color)
         }
     }
     
